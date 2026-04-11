@@ -6,6 +6,11 @@ ola.txt
 premio.txt
 saudacao.py
 meu-projeto/
+meu-blog/
+biblioteca.db
+consulta.txt
+todo.json
+ler_todo.py
 
 # Artifacts from the Spanish-era lesson content (still valid if CF_LANG=es)
 hola.txt

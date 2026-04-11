@@ -69,8 +69,11 @@ estudante ter seu próprio progresso no seu fork).
 | 01 | Navegar o sistema de arquivos | ~25 min |
 | 02 | Seu primeiro commit em Git | ~30 min |
 | 03 | Seu primeiro script em Python | ~30 min |
+| 04 | Ramos e fusões em Git | ~30 min |
+| 05 | Sua primeira consulta SQL | ~35 min |
+| 06 | HTTP e APIs públicas | ~30 min |
 
-Em breve: SQL com SQLite, GitHub + branches, HTTP + APIs com curl.
+Total atual: **7 lições · ~3h 15min** de tarefas práticas com validação automática.
 
 ## Filosofia
 
