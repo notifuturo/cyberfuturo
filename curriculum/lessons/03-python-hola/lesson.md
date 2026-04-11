@@ -1,91 +1,91 @@
-# Tu primer script en Python
+# Seu primeiro script em Python
 
-Hasta ahora hemos usado el terminal para mover archivos y hacer commits. Ahora vas a escribir
-tu primer programa — un script en Python — y a ejecutarlo desde la misma terminal que ya
-sabes usar.
+Até agora a gente usou o terminal pra mover arquivos e fazer commits. Agora você vai
+escrever seu primeiro programa — um script em Python — e rodar ele pelo mesmo terminal
+que você já sabe usar.
 
-Un script de Python es solo un archivo de texto con extensión `.py` que contiene instrucciones
-que el intérprete entiende. Se ejecuta con el comando `python3 nombre.py`.
+Um script Python é só um arquivo de texto com extensão `.py` que contém instruções que o
+interpretador entende. Ele é executado com o comando `python3 nome.py`.
 
-## Tu tarea
+## Sua tarefa
 
-Vas a crear un script que reciba un nombre como argumento y lo salude. Específicamente:
+Você vai criar um script que recebe um nome como argumento e cumprimenta. Especificamente:
 
-1. Crea un archivo `curriculum/saludo.py`
-2. Cuando lo ejecutes como `python3 saludo.py Luis`, debe imprimir exactamente:
+1. Crie um arquivo `curriculum/saudacao.py`
+2. Quando você rodar como `python3 saudacao.py Luiz`, ele precisa imprimir exatamente:
    ```
-   Hola, Luis!
+   Olá, Luiz!
    ```
-3. Cuando lo ejecutes sin argumentos (`python3 saludo.py`), debe imprimir:
+3. Quando você rodar sem argumentos (`python3 saudacao.py`), ele precisa imprimir:
    ```
-   Hola, mundo!
+   Olá, mundo!
    ```
 
-Ese mismo script se puede ejecutar con cualquier nombre: `python3 saludo.py Ana` debe
-imprimir `Hola, Ana!`.
+O mesmo script precisa funcionar com qualquer nome: `python3 saudacao.py Ana` deve
+imprimir `Olá, Ana!`.
 
-## Conceptos que vas a necesitar
+## Conceitos que você vai precisar
 
-**Lectura de argumentos desde la línea de comandos** — Python tiene un módulo llamado `sys`
-que te da acceso a los argumentos con los que se invocó el script:
+**Leitura de argumentos da linha de comando** — Python tem um módulo chamado `sys` que
+te dá acesso aos argumentos com que o script foi chamado:
 
 ```python
 import sys
-# sys.argv[0] es el nombre del script
-# sys.argv[1], sys.argv[2]... son los argumentos que te pasaron
+# sys.argv[0] é o nome do script
+# sys.argv[1], sys.argv[2]... são os argumentos que foram passados pra ele
 ```
 
-**Imprimir texto** — la función incorporada `print` imprime lo que le pases:
+**Imprimir texto** — a função embutida `print` imprime o que você passar:
 
 ```python
-print("Hola, mundo!")
+print("Olá, mundo!")
 ```
 
-**f-strings** — una forma moderna de insertar variables en cadenas:
+**f-strings** — uma forma moderna de inserir variáveis em strings:
 
 ```python
-nombre = "Ana"
-print(f"Hola, {nombre}!")
+nome = "Ana"
+print(f"Olá, {nome}!")
 ```
 
-**Control de flujo** — ejecuta una rama u otra según una condición:
+**Controle de fluxo** — executa um ramo ou outro conforme uma condição:
 
 ```python
-if condicion:
+if condicao:
     ...
 else:
     ...
 ```
 
-## Un ejemplo muy cercano
+## Um exemplo bem próximo
 
-Fíjate que este no es exactamente lo que te pide la tarea, pero está muy cerca:
+Presta atenção que isso não é exatamente o que a tarefa pede, mas está bem perto:
 
 ```python
 import sys
 
-print("esto siempre se imprime")
-print(f"nombre del script: {sys.argv[0]}")
+print("isso sempre é impresso")
+print(f"nome do script: {sys.argv[0]}")
 print(f"argumentos: {sys.argv[1:]}")
 ```
 
-Adáptalo: lee `sys.argv[1:]`, si está vacío usa `"mundo"`, si no usa el primero, y construye
-la cadena de salida con una f-string.
+Adapte: leia `sys.argv[1:]`, se estiver vazio use `"mundo"`, se não use o primeiro, e
+monte a string de saída com uma f-string.
 
-## Los pasos, uno por uno
+## Os passos, um por um
 
 1. `cd ~/curriculum`
-2. Crea `saludo.py` con tu editor favorito. Puedes usar nano (`nano saludo.py`) o VS Code
-   directamente en el panel de archivos de la izquierda.
-3. Escribe las ~6 líneas de código.
-4. Prueba: `python3 saludo.py` → debe imprimir `Hola, mundo!`
-5. Prueba: `python3 saludo.py Ana` → debe imprimir `Hola, Ana!`
-6. Cuando ambos casos funcionen, corre `./cf check`.
+2. Crie `saudacao.py` com seu editor favorito. Você pode usar nano (`nano saudacao.py`)
+   ou VS Code direto no painel de arquivos à esquerda.
+3. Escreva as ~6 linhas de código.
+4. Teste: `python3 saudacao.py` → deve imprimir `Olá, mundo!`
+5. Teste: `python3 saudacao.py Ana` → deve imprimir `Olá, Ana!`
+6. Quando os dois casos funcionarem, rode `./cf check`.
 
-## Lo que acabas de aprender
+## O que você acabou de aprender
 
-- **python3 archivo.py** — ejecutar un script Python desde el terminal
-- **sys.argv** — leer los argumentos de la línea de comandos
-- **print()** — imprimir algo
-- **f-strings** — formato moderno para interpolar variables en cadenas
-- **if / else** — control de flujo básico
+- **python3 arquivo.py** — rodar um script Python pelo terminal
+- **sys.argv** — ler os argumentos da linha de comando
+- **print()** — imprimir alguma coisa
+- **f-strings** — formato moderno para interpolar variáveis em strings
+- **if / else** — controle de fluxo básico

@@ -1,75 +1,97 @@
-# CyberFuturo — el curso
+# CyberFuturo — o curso
 
-> **Aprende tecnología al revés.** GUI → Terminal → Git → SQL → Python.
-> Todo en tu navegador, sin instalar nada.
+> **Aprenda tecnologia de trás para frente.** GUI → Terminal → Git → SQL → Python.
+> Tudo no seu navegador, sem instalar nada.
 
-Este directorio contiene el curso completo. Si estás leyendo esto dentro de un Codespace,
-ya tienes todo lo necesario para empezar. Si llegaste aquí desde GitHub, haz clic en el
-botón verde **Code → Open in Codespaces**.
+Este diretório contém o curso completo. Se você está lendo isso dentro de um Codespace,
+já tem tudo o que precisa pra começar. Se chegou aqui pelo GitHub, clique no botão verde
+**Code → Open in Codespaces**.
 
-## Empezar
+## Começar
 
 ```bash
 cd curriculum
 ./cf start
 ```
 
-Eso arranca la primera lección que no hayas completado todavía.
+Isso abre a primeira lição que você ainda não concluiu.
 
-## Comandos del runner
+## Idiomas
 
-| Comando | Qué hace |
+As lições são escritas em **português brasileiro** por padrão. Se você preferir outro
+idioma, defina a variável de ambiente `CF_LANG` antes de começar:
+
+```bash
+export CF_LANG=es    # espanhol (arquivo: lesson.es.md)
+export CF_LANG=pt    # português (padrão, arquivo: lesson.md)
+```
+
+O runner carrega automaticamente a versão do idioma escolhido quando ela existe. Se não
+houver uma tradução, ele usa o português canônico como fallback. As traduções disponíveis
+hoje:
+
+| Idioma | Status |
 |---|---|
-| `./cf list` | Lista todas las lecciones con su estado |
-| `./cf start [n]` | Empieza la lección `n` (o la siguiente sin completar) |
-| `./cf show` | Re-imprime las instrucciones de la lección actual |
-| `./cf check` | Valida la lección actual |
-| `./cf next` | Avanza a la siguiente lección (después de pasar el check) |
-| `./cf progress` | Muestra tu progreso global |
-| `./cf reset` | Reinicia tu progreso |
-| `./cf help` | Ayuda |
+| Português (pt) | ✅ canônico |
+| Espanhol (es) | ✅ arquivo em todas as lições |
+| Inglês (en) | ⏳ em desenvolvimento |
+| Francês (fr) | ⏳ em desenvolvimento |
 
-## Cómo están organizadas las lecciones
+## Comandos do runner
 
-Cada lección vive en `lessons/NN-slug/` y contiene:
+| Comando | O que faz |
+|---|---|
+| `./cf list` | Lista todas as lições com seu status |
+| `./cf start [n]` | Começa a lição `n` (ou a próxima não concluída) |
+| `./cf show` | Reimprime as instruções da lição atual |
+| `./cf check` | Valida a lição atual |
+| `./cf next` | Avança pra próxima lição (depois de passar o check) |
+| `./cf progress` | Mostra seu progresso geral |
+| `./cf reset` | Reinicia seu progresso |
+| `./cf help` | Ajuda |
 
-- `lesson.md` — las instrucciones que lees
-- `test.py` — el validador automático de la lección
+## Como as lições estão organizadas
 
-Tu progreso se guarda en `.progress.json` (este archivo está en `.gitignore` para que cada
-estudiante tenga su propio progreso en su fork).
+Cada lição vive em `lessons/NN-slug/` e contém:
 
-## Lecciones disponibles (v0.1)
+- `lesson.md` — as instruções em português (padrão)
+- `lesson.es.md` — versão em espanhol (opcional)
+- `test.py` — o validador automático da lição
 
-| # | Nombre | Tiempo |
+Seu progresso é salvo em `.progress.json` (esse arquivo está no `.gitignore` pra cada
+estudante ter seu próprio progresso no seu fork).
+
+## Lições disponíveis (v0.1)
+
+| # | Nome | Tempo |
 |---|---|---|
-| 00 | Bienvenida — tu primer archivo | ~15 min |
-| 01 | Navegar el sistema de archivos | ~25 min |
-| 02 | Tu primer commit en Git | ~30 min |
-| 03 | Tu primer script en Python | ~30 min |
+| 00 | Boas-vindas — seu primeiro arquivo | ~15 min |
+| 01 | Navegar o sistema de arquivos | ~25 min |
+| 02 | Seu primeiro commit em Git | ~30 min |
+| 03 | Seu primeiro script em Python | ~30 min |
 
-Próximamente: SQL con SQLite, GitHub + branches, HTTP + APIs con curl.
+Em breve: SQL com SQLite, GitHub + branches, HTTP + APIs com curl.
 
-## Filosofía
+## Filosofia
 
-- **Las lecciones son tareas reales**, no quizzes ni multiple choice.
-- **Los tests verifican el estado real** de tus archivos, tu repo Git, o la salida de tus
-  programas — no comparan texto con una respuesta pre-escrita.
-- **El runner es Python stdlib puro**, 0 dependencias. Si algo rompe, puedes leer el código
-  tú mismo y arreglarlo.
-- **Progreso = commits**. Cada lección completada es una nueva entrada en tu historial de
-  Git. Al final del curso tienes un repo con 30+ commits reales para poner en tu CV.
+- **As lições são tarefas reais**, não quizzes nem múltipla escolha.
+- **Os testes verificam o estado real** dos seus arquivos, do seu repositório Git, ou
+  da saída dos seus programas — eles não comparam texto com uma resposta pré-escrita.
+- **O runner é Python stdlib puro**, 0 dependências. Se algo quebrar, você pode ler o
+  código você mesmo e consertar.
+- **Progresso = commits**. Cada lição concluída é uma nova entrada no seu histórico do
+  Git. No final do curso você tem um repo com 30+ commits reais pra colocar no seu CV.
 
-## Si algo no funciona
+## Se algo não funcionar
 
-1. Lee cuidadosamente el mensaje de error que te dio `./cf check`. Los tests tratan de
-   darte una pista específica.
-2. Corre `./cf show` para re-leer las instrucciones de la lección actual.
-3. Revisa el archivo `test.py` de la lección actual — es Python legible, puedes ver
-   exactamente qué está buscando.
-4. Abre un issue en el repositorio de GitHub.
+1. Leia com atenção a mensagem de erro que o `./cf check` te deu. Os testes tentam
+   te dar uma dica específica.
+2. Rode `./cf show` pra reler as instruções da lição atual.
+3. Olha o arquivo `test.py` da lição atual — é Python legível, você pode ver
+   exatamente o que ele está procurando.
+4. Abra uma issue no repositório do GitHub.
 
-## Licencia
+## Licença
 
-MIT sobre el código. CC-BY-4.0 sobre el contenido de las lecciones. Úsalo, modifícalo,
-tradúcelo, enséñalo. Solo atribúyelo.
+MIT sobre o código. CC-BY-4.0 sobre o conteúdo das lições. Use, modifique, traduza,
+ensine. Só atribua.

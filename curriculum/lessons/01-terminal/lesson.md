@@ -1,54 +1,56 @@
-# Navegar el sistema de archivos
+# Navegar o sistema de arquivos
 
-Ahora que ya sabes crear un archivo, vamos a aprender a movernos. Un sistema de archivos
-es una estructura en forma de árbol: directorios dentro de directorios, con archivos en
-las hojas. Los comandos para moverte y mirar son los que vas a usar **todos los días**
-de tu carrera.
+Agora que você já sabe criar um arquivo, vamos aprender a se mover. Um sistema de arquivos
+é uma estrutura em forma de árvore: diretórios dentro de diretórios, com arquivos nas
+folhas. Os comandos para se mover e olhar são os que você vai usar **todos os dias** da
+sua carreira.
 
-## Tu tarea
+## Sua tarefa
 
-Dentro de `curriculum/lessons/01-terminal/workspace/` hay un directorio llamado
-`laberinto/`. En alguna parte de ese laberinto hay un archivo oculto llamado `.premio`.
-Tu tarea es **encontrarlo** y escribir su contenido en un archivo nuevo llamado `premio.txt`
-en el directorio `curriculum/` (no en el workspace, en `curriculum/` directamente).
+Dentro de `curriculum/lessons/01-terminal/workspace/` tem um diretório chamado
+`labirinto/`. Em algum lugar desse labirinto tem um arquivo escondido chamado `.premio`.
+Sua tarefa é **encontrar ele** e escrever o conteúdo dele em um arquivo novo chamado
+`premio.txt` no diretório `curriculum/` (não dentro do workspace, diretamente em
+`curriculum/`).
 
-## Comandos que vas a usar
+## Comandos que você vai usar
 
 ```
-cd <ruta>          ← cambiar de directorio
-cd ..              ← subir un nivel
-cd                 ← volver al home
-ls                 ← listar archivos
-ls -a              ← listar TODOS los archivos (incluidos los ocultos: los que empiezan con .)
-ls -la             ← lista larga con detalles
-find . -name .premio  ← buscar un archivo por nombre desde aquí hacia abajo
-cat <archivo>      ← leer el contenido
-pwd                ← dónde estoy ahora
+cd <caminho>           ← mudar de diretório
+cd ..                  ← subir um nível
+cd                     ← voltar pro home
+ls                     ← listar arquivos
+ls -a                  ← listar TODOS os arquivos (incluindo os ocultos: os que começam com .)
+ls -la                 ← lista detalhada
+find . -name .premio   ← buscar um arquivo por nome a partir daqui pra baixo
+cat <arquivo>          ← ler o conteúdo
+pwd                    ← onde estou agora
 ```
 
-## Pistas
+## Dicas
 
-- Los archivos que empiezan con `.` son **archivos ocultos**. `ls` normal no los muestra;
-  tienes que usar `ls -a`.
-- El comando `find` es tu amigo. `find . -name .premio` va a buscar desde el directorio
-  actual hacia abajo y va a imprimir la ruta del archivo si lo encuentra.
-- Puedes usar `cat <ruta-completa>` para leer el archivo sin necesidad de hacer `cd` primero.
-- Para escribir el contenido de un archivo en otro: `cat <origen> > <destino>`.
+- Arquivos que começam com `.` são **arquivos ocultos**. `ls` normal não mostra eles;
+  você precisa usar `ls -a`.
+- O comando `find` é seu amigo. `find . -name .premio` vai procurar a partir do
+  diretório atual pra baixo e imprimir o caminho do arquivo se achar.
+- Você pode usar `cat <caminho-completo>` para ler o arquivo sem precisar fazer `cd`
+  antes.
+- Para escrever o conteúdo de um arquivo em outro: `cat <origem> > <destino>`.
 
-## Los pasos, uno por uno
+## Os passos, um por um
 
-1. `cd curriculum/lessons/01-terminal/workspace/laberinto`
-2. Usa `ls -la` y `find` para explorar la estructura. Vas a ver algunos directorios anidados.
-3. Encuentra `.premio` con `find . -name .premio`. El comando te da la ruta.
-4. Léelo con `cat <ruta>`. Verifica el contenido.
-5. Vuelve a `cd ~/curriculum` (o `cd` hasta llegar al directorio `curriculum/`).
-6. Escribe el contenido en `premio.txt` con `cat <ruta-del-.premio> > premio.txt`.
-7. Ejecuta `./cf check`.
+1. `cd curriculum/lessons/01-terminal/workspace/labirinto`
+2. Use `ls -la` e `find` para explorar a estrutura. Você vai ver alguns diretórios aninhados.
+3. Encontre `.premio` com `find . -name .premio`. O comando te dá o caminho.
+4. Leia com `cat <caminho>`. Confira o conteúdo.
+5. Volte com `cd ~/curriculum` (ou `cd` até chegar no diretório `curriculum/`).
+6. Escreva o conteúdo em `premio.txt` com `cat <caminho-do-.premio> > premio.txt`.
+7. Rode `./cf check`.
 
-## Lo que acabas de aprender
+## O que você acabou de aprender
 
-- **cd** — moverse entre directorios
-- **ls -la** — ver archivos ocultos y detalles
-- **find** — buscar archivos por nombre
-- **cat origen > destino** — copiar contenido de un archivo a otro
-- Qué son los archivos ocultos (los que empiezan con `.`)
+- **cd** — se mover entre diretórios
+- **ls -la** — ver arquivos ocultos e detalhes
+- **find** — buscar arquivos por nome
+- **cat origem > destino** — copiar conteúdo de um arquivo para outro
+- O que são arquivos ocultos (os que começam com `.`)

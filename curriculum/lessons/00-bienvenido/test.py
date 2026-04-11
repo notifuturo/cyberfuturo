@@ -1,7 +1,7 @@
-"""Test for lesson 00 — bienvenido.
+"""Test for lesson 00 — boas-vindas.
 
-Checks that the student has created curriculum/hola.txt with the text
-"hola mundo" followed by a newline.
+Checks that the student has created curriculum/ola.txt with the text
+"olá mundo" followed by a newline.
 
 Exit code: 0 on pass, 1 on fail.
 """
@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 CURRICULUM_DIR = Path(__file__).resolve().parent.parent.parent
-TARGET = CURRICULUM_DIR / "hola.txt"
+TARGET = CURRICULUM_DIR / "ola.txt"
 
 OK   = "\033[38;5;84m✔\033[0m"
 FAIL = "\033[38;5;210m✘\033[0m"
@@ -22,8 +22,8 @@ RST  = "\033[0m"
 
 def check_exists() -> bool:
     if not TARGET.exists():
-        print(f"  {FAIL} no existe el archivo {TARGET.relative_to(CURRICULUM_DIR)}")
-        print(f"    {DIM}pista: usa `echo \"hola mundo\" > hola.txt` desde curriculum/{RST}")
+        print(f"  {FAIL} o arquivo {TARGET.relative_to(CURRICULUM_DIR)} não existe")
+        print(f"    {DIM}dica: use `echo \"olá mundo\" > ola.txt` dentro de curriculum/{RST}")
         return False
     print(f"  {OK} {TARGET.relative_to(CURRICULUM_DIR)} existe")
     return True
@@ -33,26 +33,26 @@ def check_contents() -> bool:
     try:
         raw = TARGET.read_bytes()
     except OSError as e:
-        print(f"  {FAIL} no pude leer el archivo: {e}")
+        print(f"  {FAIL} não consegui ler o arquivo: {e}")
         return False
     text = raw.decode("utf-8", errors="replace")
-    expected = "hola mundo\n"
+    expected = "olá mundo\n"
     if text == expected:
-        print(f"  {OK} contenido correcto (\"hola mundo\\n\")")
+        print(f"  {OK} conteúdo correto (\"olá mundo\\n\")")
         return True
-    if text.strip() == "hola mundo":
-        print(f"  {FAIL} el texto es correcto pero falta el salto de línea al final")
-        print(f"    {DIM}pista: `echo \"hola mundo\" > hola.txt` agrega el \\n automáticamente{RST}")
+    if text.strip() == "olá mundo":
+        print(f"  {FAIL} o texto está correto, mas falta a quebra de linha no final")
+        print(f"    {DIM}dica: `echo \"olá mundo\" > ola.txt` já adiciona o \\n automaticamente{RST}")
         return False
-    if "hola mundo" in text:
-        print(f"  {FAIL} el archivo contiene texto extra")
-        print(f"    {DIM}encontré: {text!r}{RST}")
-        print(f"    {DIM}esperaba: {expected!r}{RST}")
-        print(f"    {DIM}pista: puedes borrar con `rm hola.txt` y volver a intentar{RST}")
+    if "olá mundo" in text or "ola mundo" in text:
+        print(f"  {FAIL} o arquivo contém texto extra")
+        print(f"    {DIM}encontrei: {text!r}{RST}")
+        print(f"    {DIM}esperava:  {expected!r}{RST}")
+        print(f"    {DIM}dica: você pode apagar com `rm ola.txt` e tentar de novo{RST}")
         return False
-    print(f"  {FAIL} el contenido no es lo que esperaba")
-    print(f"    {DIM}encontré: {text!r}{RST}")
-    print(f"    {DIM}esperaba: {expected!r}{RST}")
+    print(f"  {FAIL} o conteúdo não é o que eu esperava")
+    print(f"    {DIM}encontrei: {text!r}{RST}")
+    print(f"    {DIM}esperava:  {expected!r}{RST}")
     return False
 
 

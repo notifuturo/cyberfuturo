@@ -1,71 +1,74 @@
-# Tu primer commit en Git
+# Seu primeiro commit em Git
 
-Git es el sistema de control de versiones que usa el 95% del mundo del software. Hace una
-cosa: guarda instantáneas de tu código a lo largo del tiempo. Cada instantánea se llama un
-**commit**. Un commit tiene un mensaje corto que explica qué cambió. Todo tu trabajo
-quedará registrado como una lista de commits que puedes ver con `git log`.
+Git é o sistema de controle de versão que 95% do mundo do software usa. Ele faz uma
+coisa: guarda instantâneas do seu código ao longo do tempo. Cada instantânea se chama um
+**commit**. Um commit tem uma mensagem curta que explica o que mudou. Todo o seu trabalho
+vai ficar registrado como uma lista de commits que você pode ver com `git log`.
 
-En esta lección vas a crear un mini-proyecto, inicializarlo como un repositorio Git, y
-hacer tu primer commit real.
+Nessa lição você vai criar um miniprojeto, inicializar como um repositório Git, e fazer
+seu primeiro commit de verdade.
 
-## Tu tarea
+## Sua tarefa
 
-Dentro de `curriculum/` hay que crear un directorio llamado `mi-proyecto/` que contenga:
+Dentro de `curriculum/` você vai criar um diretório chamado `meu-projeto/` que contém:
 
-1. Un archivo `README.md` con exactamente esta línea: `# mi-proyecto`
-2. Un archivo `notas.txt` con cualquier texto que quieras (lo que sea, de al menos 3 caracteres)
-3. El directorio debe ser un repositorio Git con **al menos un commit** que incluya ambos
-   archivos
+1. Um arquivo `README.md` com exatamente essa linha: `# meu-projeto`
+2. Um arquivo `notas.txt` com qualquer texto que você quiser (qualquer coisa, com pelo
+   menos 3 caracteres)
+3. O diretório precisa ser um repositório Git com **pelo menos um commit** que inclui os
+   dois arquivos
 
-## Comandos que vas a usar
+## Comandos que você vai usar
 
 ```
-mkdir mi-proyecto              ← crear el directorio
-cd mi-proyecto                 ← entrar al directorio
-echo "# mi-proyecto" > README.md
-echo "hola" > notas.txt
+mkdir meu-projeto              ← criar o diretório
+cd meu-projeto                 ← entrar no diretório
+echo "# meu-projeto" > README.md
+echo "oi" > notas.txt
 
-git init                       ← inicializar un repositorio git aquí
-git status                     ← ver qué archivos están y cuál es su estado
-git add .                      ← agregar todos los archivos al "área de staging"
-git commit -m "mensaje"        ← crear un commit con ese mensaje
-git log                        ← ver la historia de commits
+git init                       ← inicializar um repositório git aqui
+git status                     ← ver quais arquivos estão e qual é o estado deles
+git add .                      ← adicionar todos os arquivos à "área de staging"
+git commit -m "mensagem"       ← criar um commit com essa mensagem
+git log                        ← ver o histórico de commits
 ```
 
-## Pistas
+## Dicas
 
-- Si nunca usaste Git, la primera vez puede pedirte un nombre y un correo. Si pasa eso,
-  ejecuta:
+- Se você nunca usou Git, a primeira vez ele pode pedir um nome e um email. Se isso
+  acontecer, rode:
   ```
-  git config --global user.email "tu@correo.com"
-  git config --global user.name "Tu Nombre"
+  git config --global user.email "voce@email.com"
+  git config --global user.name "Seu Nome"
   ```
-- `git status` es el comando más importante. Úsalo **mucho**. Después de cada paso, para ver
-  qué ve Git.
-- Cuando hagas `git add .`, no pasa nada visible. Es normal. Git prepara los archivos para
-  el commit, pero todavía no los guarda. `git status` te va a mostrar los archivos "staged".
-- El mensaje de commit tiene que ser significativo. No pongas `"asdf"`. Pon algo como
-  `"inicio del proyecto"` o `"primer commit"`. Un mensaje decente es parte de la tarea.
+- `git status` é o comando mais importante. Use ele **muito**. Depois de cada passo,
+  pra ver o que o Git está vendo.
+- Quando você rodar `git add .`, nada visível acontece. Isso é normal. O Git prepara
+  os arquivos pro commit, mas ainda não guarda. `git status` vai te mostrar os arquivos
+  "staged".
+- A mensagem de commit precisa ser significativa. Não coloque `"asdf"`. Coloque algo
+  como `"início do projeto"` ou `"primeiro commit"`. Uma mensagem decente faz parte
+  da tarefa.
 
-## Los pasos, uno por uno
+## Os passos, um por um
 
 1. `cd ~/curriculum`
-2. `mkdir mi-proyecto && cd mi-proyecto`
-3. `echo "# mi-proyecto" > README.md`
-4. `echo "esta es mi primera nota" > notas.txt`
+2. `mkdir meu-projeto && cd meu-projeto`
+3. `echo "# meu-projeto" > README.md`
+4. `echo "essa é minha primeira nota" > notas.txt`
 5. `git init`
-6. `git status`  ← mira la salida. Los archivos aparecen en rojo, "untracked".
+6. `git status`  ← olhe a saída. Os arquivos aparecem em vermelho, "untracked".
 7. `git add .`
-8. `git status`  ← ahora aparecen en verde, "Changes to be committed".
-9. `git commit -m "inicio del proyecto"`
-10. `git log`  ← vas a ver tu commit con un hash, tu nombre, y la fecha.
-11. `cd ..` para volver a `curriculum/`, y después `./cf check`.
+8. `git status`  ← agora aparecem em verde, "Changes to be committed".
+9. `git commit -m "início do projeto"`
+10. `git log`  ← você vai ver seu commit com um hash, seu nome, e a data.
+11. `cd ..` para voltar a `curriculum/`, e depois `./cf check`.
 
-## Lo que acabas de aprender
+## O que você acabou de aprender
 
-- **git init** — convertir un directorio en un repositorio Git
-- **git status** — ver qué cambió y qué está listo para commit
-- **git add** — preparar archivos para ser commiteados
-- **git commit -m "mensaje"** — crear una instantánea con un mensaje
-- **git log** — ver la historia de commits
-- Qué es "staging" (el área intermedia entre tu código y la historia)
+- **git init** — transformar um diretório em um repositório Git
+- **git status** — ver o que mudou e o que está pronto pra commit
+- **git add** — preparar arquivos para serem commitados
+- **git commit -m "mensagem"** — criar uma instantânea com uma mensagem
+- **git log** — ver o histórico de commits
+- O que é "staging" (a área intermediária entre seu código e o histórico)

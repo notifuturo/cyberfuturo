@@ -1,5 +1,13 @@
 .progress.json
-hola.txt
+
+# Artifacts created by students working through the lessons
+# (Portuguese — current default)
+ola.txt
 premio.txt
+saudacao.py
+meu-projeto/
+
+# Artifacts from the Spanish-era lesson content (still valid if CF_LANG=es)
+hola.txt
 saludo.py
 mi-proyecto/

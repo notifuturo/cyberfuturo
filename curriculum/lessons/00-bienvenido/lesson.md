@@ -1,48 +1,48 @@
-# Bienvenida — tu primer archivo
+# Boas-vindas — seu primeiro arquivo
 
-Estás en una máquina virtual, en un navegador. No instalaste nada. Eso que se ve abajo de esta
-ventana con el cursor parpadeando es una **terminal**, y a partir de ahora es tu herramienta
-principal.
+Você está em uma máquina virtual, no navegador. Não instalou nada. Aquela janela embaixo
+com o cursor piscando é um **terminal**, e a partir de agora ele é sua ferramenta principal.
 
-La terminal es un programa que acepta comandos escritos y los ejecuta. Cada comando es una
-palabra (a veces con argumentos). Al final del comando, presionas Enter, y el programa hace
-algo y te devuelve el control.
+O terminal é um programa que aceita comandos digitados e executa. Cada comando é uma
+palavra (às vezes com argumentos). No fim do comando, você aperta Enter, o programa faz
+alguma coisa, e devolve o controle pra você.
 
-## Tu tarea
+## Sua tarefa
 
-Dentro del directorio actual hay un archivo que tú vas a crear. Se llama `hola.txt` y su
-contenido es exactamente el texto **hola mundo** seguido de un salto de línea.
+Dentro do diretório atual você vai criar um arquivo. Ele se chama `ola.txt` e seu conteúdo
+é exatamente o texto **olá mundo** seguido de uma quebra de linha.
 
-## Comandos que vas a necesitar
+## Comandos que você vai precisar
 
 ```
-pwd                           ← imprime "print working directory"
-ls                            ← lista los archivos del directorio actual
-echo "hola mundo" > hola.txt  ← crea un archivo con el texto dado
-cat hola.txt                  ← imprime el contenido del archivo
+pwd                          ← imprime "print working directory"
+ls                           ← lista os arquivos do diretório atual
+echo "olá mundo" > ola.txt   ← cria um arquivo com o texto dado
+cat ola.txt                  ← imprime o conteúdo do arquivo
 ```
 
-## Los pasos, uno por uno
+## Os passos, um por um
 
-1. Ejecuta `pwd`. Eso te muestra dónde estás en el sistema de archivos.
-2. Ejecuta `ls`. Eso te muestra qué archivos hay aquí. No deberías ver `hola.txt` todavía.
-3. Ejecuta `echo "hola mundo" > hola.txt`. El símbolo `>` redirige la salida del comando
-   a un archivo. Estás creando `hola.txt` con ese contenido en una sola línea.
-4. Ejecuta `cat hola.txt`. Debería imprimir `hola mundo` en pantalla.
-5. Cuando estés listo, ejecuta `./cf check` para validar.
+1. Rode `pwd`. Isso mostra onde você está no sistema de arquivos.
+2. Rode `ls`. Isso mostra quais arquivos tem aqui. Você ainda não deve ver `ola.txt`.
+3. Rode `echo "olá mundo" > ola.txt`. O símbolo `>` redireciona a saída do comando
+   para um arquivo. Você está criando `ola.txt` com esse conteúdo em uma única linha.
+4. Rode `cat ola.txt`. Deve imprimir `olá mundo` na tela.
+5. Quando estiver pronto, rode `./cf check` para validar.
 
-## Si algo sale mal
+## Se algo der errado
 
-- Si el archivo queda con comillas dentro del texto, probablemente escribiste
-  `echo hola mundo` sin las comillas o usaste comillas curvas. Borra el archivo con
-  `rm hola.txt` e intenta de nuevo.
-- Si el contenido termina sin salto de línea, el test te lo va a decir con un mensaje útil.
-- Si te equivocaste de directorio, vuelve con `cd ~/curriculum` y verifica con `pwd`.
+- Se o arquivo ficar com aspas dentro do texto, você provavelmente escreveu
+  `echo ola mundo` sem as aspas ou usou aspas curvas. Delete o arquivo com
+  `rm ola.txt` e tente de novo.
+- Se o conteúdo terminar sem quebra de linha, o teste vai te avisar com uma dica.
+- Se você se perdeu e está no diretório errado, volte com `cd ~/curriculum` e
+  confirme com `pwd`.
 
-## Lo que acabas de aprender
+## O que você acabou de aprender
 
-- **pwd** — dónde estás
-- **ls** — qué hay aquí
-- **echo** — imprimir texto en pantalla (o redirigirlo a un archivo)
-- **cat** — leer un archivo
-- **>** — redirigir la salida a un archivo
+- **pwd** — onde você está
+- **ls** — o que tem aqui
+- **echo** — imprimir texto na tela (ou redirecionar para um arquivo)
+- **cat** — ler um arquivo
+- **>** — redirecionar a saída para um arquivo

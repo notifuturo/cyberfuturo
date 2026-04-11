@@ -3,19 +3,32 @@
 A tiny curriculum runner, written in Python stdlib only.
 
 Commands:
-  ./cf list              Show all lessons and their status
-  ./cf start [n]         Start lesson n (or the next incomplete one)
-  ./cf show              Re-print the current lesson instructions
-  ./cf check             Run the test for the current lesson
-  ./cf next              Advance to the next lesson (only after check passes)
-  ./cf progress          Show progress summary
-  ./cf help              Print this help
-  ./cf reset             Reset progress (asks for confirmation)
+  ./cf list              Mostra todas as lições e seus status
+  ./cf start [n]         Começa a lição n (ou a próxima não concluída)
+  ./cf show              Reimprime as instruções da lição atual
+  ./cf check             Roda o validador da lição atual
+  ./cf next              Avança para a próxima lição (só depois do check passar)
+  ./cf progress          Mostra o progresso geral
+  ./cf help              Imprime esta ajuda
+  ./cf reset             Reinicia o progresso (pede confirmação)
+
+Internationalization:
+  The runner's user-facing strings default to Portuguese (pt-BR). The language
+  of the lesson MARKDOWN displayed to the student can be overridden with the
+  CF_LANG environment variable:
+
+      export CF_LANG=pt    # default: reads lesson.md
+      export CF_LANG=es    # reads lesson.es.md (Spanish archive)
+      export CF_LANG=en    # reads lesson.en.md (if present)
+
+  If a language-specific lesson file doesn't exist, the runner falls back to
+  lesson.md (the canonical Portuguese version).
 
 Design notes:
   - Progress is stored in curriculum/.progress.json
   - Each lesson lives in curriculum/lessons/NN-slug/
-  - A lesson folder must contain at least a lesson.md (instructions).
+  - A lesson folder must contain at least a lesson.md (canonical PT instructions).
+  - Optional lesson.<lang>.md files provide alternative-language versions.
   - A test is curriculum/lessons/NN-slug/test.py — a script that exits 0
     on pass, non-zero on fail, and prints its feedback to stdout.
   - The runner is 100% Python stdlib. No third-party packages. Ever.
@@ -54,6 +67,20 @@ def color(text: str, c: str) -> str:
     return f"{c}{text}{RESET}"
 
 
+# ---- Language detection --------------------------------------------------------
+
+def lesson_lang() -> str:
+    """Return the 2-letter language code for lesson content display.
+
+    Reads CF_LANG env var; falls back to 'pt' (Portuguese, canonical).
+    """
+    lang = os.environ.get("CF_LANG", "pt").strip().lower()
+    # Accept common full locale codes (e.g. pt_BR, es-419) and reduce to prefix.
+    if len(lang) >= 2:
+        lang = lang[:2]
+    return lang or "pt"
+
+
 # ---- Lesson discovery ----------------------------------------------------------
 
 @dataclass
@@ -62,13 +89,30 @@ class Lesson:
     number: int        # e.g. 0
     name: str          # human-readable name
     path: Path         # full path to the lesson folder
-    lesson_file: Path  # lesson.md
+    lesson_file: Path  # the markdown to show (language-resolved)
     test_file: Path    # test.py (may not exist yet)
+
+
+def resolve_lesson_file(lesson_dir: Path, lang: str) -> Path | None:
+    """Pick the best lesson markdown for the requested language.
+
+    Priority:
+      1. lesson.<lang>.md  (exact language match)
+      2. lesson.md         (canonical fallback, Portuguese)
+    """
+    exact = lesson_dir / f"lesson.{lang}.md"
+    canonical = lesson_dir / "lesson.md"
+    if lang != "pt" and exact.exists():
+        return exact
+    if canonical.exists():
+        return canonical
+    return None
 
 
 def discover_lessons() -> list[Lesson]:
     if not LESSONS_DIR.exists():
         return []
+    lang = lesson_lang()
     lessons: list[Lesson] = []
     for entry in sorted(LESSONS_DIR.iterdir()):
         if not entry.is_dir():
@@ -77,11 +121,11 @@ def discover_lessons() -> list[Lesson]:
         if not m:
             continue
         number = int(m.group(1))
-        lesson_file = entry / "lesson.md"
+        lesson_file = resolve_lesson_file(entry, lang)
         test_file = entry / "test.py"
-        if not lesson_file.exists():
+        if lesson_file is None:
             continue  # skip malformed lesson dirs
-        # Name is the first markdown heading of lesson.md, if present
+        # Name is the first markdown heading of the chosen lesson file
         name = entry.name
         try:
             with lesson_file.open("r", encoding="utf-8") as f:
@@ -129,35 +173,35 @@ def save_progress(p: dict) -> None:
 
 def cmd_list(lessons: list[Lesson], progress: dict) -> int:
     if not lessons:
-        print(color("No lessons found under curriculum/lessons/.", YELLOW))
+        print(color("Nenhuma lição encontrada em curriculum/lessons/.", YELLOW))
         return 0
     print()
-    print(color("  CyberFuturo — lesson map", PURPLE + BOLD))
+    print(color("  CyberFuturo — mapa de lições", PURPLE + BOLD))
     print()
     completed = set(progress.get("completed", []))
     current = progress.get("current")
     for l in lessons:
         if l.slug in completed:
             mark = color("✔", GREEN)
-            status = color("done", GREEN)
+            status = color("feito", GREEN)
         elif l.slug == current:
             mark = color("▸", CYAN)
-            status = color("current", CYAN)
+            status = color("atual", CYAN)
         else:
             mark = color("·", GREY)
-            status = color("pending", GREY)
+            status = color("pendente", GREY)
         print(f"  {mark}  {color(f'{l.number:02d}', PURPLE)}  {l.name}  {DIM}[{status}{DIM}]{RESET}")
     total = len(lessons)
     done = len([l for l in lessons if l.slug in completed])
     print()
-    print(f"  {DIM}progress: {done}/{total} lessons{RESET}")
+    print(f"  {DIM}progresso: {done}/{total} lições{RESET}")
     print()
     return 0
 
 
 def cmd_start(lessons: list[Lesson], progress: dict, args: list[str]) -> int:
     if not lessons:
-        print(color("No lessons found under curriculum/lessons/.", YELLOW))
+        print(color("Nenhuma lição encontrada em curriculum/lessons/.", YELLOW))
         return 1
 
     target: Lesson | None = None
@@ -171,15 +215,15 @@ def cmd_start(lessons: list[Lesson], progress: dict, args: list[str]) -> int:
         except ValueError:
             target = next((l for l in lessons if l.slug == arg or arg in l.slug), None)
         if target is None:
-            print(color(f"  No lesson matches '{arg}'.", RED))
-            print(f"  {DIM}Try: ./cf list{RESET}")
+            print(color(f"  Nenhuma lição corresponde a '{arg}'.", RED))
+            print(f"  {DIM}Tente: ./cf list{RESET}")
             return 1
     else:
         target = next((l for l in lessons if l.slug not in completed), None)
         if target is None:
             print()
-            print(color("  🎉 You've completed every available lesson.", GREEN + BOLD))
-            print(f"  {DIM}New lessons are added over time. Run ./cf list to check.{RESET}")
+            print(color("  🎉 Você concluiu todas as lições disponíveis.", GREEN + BOLD))
+            print(f"  {DIM}Novas lições saem com o tempo. Rode ./cf list para conferir.{RESET}")
             print()
             return 0
 
@@ -192,12 +236,12 @@ def cmd_start(lessons: list[Lesson], progress: dict, args: list[str]) -> int:
 def cmd_show(lessons: list[Lesson], progress: dict) -> int:
     current = progress.get("current")
     if not current:
-        print(color("  No lesson is currently active.", YELLOW))
-        print(f"  {DIM}Run: ./cf start{RESET}")
+        print(color("  Nenhuma lição está ativa no momento.", YELLOW))
+        print(f"  {DIM}Rode: ./cf start{RESET}")
         return 0
     lesson = next((l for l in lessons if l.slug == current), None)
     if not lesson:
-        print(color(f"  Current lesson '{current}' no longer exists.", RED))
+        print(color(f"  A lição atual '{current}' não existe mais.", RED))
         return 1
     _print_lesson(lesson)
     return 0
@@ -207,7 +251,7 @@ def _print_lesson(lesson: Lesson) -> None:
     print()
     bar = "─" * 60
     print(color(f"  {bar}", GREY))
-    print(color(f"  ▸ Lesson {lesson.number:02d} — {lesson.name}", CYAN + BOLD))
+    print(color(f"  ▸ Lição {lesson.number:02d} — {lesson.name}", CYAN + BOLD))
     print(color(f"  {bar}", GREY))
     print()
     text = lesson.lesson_file.read_text(encoding="utf-8")
@@ -227,25 +271,25 @@ def _print_lesson(lesson: Lesson) -> None:
         else:
             print(f"  {line}")
     print()
-    print(color(f"  When you're done: ./cf check", GREEN))
+    print(color(f"  Quando você terminar: ./cf check", GREEN))
     print()
 
 
 def cmd_check(lessons: list[Lesson], progress: dict) -> int:
     current = progress.get("current")
     if not current:
-        print(color("  No lesson is currently active. Run: ./cf start", YELLOW))
+        print(color("  Nenhuma lição está ativa. Rode: ./cf start", YELLOW))
         return 1
     lesson = next((l for l in lessons if l.slug == current), None)
     if not lesson:
-        print(color(f"  Current lesson '{current}' no longer exists.", RED))
+        print(color(f"  A lição atual '{current}' não existe mais.", RED))
         return 1
     if not lesson.test_file.exists():
-        print(color(f"  Lesson {lesson.number:02d} has no automated test yet.", YELLOW))
-        print(f"  {DIM}Marking as complete manually. Run: ./cf next{RESET}")
+        print(color(f"  A lição {lesson.number:02d} ainda não tem teste automático.", YELLOW))
+        print(f"  {DIM}Marcando como concluída manualmente. Rode: ./cf next{RESET}")
         return 0
 
-    print(color(f"  Running checks for lesson {lesson.number:02d} — {lesson.name}...", CYAN))
+    print(color(f"  Rodando validador da lição {lesson.number:02d} — {lesson.name}...", CYAN))
     print()
     proc = subprocess.run(
         [sys.executable, str(lesson.test_file)],
@@ -259,13 +303,13 @@ def cmd_check(lessons: list[Lesson], progress: dict) -> int:
             completed.append(lesson.slug)
             progress["completed"] = completed
             save_progress(progress)
-        print(color(f"  ✔ Lesson {lesson.number:02d} complete.", GREEN + BOLD))
-        print(f"  {DIM}Next: ./cf next{RESET}")
+        print(color(f"  ✔ Lição {lesson.number:02d} concluída.", GREEN + BOLD))
+        print(f"  {DIM}Próximo: ./cf next{RESET}")
         print()
         return 0
     else:
-        print(color(f"  ✘ Checks failed for lesson {lesson.number:02d}.", RED + BOLD))
-        print(f"  {DIM}Read the feedback above, fix what's missing, then run ./cf check again.{RESET}")
+        print(color(f"  ✘ O validador falhou para a lição {lesson.number:02d}.", RED + BOLD))
+        print(f"  {DIM}Leia o feedback acima, ajuste o que está faltando, e rode ./cf check de novo.{RESET}")
         print()
         return 1
 
@@ -274,13 +318,13 @@ def cmd_next(lessons: list[Lesson], progress: dict) -> int:
     current = progress.get("current")
     completed = set(progress.get("completed", []))
     if current not in completed:
-        print(color("  You haven't completed the current lesson yet.", YELLOW))
-        print(f"  {DIM}Run: ./cf check{RESET}")
+        print(color("  Você ainda não concluiu a lição atual.", YELLOW))
+        print(f"  {DIM}Rode: ./cf check{RESET}")
         return 1
     next_lesson = next((l for l in lessons if l.slug not in completed), None)
     if not next_lesson:
         print()
-        print(color("  🎉 You've completed every available lesson.", GREEN + BOLD))
+        print(color("  🎉 Você concluiu todas as lições disponíveis.", GREEN + BOLD))
         print()
         progress["current"] = None
         save_progress(progress)
@@ -293,7 +337,7 @@ def cmd_next(lessons: list[Lesson], progress: dict) -> int:
 
 def cmd_progress(lessons: list[Lesson], progress: dict) -> int:
     if not lessons:
-        print(color("No lessons found.", YELLOW))
+        print(color("Nenhuma lição encontrada.", YELLOW))
         return 0
     completed = set(progress.get("completed", []))
     done = len([l for l in lessons if l.slug in completed])
@@ -303,32 +347,32 @@ def cmd_progress(lessons: list[Lesson], progress: dict) -> int:
     filled = int(bar_len * done / total) if total else 0
     bar = "█" * filled + "·" * (bar_len - filled)
     print()
-    print(color(f"  CyberFuturo progress", PURPLE + BOLD))
+    print(color(f"  progresso CyberFuturo", PURPLE + BOLD))
     print()
     print(f"  [{color(bar, GREEN)}]  {color(f'{done}/{total}', CYAN)}  {DIM}({pct}%){RESET}")
     print()
     if done == total and total > 0:
-        print(color("  🎉 All current lessons complete. New ones land over time.", GREEN))
+        print(color("  🎉 Todas as lições atuais concluídas. Novas chegam com o tempo.", GREEN))
     elif progress.get("current"):
         lesson = next((l for l in lessons if l.slug == progress["current"]), None)
         if lesson:
-            print(f"  {DIM}current: {color(lesson.name, CYAN)}  ({DIM}./cf show{DIM}){RESET}")
+            print(f"  {DIM}atual: {color(lesson.name, CYAN)}  ({DIM}./cf show{DIM}){RESET}")
     else:
-        print(f"  {DIM}nothing started yet — run: ./cf start{RESET}")
+        print(f"  {DIM}nada começado ainda — rode: ./cf start{RESET}")
     print()
     return 0
 
 
 def cmd_reset(progress: dict) -> int:
     try:
-        reply = input("  Reset all progress? This cannot be undone. [y/N] ")
+        reply = input("  Reiniciar todo o progresso? Isso não pode ser desfeito. [s/N] ")
     except EOFError:
         reply = ""
-    if reply.strip().lower() in ("y", "yes"):
+    if reply.strip().lower() in ("s", "y", "sim", "yes"):
         save_progress({"current": None, "completed": []})
-        print(color("  Progress reset.", YELLOW))
+        print(color("  Progresso reiniciado.", YELLOW))
         return 0
-    print(color("  Cancelled.", GREY))
+    print(color("  Cancelado.", GREY))
     return 0
 
 
@@ -366,8 +410,8 @@ def main(argv: list[str]) -> int:
     if command in ("help", "-h", "--help"):
         return cmd_help()
 
-    print(color(f"  Unknown command: {command}", RED))
-    print(f"  {DIM}Try: ./cf help{RESET}")
+    print(color(f"  Comando desconhecido: {command}", RED))
+    print(f"  {DIM}Tente: ./cf help{RESET}")
     return 1
 
 
