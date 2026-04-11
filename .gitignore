@@ -31,3 +31,9 @@ build/
 .env
 .env.*
 !.env.example
+
+# Private / internal (never publish — even if repo flips public)
+_private/
+CLAUDE.md
+docs/sponsor-outreach.md
+docs/issue-00-draft.md
