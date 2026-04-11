@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 460" font-family="-apple-system, system-ui, Segoe UI, sans-serif">
+<rect width="860" height="460" fill="#ffffff"/>
+<text x="80" y="28" font-size="17" font-weight="600" fill="#0f172a">arXiv AI research velocity — monthly submissions (cs.AI OR cs.LG)</text>
+<text x="80" y="48" font-size="12" fill="#64748b">Trailing 24 months · Source: arXiv API · CyberFuturo Index</text>
+<line x1="80" y1="390.0" x2="830" y2="390.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="70" y="394.0" font-size="11" fill="#64748b" text-anchor="end">0</text>
+<line x1="80" y1="326.0" x2="830" y2="326.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="70" y="330.0" font-size="11" fill="#64748b" text-anchor="end">1,600</text>
+<line x1="80" y1="262.0" x2="830" y2="262.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="70" y="266.0" font-size="11" fill="#64748b" text-anchor="end">3,200</text>
+<line x1="80" y1="198.0" x2="830" y2="198.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="70" y="202.0" font-size="11" fill="#64748b" text-anchor="end">4,800</text>
+<line x1="80" y1="134.0" x2="830" y2="134.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="70" y="138.0" font-size="11" fill="#64748b" text-anchor="end">6,400</text>
+<line x1="80" y1="70.0" x2="830" y2="70.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="70" y="74.0" font-size="11" fill="#64748b" text-anchor="end">8,000</text>
+<line x1="80" y1="390" x2="830" y2="390" stroke="#94a3b8" stroke-width="1"/>
+<text x="80.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2024-04</text>
+<text x="177.8" y="408" font-size="11" fill="#64748b" text-anchor="middle">2024-07</text>
+<text x="275.7" y="408" font-size="11" fill="#64748b" text-anchor="middle">2024-10</text>
+<text x="373.5" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-01</text>
+<text x="471.3" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-04</text>
+<text x="569.1" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-07</text>
+<text x="667.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-10</text>
+<text x="764.8" y="408" font-size="11" fill="#64748b" text-anchor="middle">2026-01</text>
+<text x="830.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2026-03</text>
+<polyline fill="none" stroke="#1e40af" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="80.0,224.8 112.6,178.9 145.2,168.0 177.8,209.1 210.4,230.8 243.0,206.6 275.7,113.7 308.3,200.7 340.9,183.1 373.5,212.8 406.1,136.0 438.7,158.3 471.3,193.9 503.9,74.6 536.5,134.7 569.1,165.2 601.7,154.2 634.3,114.8 667.0,76.9 699.6,137.9 732.2,171.8 764.8,129.9 797.4,98.6 830.0,93.8"/>
+<circle cx="80.0" cy="224.8" r="3.5" fill="#1e40af"/>
+<circle cx="112.6" cy="178.9" r="3.5" fill="#1e40af"/>
+<circle cx="145.2" cy="168.0" r="3.5" fill="#1e40af"/>
+<circle cx="177.8" cy="209.1" r="3.5" fill="#1e40af"/>
+<circle cx="210.4" cy="230.8" r="3.5" fill="#1e40af"/>
+<circle cx="243.0" cy="206.6" r="3.5" fill="#1e40af"/>
+<circle cx="275.7" cy="113.7" r="3.5" fill="#1e40af"/>
+<circle cx="308.3" cy="200.7" r="3.5" fill="#1e40af"/>
+<circle cx="340.9" cy="183.1" r="3.5" fill="#1e40af"/>
+<circle cx="373.5" cy="212.8" r="3.5" fill="#1e40af"/>
+<circle cx="406.1" cy="136.0" r="3.5" fill="#1e40af"/>
+<circle cx="438.7" cy="158.3" r="3.5" fill="#1e40af"/>
+<circle cx="471.3" cy="193.9" r="3.5" fill="#1e40af"/>
+<circle cx="503.9" cy="74.6" r="3.5" fill="#1e40af"/>
+<circle cx="536.5" cy="134.7" r="3.5" fill="#1e40af"/>
+<circle cx="569.1" cy="165.2" r="3.5" fill="#1e40af"/>
+<circle cx="601.7" cy="154.2" r="3.5" fill="#1e40af"/>
+<circle cx="634.3" cy="114.8" r="3.5" fill="#1e40af"/>
+<circle cx="667.0" cy="76.9" r="3.5" fill="#1e40af"/>
+<circle cx="699.6" cy="137.9" r="3.5" fill="#1e40af"/>
+<circle cx="732.2" cy="171.8" r="3.5" fill="#1e40af"/>
+<circle cx="764.8" cy="129.9" r="3.5" fill="#1e40af"/>
+<circle cx="797.4" cy="98.6" r="3.5" fill="#1e40af"/>
+<circle cx="830.0" cy="93.8" r="3.5" fill="#1e40af"/>
+<text x="20" y="230.0" font-size="11" fill="#64748b" text-anchor="middle" transform="rotate(-90 20 230.0)">papers / month</text>
+<text x="80" y="438" font-size="12" fill="#0f172a" font-weight="500">2026-03: 7,406 papers · +79% vs 2024-04</text>
+<text x="80" y="452" font-size="10" fill="#94a3b8">cyberfuturo.com — how fast the future is arriving, by the numbers</text>
+</svg>

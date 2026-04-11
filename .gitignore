@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Claude-flow / Ruflo local state (not for public repo)
+.claude-flow/
+.claude/
+.swarm/
+.mcp.json
+ruvector.db
+
+# Logs & temp
+*.log
+/tmp/
+.cache/
+
+# Build outputs
+dist/
+build/
+
+# Secrets
+.env
+.env.*
+!.env.example
