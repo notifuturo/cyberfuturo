@@ -3,10 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CyberFuturo #01 — AI research velocity · arXiv cs.AI + cs.LG</title>
-  <meta name="description" content="March 2026: 7,406 new AI/ML papers on arXiv — highest monthly output in our 24-month window. +79% vs April 2024, +27.5% YoY.">
+  <title>CyberFuturo #01 — AI research velocity · arxiv-ai-velocity v0.1</title>
+  <meta name="description" content="March 2026: 7,406 new AI/ML papers on arXiv — highest monthly value in the 24-month window. +79% vs April 2024, +27.5% year-over-year. Cited under arxiv-ai-velocity v0.1.">
   <meta property="og:title" content="CyberFuturo #01 — AI research velocity">
+  <!-- lint:allow-forbidden start -->
   <meta property="og:description" content="7,406 new AI/ML papers on arXiv in March 2026 — +79% vs April 2024, +27.5% YoY. No forecast. Just the data.">
+  <!-- lint:allow-forbidden end -->
   <meta property="og:image" content="https://cyberfuturo.com/data/arxiv-ai-velocity.svg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="/styles.css">
@@ -19,7 +21,9 @@
     <a class="brand" href="/">Cyber<span>Futuro</span></a>
     <nav class="nav">
       <a href="/issues/01">Issue #01</a>
-      <a href="/methodology/arxiv-ai-velocity">Methodology</a>
+      <a href="/methodology">Methodology</a>
+      <a href="/rules">Rules</a>
+      <a href="/about">About</a>
       <a href="/#subscribe">Subscribe</a>
     </nav>
   </div>
@@ -27,16 +31,20 @@
 
 <main>
   <h1>CyberFuturo #01 — AI research velocity</h1>
-  <p class="meta">2026-04-11 · ~4-minute read · <a href="/data/arxiv-ai-velocity.csv">Raw data</a> · <a href="/methodology/arxiv-ai-velocity">Methodology</a></p>
+  <p class="meta">2026-04-11 · ~4-minute read · <strong>Cited index:</strong> <code>arxiv-ai-velocity v0.1</code> · <a href="/data/arxiv-ai-velocity.csv">raw data</a> · <a href="/methodology/arxiv-ai-velocity">methodology</a></p>
+
+  <div class="disclosure">
+    <strong>Editorial mode:</strong> human-edited, AI-assisted prose · deterministic pipeline · no LLM touched the numbers. <a href="/rules">Our rules</a>.
+  </div>
 
   <h2>The number</h2>
 
   <div class="pullquote">
     <span class="big">7,406</span>
-    <span class="label">new AI/ML papers submitted to arXiv in March 2026</span>
+    <span class="label">new AI/ML papers submitted to arXiv in March 2026 <span class="muted">[arxiv-ai-velocity v0.1]</span></span>
   </div>
 
-  <p>The highest monthly output we've seen in the cs.AI + cs.LG categories since our 24-month tracking window began, and <strong>+79% vs. the same window two years ago</strong> (April 2024: 4,130).</p>
+  <p>The highest monthly value in our 24-month tracking window, and <strong>+79%</strong> over April 2024 (4,130 papers).</p>
 
   <div class="chart">
     <img src="/data/arxiv-ai-velocity.svg" alt="arXiv AI research velocity — monthly submissions to cs.AI or cs.LG, trailing 24 months.">
@@ -45,48 +53,77 @@
 
   <h2>What moved</h2>
 
-  <p>Three things the chart shows that the headline number doesn't:</p>
+  <p>Three observations the headline number does not convey on its own.</p>
 
-  <h3>1. The YoY rate is ~28%, not 79%.</h3>
-  <p>That two-year doubling is eye-catching, but most of it is compounding. Comparing trailing-12 to prior-12:</p>
+  <h3>1. The YoY rate is ~28%, not 79%</h3>
+  <p>The two-year doubling is compounding, not acceleration. Trailing-12 vs prior-12:</p>
   <ul>
-    <li>Apr 2025 → Mar 2026: <strong>6,529 papers/month average</strong></li>
-    <li>Apr 2024 → Mar 2025: <strong>5,119 papers/month average</strong></li>
-    <li><strong>+27.5% YoY</strong></li>
+    <li>April 2025 → March 2026: <strong>6,529 papers/month average</strong></li>
+    <li>April 2024 → March 2025: <strong>5,119 papers/month average</strong></li>
+    <li><strong>+27.5% year-over-year</strong></li>
   </ul>
-  <p>That's faster than global GDP, faster than cloud-compute spend, faster than almost any macro indicator — but well short of the "exponential" narrative some press cycles imply.</p>
+  <p>Faster than global GDP, faster than cloud-compute spend, faster than almost any macro indicator — and meaningfully below the "exponential takeoff" framing common in press coverage.</p>
 
-  <h3>2. Volatility is structural.</h3>
-  <p>Look at August 2024 (3,981) vs May 2025 (7,886). That's nearly a 2× swing within a year. arXiv submissions are seasonal — conference deadlines for NeurIPS, ICML, ICLR, CVPR push clusters into specific months, and those clusters alone can move a monthly number more than any underlying trend shift. Don't read individual months as inflection points. Read the 6-month moving average or the YoY rate.</p>
+  <h3>2. Volatility is structural</h3>
+  <p>Compare August 2024 (3,981) with May 2025 (7,886) — a near 2× swing within a single year. arXiv submissions cluster around conference deadlines (NeurIPS, ICML, ICLR, CVPR). A single month's count moves more from seasonal deadline clustering than from any underlying shift in the field. Read the 6-month moving average or the YoY rate, not individual months, to infer direction.</p>
 
-  <h3>3. Q1 2026 is the strongest Q1 on record in this window.</h3>
-  <p>January 6,502 · February 7,284 · March 7,406. Averages <strong>7,064 papers/month</strong> — up <strong>+27.9%</strong> from Q1 2025 (5,524). Whatever is driving the 2-year acceleration is holding, not decelerating, as of the most recent month we can measure.</p>
+  <h3>3. Q1 2026 is the highest-volume Q1 in the window</h3>
+  <ul>
+    <li>January: 6,502 &nbsp;·&nbsp; February: 7,284 &nbsp;·&nbsp; March: 7,406</li>
+    <li><strong>Q1 2026 average: 7,064 papers/month</strong></li>
+    <li>Q1 2025 average: 5,524</li>
+    <li><strong>+27.9% Q1-over-Q1</strong></li>
+  </ul>
+  <p>The acceleration rate is holding, not decelerating, as of the most recent month we can measure.</p>
 
-  <h2>What this is <em>not</em></h2>
-  <p>This is one data point — arXiv submissions in two specific categories, counted by submission date. It does not measure paper quality, reproducibility, novelty, industrial vs academic distribution, or whether the research matters. It's a raw velocity indicator, nothing more. Read it as: <em>how fast is the AI research surface area expanding?</em></p>
-  <p>Anything beyond that — claims about capability scaling, model quality, or "AI is speeding up / slowing down" — is interpretation layered on top of this number. It's not the number itself.</p>
+  <h2>What this is not</h2>
+  <p>This is one data point from one source. It does not measure paper quality, reproducibility, novelty, industrial vs. academic distribution, or whether the research matters. It is a raw volumetric indicator of AI/ML research submission velocity on arXiv, counted by first-submission date.</p>
+  <p>Any claim that goes beyond that — capability scaling, model quality, "AI is speeding up / slowing down" as a civilizational pattern — is interpretation layered on top of this number, not the number itself. If you see such a claim citing this index, treat the claim as opinion, not as measurement.</p>
 
   <h2>How this was built</h2>
-  <p>Every index in CyberFuturo is deterministic: a documented query against a public API, run on a schedule, stored as CSV, rendered to SVG. No LLM generated these numbers. No forecasts were produced. If the methodology changes, the change is logged and past values remain reproducible.</p>
-  <p>Full source of this index: <a href="https://github.com/notifuturo/cyberfuturo/blob/main/scripts/build_index_arxiv_ai.py">scripts/build_index_arxiv_ai.py</a> · <a href="/methodology/arxiv-ai-velocity">methodology and known limitations</a></p>
+  <p>Every index in CyberFuturo is deterministic: a documented query against a public API, run on a schedule, stored as CSV, rendered to SVG. No LLM generated any number in this brief. No outputs were estimated, interpolated, or rounded by a language model.</p>
+  <p>Editorial prose (the words you are reading) was drafted with AI assistance and human-edited. The numbers and chart were not. The full rules governing this split are documented in <a href="/rules">our editorial rules</a>.</p>
+  <ul>
+    <li>Full pipeline source: <a href="https://github.com/notifuturo/cyberfuturo/blob/main/scripts/build_index_arxiv_ai.py">scripts/build_index_arxiv_ai.py</a> (private repo)</li>
+    <li>Methodology and known limitations: <a href="/methodology/arxiv-ai-velocity"><code>arxiv-ai-velocity v0.1</code></a></li>
+    <li>Architectural constraints: <a href="/rules">editorial rules</a> · <a href="/about">about</a></li>
+  </ul>
 
   <h2>Next</h2>
-  <p>Over the next few issues I'm adding two more indices: <strong>global compute capex</strong> and <strong>battery $/kWh</strong>. The goal is simple — give you a small, rigorous set of numbers that tell you how fast the digital, compute, and energy foundations of the near future are actually being built.</p>
-  <p>If you want to follow along, <a href="/#subscribe">subscribe</a>. If you spot a methodology problem, reply to any issue — corrections go out in the next issue with a changelog entry.</p>
+  <p>The next brief cites two more indices already in development: <strong>global compute capex</strong> and <strong>battery $/kWh</strong>. Both follow the same pipeline pattern as this one — public source, deterministic query, versioned methodology, CSV and SVG outputs, no LLM-generated numbers.</p>
+  <p>If you want to follow along, <a href="/#subscribe">subscribe</a>. If you spot a methodology problem, reply to any brief or open an issue on the repo. Corrections appear in the next brief with a changelog entry.</p>
+
+  <hr>
+
+  <h2>Sources</h2>
+  <table class="sources">
+    <thead>
+      <tr><th>Claim</th><th>Index</th><th>Version</th><th>Source</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>7,406 papers in March 2026</td><td><code>arxiv-ai-velocity</code></td><td>v0.1</td><td><a href="https://export.arxiv.org/api/query">arXiv API</a></td></tr>
+      <tr><td>4,130 papers in April 2024</td><td><code>arxiv-ai-velocity</code></td><td>v0.1</td><td><a href="https://export.arxiv.org/api/query">arXiv API</a></td></tr>
+      <tr><td>5,119 prior-12 avg · 6,529 trailing-12 avg · +27.5% YoY</td><td><code>arxiv-ai-velocity</code></td><td>v0.1</td><td>computed from <a href="/data/arxiv-ai-velocity.csv">canonical CSV</a></td></tr>
+      <tr><td>Q1 2026 avg 7,064 · Q1 2025 avg 5,524 · +27.9%</td><td><code>arxiv-ai-velocity</code></td><td>v0.1</td><td>computed from <a href="/data/arxiv-ai-velocity.csv">canonical CSV</a></td></tr>
+      <tr><td>August 2024: 3,981 · May 2025: 7,886</td><td><code>arxiv-ai-velocity</code></td><td>v0.1</td><td><a href="/data/arxiv-ai-velocity.csv">canonical CSV</a></td></tr>
+    </tbody>
+  </table>
+  <p class="muted">Every number above is traceable in three clicks: this brief → canonical CSV → arXiv API query documented in methodology.</p>
 
   <hr>
 
   <p class="muted"><em>CyberFuturo — how fast the future is arriving, by the numbers.</em></p>
 
   <section id="subscribe" class="subscribe">
-    <h2>Get the next issue</h2>
-    <p>One short email every other week. Three charts per issue. No forecasts, no hot takes.</p>
+    <h2>Get the next brief</h2>
+    <p>One short email every other week. A small number of charts per issue. Unsubscribe in one click.</p>
     <form action="https://formsubmit.co/ajax/lujoeduca@gmail.com" method="POST">
       <input type="hidden" name="_subject" value="New CyberFuturo subscriber">
       <input type="hidden" name="_captcha" value="false">
       <input type="email" name="email" placeholder="you@work.com" required aria-label="Email address">
       <button type="submit">Subscribe</button>
     </form>
+    <p class="fineprint">Your email is used only for CyberFuturo briefs. We never share it. <a href="/privacy">Privacy policy →</a></p>
   </section>
 </main>
 
@@ -97,9 +134,15 @@
   <div>
     <a href="/">Home</a>
     &nbsp;·&nbsp;
+    <a href="/about">About</a>
+    &nbsp;·&nbsp;
+    <a href="/rules">Rules</a>
+    &nbsp;·&nbsp;
     <a href="/methodology/arxiv-ai-velocity">Methodology</a>
     &nbsp;·&nbsp;
     <a href="/data/arxiv-ai-velocity.csv">Data</a>
+    &nbsp;·&nbsp;
+    <a href="/privacy">Privacy</a>
   </div>
 </footer>
 

@@ -4,9 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CyberFuturo — how fast the future is arriving, by the numbers</title>
-  <meta name="description" content="A free weekly dashboard and brief tracking leading indicators across AI, compute, and energy. No forecasts. No hype. Just the data.">
+  <!-- lint:allow-forbidden start -->
+  <meta name="description" content="A free, rigorously documented set of indices tracking leading indicators across AI, compute, and energy. No forecasts. Public data. Reproducible methodology.">
   <meta property="og:title" content="CyberFuturo — how fast the future is arriving, by the numbers">
-  <meta property="og:description" content="A free weekly dashboard tracking leading indicators across AI, compute, and energy. No forecasts. Just the data.">
+  <meta property="og:description" content="Free indices tracking AI, compute, and energy. No forecasts. Just the data.">
+  <!-- lint:allow-forbidden end -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://cyberfuturo.com/">
   <meta property="og:image" content="https://cyberfuturo.com/data/arxiv-ai-velocity.svg">
@@ -21,7 +23,9 @@
     <a class="brand" href="/">Cyber<span>Futuro</span></a>
     <nav class="nav">
       <a href="/issues/01">Issue #01</a>
-      <a href="/methodology/arxiv-ai-velocity">Methodology</a>
+      <a href="/methodology">Methodology</a>
+      <a href="/rules">Rules</a>
+      <a href="/about">About</a>
       <a href="#subscribe">Subscribe</a>
     </nav>
   </div>
@@ -30,7 +34,9 @@
 <main>
   <section class="hero">
     <h1>How fast the future is arriving, by the numbers.</h1>
-    <p class="tagline">A free weekly dashboard and brief tracking leading indicators across <strong>AI, compute, and energy</strong>. No forecasts. No hype. Just the data — measured from public sources, documented, reproducible.</p>
+    <!-- lint:allow-forbidden start -->
+    <p class="tagline">A free, rigorously documented set of indices tracking leading indicators across <strong>AI, compute, and energy</strong>. Built from public data. Reproducible methodology. No forecasts — only measurements.</p>
+    <!-- lint:allow-forbidden end -->
   </section>
 
   <section>
@@ -39,73 +45,82 @@
 
     <div class="pullquote">
       <span class="big">7,406</span>
-      <span class="label">new AI/ML papers on arXiv in March 2026 — the highest monthly output in our 24-month tracking window. <strong>+79%</strong> vs April 2024, <strong>+27.5% YoY</strong>.</span>
+      <span class="label">new AI/ML papers on arXiv in March 2026 — the highest monthly value in our 24-month window. <strong>+79%</strong> vs April 2024, <strong>+27.5%</strong> year-over-year. <span class="muted">[arxiv-ai-velocity v0.1]</span></span>
     </div>
 
     <div class="chart">
-      <img src="/data/arxiv-ai-velocity.svg" alt="arXiv AI research velocity — monthly submissions to cs.AI or cs.LG, trailing 24 months. April 2024: 4,130. March 2026: 7,406.">
-      <p class="chart-caption">Source: <a href="https://export.arxiv.org/api/query" rel="noopener">arXiv API</a>. Query: <code>(cat:cs.AI OR cat:cs.LG) AND submittedDate:[month]</code>. <a href="/data/arxiv-ai-velocity.csv">Raw data (CSV)</a> · <a href="/methodology/arxiv-ai-velocity">Methodology</a></p>
+      <img src="/data/arxiv-ai-velocity.svg" alt="arXiv AI research velocity — monthly submissions to cs.AI or cs.LG, trailing 24 months. April 2024: 4,130 papers. March 2026: 7,406 papers.">
+      <p class="chart-caption">Source: <a href="https://export.arxiv.org/api/query" rel="noopener">arXiv API</a>. Query: <code>(cat:cs.AI OR cat:cs.LG) AND submittedDate:[month]</code>. <a href="/data/arxiv-ai-velocity.csv">Raw CSV</a> · <a href="/methodology/arxiv-ai-velocity">Methodology</a></p>
     </div>
 
     <p><a href="/issues/01">Read the full brief →</a></p>
   </section>
 
+  <section class="commitments">
+    <h2>Our commitments</h2>
+    <ol class="commitments-list">
+      <!-- lint:allow-forbidden start -->
+      <li><strong>No forecasts.</strong> Every published claim is a measurement or a description of one.</li>
+      <!-- lint:allow-forbidden end -->
+      <li><strong>Numbers come from public APIs, never from an LLM.</strong> Editorial prose may be AI-assisted; numbers and charts are deterministic.</li>
+      <li><strong>Every number is traceable in three clicks</strong> — brief, canonical CSV, source methodology.</li>
+      <li><strong>Methodology is versioned.</strong> When a query changes, the version bumps and old values stay verifiable in git history.</li>
+      <li><strong>Sponsors never appear above the editorial.</strong> One sponsor per brief, never programmatic, never hidden.</li>
+      <li><strong>Subscriber data is never shared or sold</strong> — not to sponsors, not in aggregate, not for any reason.</li>
+    </ol>
+    <p><a href="/rules">The full editorial rules →</a></p>
+  </section>
+
   <section id="subscribe" class="subscribe">
     <h2>Get it in your inbox</h2>
-    <p>One short email every other week. Three charts per issue. No forecasts, no hot takes, no growth-hack scheduling. Unsubscribe at any time.</p>
-    <!--
-      v0.1: this form posts to formsubmit.co, which forwards submissions to the publication email.
-      The first submission triggers a one-click activation email — check lujoeduca@gmail.com for it.
-      To switch to beehiiv later: replace the action URL with https://embeds.beehiiv.com/YOUR_PUBLICATION_UUID
-      and remove the two hidden inputs below.
-    -->
+    <p>One short email every other week. A small number of charts per issue. Unsubscribe at any time with a single click.</p>
     <form action="https://formsubmit.co/ajax/lujoeduca@gmail.com" method="POST">
       <input type="hidden" name="_subject" value="New CyberFuturo subscriber">
       <input type="hidden" name="_captcha" value="false">
       <input type="email" name="email" placeholder="you@work.com" required aria-label="Email address">
       <button type="submit">Subscribe</button>
     </form>
-    <p class="fineprint">We publish what we measure. If a methodology changes, we tell you. If a number moves, we show you the chart, not our opinion.</p>
+    <p class="fineprint">Your email is used only to send you CyberFuturo briefs and to honor unsubscribe requests. We do not share, sell, or hand it to sponsors. <a href="/privacy">Full privacy policy →</a></p>
   </section>
 
   <section>
-    <h2>What this is</h2>
-    <p>Most near-future analysis is opinion dressed as insight — essays predicting which technology will "win," which year "transforms everything," which startup will "redefine" a category.</p>
-    <p>CyberFuturo is the opposite. We track a small set of rigorously defined indices using only free public data — arXiv, patent filings, SEC disclosures, government datasets, open benchmarks. Every index has a documented query, a reproducible pipeline, and a methodology page you can audit. When a number moves, we publish the chart. We do not forecast. We do not interpret heavily. We let the data do the talking.</p>
-    <p>Our bet is simple: over enough time, measured truth compounds into authority, and forecasts rot.</p>
-  </section>
-
-  <section>
-    <h2>Indices, today</h2>
+    <h2>Indices</h2>
     <ul class="card-list">
       <li>
-        <a href="/issues/01">arXiv AI research velocity</a>
-        <span class="card-meta">v0.1 · monthly cadence · 24-month window · live</span>
-        <p class="card-excerpt">Monthly count of papers submitted to cs.AI or cs.LG. The raw expansion rate of the AI/ML research surface area.</p>
+        <a href="/methodology/arxiv-ai-velocity">arXiv AI research velocity</a>
+        <span class="card-meta">v0.1 · monthly cadence · 24-month window · status: live</span>
+        <p class="card-excerpt">Monthly count of papers submitted to cs.AI or cs.LG — the raw expansion rate of the AI/ML research surface area.</p>
       </li>
       <li>
-        <a href="#subscribe">Global compute capex <span class="muted">(coming next issue)</span></a>
-        <span class="card-meta">v0.1 · quarterly cadence · planned Q2 2026</span>
+        <a href="/methodology">Global compute capex</a>
+        <span class="card-meta">status: in development · methodology unpublished</span>
         <p class="card-excerpt">Combined capital expenditure on semiconductor fab and hyperscaler data center buildout, from public disclosures.</p>
       </li>
       <li>
-        <a href="#subscribe">Battery $/kWh <span class="muted">(coming)</span></a>
-        <span class="card-meta">v0.1 · annual cadence · planned Q3 2026</span>
-        <p class="card-excerpt">Unsubsidized lithium-ion battery pack price, tracked against historical trajectory.</p>
+        <a href="/methodology">Battery $/kWh</a>
+        <span class="card-meta">status: in development · methodology unpublished</span>
+        <p class="card-excerpt">Unsubsidized lithium-ion battery pack price tracked against historical trajectory.</p>
       </li>
     </ul>
+    <p class="muted">An index is never announced as "coming by date X" — we list it here only once the methodology is drafted and the pipeline is real.</p>
   </section>
 </main>
 
 <footer class="footer">
   <div>
     <strong>CyberFuturo</strong> — how fast the future is arriving, by the numbers.
+    <!-- lint:allow-forbidden start -->
     <br>Measurements, not forecasts. Public data, reproducible methodology.
+    <!-- lint:allow-forbidden end -->
   </div>
   <div>
-    <a href="/methodology/arxiv-ai-velocity">Methodology</a>
+    <a href="/about">About</a>
     &nbsp;·&nbsp;
-    <a href="/data/arxiv-ai-velocity.csv">Raw data</a>
+    <a href="/rules">Rules</a>
+    &nbsp;·&nbsp;
+    <a href="/methodology">Methodology</a>
+    &nbsp;·&nbsp;
+    <a href="/privacy">Privacy</a>
     &nbsp;·&nbsp;
     <a href="#subscribe">Subscribe</a>
   </div>
