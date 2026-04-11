@@ -27,6 +27,14 @@ ruvector.db
 dist/
 build/
 
+# Curriculum student artifacts + local progress (generated while doing lessons)
+/curriculum/*.json
+/curriculum/*.py
+/curriculum/*.txt
+/curriculum/*.sql
+/curriculum/*.db
+/curriculum/*.csv
+
 # Secrets
 .env
 .env.*
