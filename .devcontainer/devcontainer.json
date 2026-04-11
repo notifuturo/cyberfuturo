@@ -1,0 +1,33 @@
+{
+  "name": "CyberFuturo — Aprende tecnología al revés",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": false,
+      "configureZshAsDefaultShell": false,
+      "upgradePackages": false
+    }
+  },
+  "postCreateCommand": "bash curriculum/welcome.sh || true",
+  "postAttachCommand": "cd curriculum && cat WELCOME.txt 2>/dev/null || true",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.cwd": "${workspaceFolder}/curriculum",
+        "workbench.startupEditor": "readme",
+        "workbench.colorTheme": "Default Dark Modern",
+        "editor.fontFamily": "'JetBrains Mono', 'Source Code Pro', Consolas, monospace",
+        "editor.fontSize": 14
+      }
+    }
+  },
+  "remoteUser": "vscode",
+  "forwardPorts": [],
+  "portsAttributes": {}
+}

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CyberFuturo — Learn tech backwards</title>
+  <meta name="description" content="Deconstruct the stack, layer by layer. From the graphical tools you already know down to the command line, Git, SQL, and Python — all in your browser, no installation required.">
+  <meta property="og:title" content="CyberFuturo — Learn tech backwards">
+  <meta property="og:description" content="Deconstruct the stack, layer by layer. GUI → CLI → Git → SQL → Python — all in your browser, no installation required.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cyberfuturo.com/en/">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate" hreflang="es" href="https://cyberfuturo.com/">
+  <link rel="alternate" hreflang="en" href="https://cyberfuturo.com/en/">
+  <link rel="alternate" hreflang="fr" href="https://cyberfuturo.com/fr/">
+  <link rel="alternate" hreflang="x-default" href="https://cyberfuturo.com/">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="/en/">
+      <span class="brand-prompt">&gt;_</span>
+      <span class="brand-name">Cyber<span>Futuro</span></span>
+    </a>
+    <nav class="nav">
+      <a href="#stack">The stack</a>
+      <a href="#how">How it works</a>
+      <a href="#syllabus">Syllabus</a>
+      <a href="#start">Start</a>
+    </nav>
+    <div class="lang-switcher">
+      <a href="/">ES</a>
+      <a href="/en/" class="active">EN</a>
+      <a href="/fr/">FR</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <p class="prompt-line"><span class="muted">user@cyberfuturo</span>:<span style="color:var(--accent-2)">~</span>$ <span class="flash">whoami</span></p>
+    <h1>Learn tech <span class="hl">backwards.</span></h1>
+    <p class="tagline">Deconstruct the stack, layer by layer. From the graphical tools you already know down to the command line, Git, SQL, and Python — <strong>all in your browser, no installation required</strong>.</p>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://codespaces.new/notifuturo/cyberfuturo?quickstart=1" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M2 4.25A2.25 2.25 0 0 1 4.25 2h7.5A2.25 2.25 0 0 1 14 4.25V12h.25a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5H2V4.25Zm1.5 0a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 .75.75V12h-9V4.25Z"/></svg>
+        Open in Codespaces
+      </a>
+      <a class="btn btn-secondary" href="#how">See how it works</a>
+    </div>
+
+    <p class="muted" style="font-size:13px; margin-top:12px;">Free. 60 hours/month of Codespaces with any GitHub account. Zero install on your computer.</p>
+  </section>
+
+  <section id="stack">
+    <h2>The stack, layer by layer</h2>
+    <p>Most courses teach Python from the syntax up — and assume you already know how to use a terminal, an editor, and Git. We start from the layer you already recognize and go down, one tool at a time, until you hit the metal.</p>
+
+    <ol class="stack-list">
+      <li>
+        <span class="layer">LAYER 6</span>
+        <div>
+          <span class="title">GUI — what you already know</span>
+          <p>VS Code, a browser, files. The same interfaces you use every day.</p>
+        </div>
+      </li>
+      <li>
+        <span class="layer">LAYER 5</span>
+        <div>
+          <span class="title">Terminal &amp; Bash</span>
+          <p>The same editor, now with a terminal open. <code>pwd</code>, <code>ls</code>, <code>cd</code>, pipes, and the shell you'll use for the rest of your career.</p>
+        </div>
+      </li>
+      <li>
+        <span class="layer">LAYER 4</span>
+        <div>
+          <span class="title">Git &amp; GitHub</span>
+          <p>Every completed exercise is a real commit. You learn Git by <em>using it</em>, not by studying it.</p>
+        </div>
+      </li>
+      <li>
+        <span class="layer">LAYER 3</span>
+        <div>
+          <span class="title">SQL with SQLite</span>
+          <p><code>CREATE</code>, <code>INSERT</code>, <code>SELECT</code>, joins — against a real database that lives in a single file, right inside your Codespace.</p>
+        </div>
+      </li>
+      <li>
+        <span class="layer">LAYER 2</span>
+        <div>
+          <span class="title">Python from zero</span>
+          <p><code>python3</code>, variables, functions, files, pip — with the interpreter already configured in your environment.</p>
+        </div>
+      </li>
+      <li>
+        <span class="layer">LAYER 1</span>
+        <div>
+          <span class="title">HTTP &amp; real APIs</span>
+          <p><code>curl</code>, JSON responses, your first script calling a public API. Now you know how the Internet actually works underneath.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section id="how">
+    <h2>How it works</h2>
+
+    <div class="terminal" role="img" aria-label="Example exercise in the terminal">
+      <div class="terminal-bar">
+        <span class="dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span>
+        <span class="title">bash — cyberfuturo/curriculum</span>
+      </div>
+      <div class="terminal-body"><span class="tline"><span class="tprompt">user@cyberfuturo</span>:<span class="tpath">~/curriculum</span>$ ./cf start 1</span>
+<span class="tline"><span class="tinfo">▸ Lesson 01 — First steps in the terminal</span></span>
+<span class="tline"></span>
+<span class="tline"><span class="tout">Task: create a file named hello.txt containing "hello world".</span></span>
+<span class="tline"><span class="tout">Hint: use echo with a redirect &gt;</span></span>
+<span class="tline"></span>
+<span class="tline"><span class="tprompt">user@cyberfuturo</span>:<span class="tpath">~/curriculum</span>$ echo "hello world" &gt; hello.txt</span>
+<span class="tline"><span class="tprompt">user@cyberfuturo</span>:<span class="tpath">~/curriculum</span>$ ./cf check</span>
+<span class="tline"><span class="tok">✔ hello.txt exists</span></span>
+<span class="tline"><span class="tok">✔ content matches</span></span>
+<span class="tline"><span class="tok">✔ lesson 01 complete</span></span>
+<span class="tline"></span>
+<span class="tline"><span class="tinfo">Next: ./cf next</span></span>
+<span class="tline"><span class="tprompt">user@cyberfuturo</span>:<span class="tpath">~/curriculum</span>$ <span class="tcursor">█</span></span></div>
+    </div>
+
+    <ol class="steps">
+      <li>
+        <span class="title">Open the project in GitHub Codespaces</span>
+        <p>One click from the button above. GitHub gives you a virtual machine with VS Code, a terminal, Python, Git, and SQLite already configured. Nothing to install.</p>
+      </li>
+      <li>
+        <span class="title">Run <code>./cf start</code> for your first lesson</span>
+        <p>A small program (written in pure Python, no dependencies) shows you the task, instructions, and hints. Lessons live in the terminal because the terminal is what you're here to learn.</p>
+      </li>
+      <li>
+        <span class="title">Do the task with real commands</span>
+        <p>Each exercise is a small mission: create a file, find a hidden one, write a Python script, run a SQL query. You use real tools, not simulations.</p>
+      </li>
+      <li>
+        <span class="title">Run <code>./cf check</code> to verify</span>
+        <p>The checker looks at the real state of your file system, your Git repo, or your program's output. It tells you what worked and what's missing.</p>
+      </li>
+      <li>
+        <span class="title">Every completed lesson is a Git commit</span>
+        <p>You learn Git without realizing it: each achievement is recorded in your history. When you finish the course, you'll have a real repository with 30+ real commits, ready to put on your CV.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="syllabus">
+    <h2>Syllabus — version 0.1</h2>
+    <p>A small subset, taught in depth. The longer the syllabus, the less likely you are to finish it. We pick lessons that are <strong>essential</strong>, not "nice to have".</p>
+
+    <ul class="curriculum">
+      <li>
+        <span class="num">00</span>
+        <div>
+          <span class="name">Welcome &amp; orientation</span>
+          <span class="desc">Your Codespace, the terminal, pwd, ls, cat. Your first file.</span>
+        </div>
+        <span class="time">~15 min</span>
+      </li>
+      <li>
+        <span class="num">01</span>
+        <div>
+          <span class="name">Navigating the file system</span>
+          <span class="desc">cd, ls -la, find, mkdir, mv, rm. Find a hidden file.</span>
+        </div>
+        <span class="time">~25 min</span>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <div>
+          <span class="name">Your first Git commit</span>
+          <span class="desc">init, status, add, commit, log, diff. Write a decent commit message.</span>
+        </div>
+        <span class="time">~30 min</span>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <div>
+          <span class="name">Your first Python script</span>
+          <span class="desc">python3, variables, print, input, functions, running a script from the terminal.</span>
+        </div>
+        <span class="time">~30 min</span>
+      </li>
+      <li class="locked">
+        <span class="num">04</span>
+        <div>
+          <span class="name">GitHub, branches, and pull requests</span>
+          <span class="desc">clone, push, branch, merge, resolving a conflict — in development.</span>
+        </div>
+        <span class="time">~40 min</span>
+      </li>
+      <li class="locked">
+        <span class="num">05</span>
+        <div>
+          <span class="name">Your first SQL query</span>
+          <span class="desc">sqlite3, CREATE, INSERT, SELECT, WHERE, joins — in development.</span>
+        </div>
+        <span class="time">~35 min</span>
+      </li>
+      <li class="locked">
+        <span class="num">06</span>
+        <div>
+          <span class="name">HTTP &amp; public APIs with curl</span>
+          <span class="desc">GET, POST, JSON, a Python script calling a real API — in development.</span>
+        </div>
+        <span class="time">~30 min</span>
+      </li>
+    </ul>
+    <p class="muted" style="margin-top:18px; font-size:13px;">Current total: 4 lessons · ~1h 40min. In development: 3 more lessons.</p>
+  </section>
+
+  <section id="start">
+    <h2>Start now</h2>
+    <p>You don't need to install Python. You don't need to configure Git. You don't need a powerful laptop. All you need is a free GitHub account and a browser.</p>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://codespaces.new/notifuturo/cyberfuturo?quickstart=1" target="_blank" rel="noopener">
+        Start in Codespaces →
+      </a>
+      <a class="btn btn-secondary" href="https://github.com/notifuturo/cyberfuturo" target="_blank" rel="noopener">
+        View code on GitHub
+      </a>
+    </div>
+  </section>
+
+  <section class="waitlist">
+    <h2>Rather wait for updates?</h2>
+    <p>If you'd rather wait until the advanced lessons are out, drop your email. We'll send you a short note when a new lesson ships or something important changes. Low frequency, no sharing, no selling.</p>
+    <form action="https://formsubmit.co/ajax/lujoeduca@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="New CyberFuturo signup (EN)">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="https://cyberfuturo.com/thank-you.html">
+      <input type="email" name="email" placeholder="you@work.com" required aria-label="Email address">
+      <button type="submit">Notify me</button>
+    </form>
+    <label class="consent-label">
+      <input type="checkbox" required>
+      I agree to receive occasional emails about CyberFuturo.
+    </label>
+    <p class="fineprint">Your email is used only for CyberFuturo updates. We don't share it, don't sell it, and don't hand it to any sponsor.</p>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div>
+    <strong>CyberFuturo</strong> — learn tech backwards.
+    <br>Free, open source, trilingual.
+  </div>
+  <div>
+    <a href="/">Español</a>
+    &nbsp;·&nbsp;
+    <a href="/fr/">Français</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/notifuturo/cyberfuturo" target="_blank" rel="noopener">GitHub</a>
+    &nbsp;·&nbsp;
+    <a href="#start">Start</a>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /gracias.html
+Disallow: /thank-you.html
+Disallow: /merci.html
 
 Sitemap: https://cyberfuturo.com/sitemap.xml

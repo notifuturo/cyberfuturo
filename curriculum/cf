@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# CyberFuturo lesson runner — wrapper that invokes the Python runner.
+# Pure bash so students can see this file, read it, and edit it.
+
+set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec python3 "$SCRIPT_DIR/runner/main.py" "$@"
