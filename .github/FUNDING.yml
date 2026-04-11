@@ -1,0 +1,22 @@
+# CyberFuturo — funding sources visible on the repo sidebar
+#
+# Until GitHub Sponsors is enabled on the notifuturo account profile
+# (user-level, not repo-level), the github.com/sponsors/notifuturo URL
+# will 404. After enabling it (one-click at
+# https://github.com/sponsors/accounts), the sidebar button becomes
+# active automatically.
+#
+# Apply for GitHub Sponsors here:
+#   https://github.com/sponsors
+#
+# No code change needed after approval — GitHub reads this file on
+# every page load.
+
+github: [notifuturo]
+
+# Optional additional funding sources. Uncomment and fill in when ready.
+# patreon:           # https://www.patreon.com/<user>
+# ko_fi:             # https://ko-fi.com/<user>
+# buy_me_a_coffee:   # https://www.buymeacoffee.com/<user>
+# liberapay:         # https://liberapay.com/<user>
+# custom: [https://cyberfuturo.com/support]
