@@ -3,5 +3,6 @@ Allow: /
 Disallow: /gracias.html
 Disallow: /thank-you.html
 Disallow: /merci.html
+Disallow: /obrigado.html
 
 Sitemap: https://cyberfuturo.com/sitemap.xml
