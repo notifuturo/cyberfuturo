@@ -295,6 +295,34 @@ em { color: var(--warn); font-style: normal; }
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes pulse { 50% { opacity: 0.4; } }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .tcursor, .hero .prompt-line .flash { animation: none; }
+  * { transition-duration: 0.01ms !important; }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.btn:focus-visible { outline-offset: 4px; }
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -100px;
+  padding: 10px 16px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 6px;
+  z-index: 100;
+  transition: top 0.15s;
+}
+.skip-link:focus { top: 12px; color: var(--bg); }
+
 code {
   font-family: inherit;
   background: var(--surface);
