@@ -1,0 +1,92 @@
+# CyberFuturo — auto-deploy to Cloudflare Pages on every push to main
+#
+# Install:
+#   mkdir -p .github/workflows
+#   mv docs/github-workflow-deploy.yml.txt .github/workflows/deploy.yml
+#   git add .github/workflows/deploy.yml
+#   git commit -m "ci: auto-deploy to Cloudflare Pages on push to main"
+#   git push
+#
+# If `git push` rejects the commit with:
+#   "refusing to allow an OAuth App to create or update workflow..."
+# then your gh token needs the 'workflow' scope:
+#   gh auth refresh -s workflow
+#
+# Required secrets (set via: gh secret set <NAME>):
+#   CLOUDFLARE_API_TOKEN   — token with Account / Cloudflare Pages / Edit permission
+#   CLOUDFLARE_ACCOUNT_ID  — 32-char hex, visible in CF dashboard sidebar
+#
+# See docs/operators-manual.md section 8 for full setup instructions.
+
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'site/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: cf-pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Basic smoke check
+        run: |
+          test -f site/index.html          || { echo "site/index.html missing"; exit 1; }
+          test -f site/es/index.html       || { echo "site/es/index.html missing"; exit 1; }
+          test -f site/en/index.html       || { echo "site/en/index.html missing"; exit 1; }
+          test -f site/fr/index.html       || { echo "site/fr/index.html missing"; exit 1; }
+          test -f site/styles.css          || { echo "site/styles.css missing"; exit 1; }
+          test -f site/favicon.svg         || { echo "site/favicon.svg missing"; exit 1; }
+          test -f site/sitemap.xml         || { echo "site/sitemap.xml missing"; exit 1; }
+          test -f site/robots.txt          || { echo "site/robots.txt missing"; exit 1; }
+          echo "all required files present"
+
+      - name: Validate HTML references
+        run: |
+          # Fail if any HTML file references the old /pt/ path (dead after the reorg)
+          if grep -r '"/pt/' site/ --include="*.html" > /dev/null; then
+            echo "Found stale /pt/ references in site/:"
+            grep -rn '"/pt/' site/ --include="*.html"
+            exit 1
+          fi
+          # Fail if any HTML references the bare /gracias.html etc. thank-you pages
+          # with the wrong language form action (safety check).
+          echo "HTML reference validation passed"
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=cyberfuturo --branch=main --commit-dirty=true
+
+      - name: Post-deploy smoke test
+        run: |
+          sleep 5
+          for path in "/" "/es/" "/en/" "/fr/" "/obrigado.html" "/gracias.html" "/thank-you.html" "/merci.html"; do
+            code=$(curl -sSL -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev${path}")
+            printf "  %-24s %s\n" "$path" "$code"
+            if [ "$code" != "200" ]; then
+              echo "FAIL: $path returned $code"
+              exit 1
+            fi
+          done
+          echo "all routes green"

@@ -44,6 +44,8 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 CSV_PATH = REPO_ROOT / "data" / "indices" / "arxiv-ai-velocity.csv"
 SVG_PATH = REPO_ROOT / "data" / "indices" / "arxiv-ai-velocity.svg"
 
+MAX_RESPONSE_BYTES = 10 * 1024 * 1024  # 10 MiB — reject abnormally large payloads
+
 
 def month_window(year: int, month: int) -> tuple[str, str]:
     last_day = calendar.monthrange(year, month)[1]
@@ -72,8 +74,22 @@ def fetch_count(year: int, month: int) -> int:
     url = f"{ARXIV_ENDPOINT}?{urllib.parse.urlencode(params)}"
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT) as resp:
-        payload = resp.read()
-    root = ET.fromstring(payload)
+        payload = resp.read(MAX_RESPONSE_BYTES + 1)
+    if len(payload) > MAX_RESPONSE_BYTES:
+        raise RuntimeError(
+            f"arXiv response exceeded {MAX_RESPONSE_BYTES} bytes; aborting to "
+            f"avoid processing untrusted oversized XML."
+        )
+    # Parse with an explicit XMLParser rather than bare ET.fromstring() to make
+    # the security posture explicit.  Python 3.9+ already limits entity
+    # expansion in the default expat parser, but we call out the concern here:
+    # stdlib xml.etree does NOT fully defend against billion-laughs on all
+    # builds.  The MAX_RESPONSE_BYTES check above is the primary mitigation
+    # for untrusted arXiv XML when defusedxml is unavailable (ADR-0002:
+    # stdlib-only constraint).
+    parser = ET.XMLParser()
+    parser.feed(payload)
+    root = parser.close()
     total_el = root.find("opensearch:totalResults", NS)
     if total_el is None or total_el.text is None:
         raise RuntimeError(f"arXiv returned no totalResults for {year}-{month:02d}")

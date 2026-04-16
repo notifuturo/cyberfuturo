@@ -72,8 +72,10 @@ estudante ter seu próprio progresso no seu fork).
 | 04 | Ramos e fusões em Git | ~30 min |
 | 05 | Sua primeira consulta SQL | ~35 min |
 | 06 | HTTP e APIs públicas | ~30 min |
+| 07 | Loops com dados reais | ~30 min |
+| 08 | Dicionários e agrupamento | ~30 min |
 
-Total atual: **7 lições · ~3h 15min** de tarefas práticas com validação automática.
+Total atual: **9 lições · ~4h 15min** de tarefas práticas com validação automática.
 
 ## Filosofia
 

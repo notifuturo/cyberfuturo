@@ -29,6 +29,7 @@ ADRs are **append-only**. When a decision changes, write a new ADR that supersed
 | [0008](./0008-llms-never-generate-numbers.md) | LLMs never generate numbers | Accepted | 2026-04-11 |
 | [0009](./0009-free-tier-only-infrastructure.md) | $0 / free-tier-only infrastructure constraint | Accepted | 2026-04-11 |
 | [0010](./0010-trailing-window-time-series.md) | Trailing-window time series, accept backfill drift (v0.1) | Accepted | 2026-04-11 |
+| [0011](./0011-interactive-curriculum.md) | Interactive, Portuguese-first curriculum embedded in the repo | Accepted | 2026-04-15 |
 
 ## Decision themes
 
@@ -37,5 +38,7 @@ These ten ADRs cluster around three big commitments that define the project:
 1. **Credibility discipline** — ADRs 0001, 0007, 0008. No forecasts, every number versioned, LLMs never fabricate. Together these are the product moat.
 2. **Radical simplicity** — ADRs 0002, 0003, 0005. Stdlib-only Python, no JS framework, charts as text. Zero dependency rot over multi-year timelines.
 3. **$0 operability** — ADRs 0004, 0006, 0009. Free-tier hosts, private repo, direct upload. The project runs indefinitely without revenue.
+
+4. **Education & Outreach** — ADR 0011. Portuguese-first interactive curriculum embedded in the repo, validated by stdlib-only tests, runnable in the devcontainer.
 
 ADR-0010 is the one explicit "we're aware this is imperfect" decision — we accept minor backfill drift in v0.1 because the alternative is too expensive for the value it adds. This is the canonical shape of a good ADR: naming a tradeoff instead of pretending it doesn't exist.

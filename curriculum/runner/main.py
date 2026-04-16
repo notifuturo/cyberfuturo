@@ -289,10 +289,18 @@ def cmd_check(lessons: list[Lesson], progress: dict) -> int:
         print(f"  {DIM}Marcando como concluída manualmente. Rode: ./cf next{RESET}")
         return 0
 
+    # Validate that the test file resides inside the lessons directory to
+    # prevent path-traversal attacks (e.g. via symlinks).
+    resolved_test = lesson.test_file.resolve()
+    resolved_lessons = LESSONS_DIR.resolve()
+    if not str(resolved_test).startswith(str(resolved_lessons) + os.sep):
+        print(color(f"  ✘ Caminho do teste está fora do diretório de lições: {resolved_test}", RED))
+        return 1
+
     print(color(f"  Rodando validador da lição {lesson.number:02d} — {lesson.name}...", CYAN))
     print()
     proc = subprocess.run(
-        [sys.executable, str(lesson.test_file)],
+        [sys.executable, str(resolved_test)],
         cwd=str(CURRICULUM_DIR),
         env={**os.environ, "CF_LESSON_DIR": str(lesson.path)},
     )

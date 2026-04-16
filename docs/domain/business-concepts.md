@@ -282,7 +282,7 @@ An intentional negative space — things the project deliberately does not do, a
 - **Not a general tech blog.** We do not write about product launches, personal takes, or industry drama.
 - **Not an AI-native publication.** LLMs assist with prose, but no index, number, or headline is LLM-authored.
 - **Not a multi-author publication** (yet). For v0.1–v0.3, one human author, one editorial voice. Multi-author is a v1.0 consideration.
-- **Not a tipping / donation product.** "Support us" buttons are rejected as out of scope — monetization is sponsor-driven or nothing.
+- **Not a tipping / donation product.** The core monetization model is sponsor-driven, not donation-driven. However, voluntary sponsorship through GitHub Sponsors is permitted as a sustainability mechanism: it is platform-native, opt-in, and does not change the product experience for non-sponsors. The core product remains free with no gated features behind a "support us" paywall. General-purpose donation buttons, Patreon campaigns, and tip jars remain out of scope.
 
 ---
 

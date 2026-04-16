@@ -83,7 +83,7 @@ def check_columns() -> bool:
     return True
 
 
-def check_rows() -> bool:
+def check_rows() -> tuple[bool, list[str] | None]:
     try:
         conn = sqlite3.connect(str(DB_PATH))
         cur = conn.cursor()
@@ -93,7 +93,7 @@ def check_rows() -> bool:
         post_2000 = [r[0] for r in cur.fetchall()]
     except sqlite3.Error as e:
         print(f"  {FAIL} erro ao contar as linhas: {e}")
-        return False
+        return False, None
     finally:
         try:
             conn.close()
@@ -102,11 +102,11 @@ def check_rows() -> bool:
     if total < 3:
         print(f"  {FAIL} só encontrei {total} livro(s); a tarefa pede pelo menos 3")
         print(f"    {DIM}dica: INSERT INTO livros (titulo, autor, ano) VALUES ('...', '...', ...);{RST}")
-        return False
+        return False, None
     print(f"  {OK} a tabela tem {total} livros")
     if len(post_2000) < 2:
         print(f"  {FAIL} só {len(post_2000)} livro(s) com ano >= 2000; a tarefa pede pelo menos 2")
-        return False
+        return False, None
     print(f"  {OK} {len(post_2000)} livros com ano >= 2000: {', '.join(post_2000)}")
     return True, post_2000
 
@@ -138,10 +138,9 @@ def main() -> int:
         return 1
     if not check_columns():
         return 1
-    rows_result = check_rows()
-    if rows_result is False:
+    ok, post_2000 = check_rows()
+    if not ok:
         return 1
-    _, post_2000 = rows_result
     if not check_query_output(post_2000):
         return 1
     return 0

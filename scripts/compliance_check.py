@@ -25,6 +25,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 REPORT_PATH = REPO_ROOT / "docs" / "compliance-report.md"
 
+SUBPROCESS_TIMEOUT = 120  # seconds — prevent misbehaving lint scripts from hanging
+
 LINTS = [
     ("scripts/lint_editorial.py", "BR-01 / ADR-0001", "No-forecast vocabulary"),
     ("scripts/lint_pipeline.py",  "ADR-0002 / ADR-0008", "Stdlib-only pipeline, no LLM"),
@@ -51,6 +53,7 @@ def run_lint(script_rel: str) -> tuple[int, str]:
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,
+        timeout=SUBPROCESS_TIMEOUT,
     )
     combined = proc.stdout + (proc.stderr if proc.stderr else "")
     return proc.returncode, combined

@@ -1,0 +1,48 @@
+name: Refresh arXiv AI velocity index
+
+on:
+  schedule:
+    # 06:00 UTC on the 2nd of every month — measuring the previous full calendar month.
+    - cron: '0 6 2 * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-arxiv
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch arXiv data and rebuild chart
+        run: |
+          python3 scripts/build_index_arxiv_ai.py
+          cp data/indices/arxiv-ai-velocity.csv site/data/
+          cp data/indices/arxiv-ai-velocity.svg site/data/
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name "cyberfuturo-bot"
+          git config user.email "bot@cyberfuturo.com"
+          git add data/indices/arxiv-ai-velocity.csv \
+                  data/indices/arxiv-ai-velocity.svg \
+                  site/data/arxiv-ai-velocity.csv \
+                  site/data/arxiv-ai-velocity.svg
+          if git diff --cached --quiet; then
+            echo "No changes — arXiv data is unchanged this month."
+            exit 0
+          fi
+          git commit -m "data: refresh arxiv-ai-velocity $(date -u +%Y-%m)"
+          git push

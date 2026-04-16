@@ -2,8 +2,6 @@
  * Dracula-inspired brand palette, monospace-first typography.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
 :root {
   --bg:        #1e1e2e;
   --surface:   #282a36;
