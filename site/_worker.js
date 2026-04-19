@@ -1,7 +1,8 @@
-// Cloudflare Pages Function — smart language redirect at the root.
-// Deployed automatically by the existing deploy.yml workflow.
+// Cloudflare Pages — Advanced Mode Worker.
+// Handles the bare root / as a smart language redirect; everything else
+// falls through to the static-asset handler (env.ASSETS.fetch).
 //
-// Decision order:
+// Decision order at root:
 //   1. Cookie cf_lang=xx (set on any language page visit) → redirect to /xx/
 //   2. Accept-Language header best match among {pt, es, en, fr}
 //   3. CF-IPCountry country code → language map
@@ -45,32 +46,34 @@ function pickLang(request) {
   // 1. Cookie
   const cookie = request.headers.get("Cookie") || "";
   const match = cookie.match(/(?:^|;\s*)cf_lang=(pt|es|en|fr)(?:;|$)/);
-  if (match) return { lang: match[1], source: "cookie" };
+  if (match) return match[1];
 
   // 2. Accept-Language
   const accept = parseAcceptLanguage(request.headers.get("Accept-Language"));
   for (const prefix of accept) {
-    if (LANGS.includes(prefix)) return { lang: prefix, source: "accept-language" };
+    if (LANGS.includes(prefix)) return prefix;
   }
 
   // 3. Country hint
   const country = request.headers.get("CF-IPCountry");
-  if (country && COUNTRY_LANG[country]) {
-    return { lang: COUNTRY_LANG[country], source: "country" };
-  }
+  if (country && COUNTRY_LANG[country]) return COUNTRY_LANG[country];
 
   // 4. English is the widest lingua franca among the remaining candidates.
-  return { lang: "en", source: "fallback" };
+  return "en";
 }
 
-export async function onRequestGet({ request }) {
-  const { lang } = pickLang(request);
-  const target = new URL(request.url);
-  target.pathname = `/${lang}/`;
-  target.search = "";
-  return Response.redirect(target.toString(), 302);
-}
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
 
-export async function onRequestHead({ request }) {
-  return onRequestGet({ request });
-}
+    // Only intercept the bare root. Everything else (including /pt/, /es/,
+    // etc. and all static assets) falls through to the Pages static handler.
+    if (url.pathname === "/" && (request.method === "GET" || request.method === "HEAD")) {
+      const lang = pickLang(request);
+      return Response.redirect(`${url.origin}/${lang}/`, 302);
+    }
+
+    // Static assets, thank-you pages, sitemap, robots, etc.
+    return env.ASSETS.fetch(request);
+  }
+};

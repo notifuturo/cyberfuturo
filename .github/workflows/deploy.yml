@@ -57,7 +57,7 @@ jobs:
           test -f site/es/gracias/index.html      || { echo "site/es/gracias/ missing"; exit 1; }
           test -f site/en/thank-you/index.html    || { echo "site/en/thank-you/ missing"; exit 1; }
           test -f site/fr/merci/index.html        || { echo "site/fr/merci/ missing"; exit 1; }
-          test -f site/functions/index.js         || { echo "root redirect function missing"; exit 1; }
+          test -f site/_worker.js                 || { echo "root redirect _worker.js missing"; exit 1; }
           test -f site/styles.css                 || { echo "site/styles.css missing"; exit 1; }
           test -f site/favicon.svg                || { echo "site/favicon.svg missing"; exit 1; }
           test -f site/sitemap.xml                || { echo "site/sitemap.xml missing"; exit 1; }
