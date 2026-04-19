@@ -1,8 +1,8 @@
 User-agent: *
 Allow: /
-Disallow: /gracias.html
-Disallow: /thank-you.html
-Disallow: /merci.html
-Disallow: /obrigado.html
+Disallow: /pt/obrigado/
+Disallow: /es/gracias/
+Disallow: /en/thank-you/
+Disallow: /fr/merci/
 
 Sitemap: https://cyberfuturo.com/sitemap.xml

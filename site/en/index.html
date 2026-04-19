@@ -18,7 +18,7 @@
   <meta name="color-scheme" content="dark">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://cyberfuturo.com/en/">
-  <link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/">
+  <link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/">
   <link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/">
   <link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/">
   <link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/">
@@ -45,10 +45,10 @@
       <a href="#start">Start</a>
     </nav>
     <div class="lang-switcher" role="navigation" aria-label="Select language">
-      <a href="/">PT</a>
-      <a href="/es/">ES</a>
-      <a href="/en/" class="active">EN</a>
-      <a href="/fr/">FR</a>
+      <a href="/pt/" hreflang="pt" data-lang="pt">PT</a>
+      <a href="/es/" hreflang="es" data-lang="es">ES</a>
+      <a href="/en/" hreflang="en" data-lang="en">EN</a>
+      <a href="/fr/" hreflang="fr" data-lang="fr">FR</a>
     </div>
   </div>
 </header>
@@ -254,7 +254,7 @@
     <form action="https://formsubmit.co/ajax/lujoeduca@gmail.com" method="POST">
       <input type="hidden" name="_subject" value="New CyberFuturo signup (EN)">
       <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_next" value="https://cyberfuturo.com/thank-you.html">
+      <input type="hidden" name="_next" value="https://cyberfuturo.com/en/thank-you/">
       <input type="email" name="email" placeholder="you@work.com" required aria-label="Email address">
       <button type="submit">Notify me</button>
     </form>
@@ -273,7 +273,7 @@
     <br>Free, open source, multilingual.
   </div>
   <div>
-    <a href="/">Português</a>
+    <a href="/pt/">Português</a>
     &nbsp;·&nbsp;
     <a href="/es/">Español</a>
     &nbsp;·&nbsp;
@@ -286,6 +286,32 @@
     <a href="#start">Start</a>
   </div>
 </footer>
+
+<div id="lang-mismatch" class="lang-mismatch" hidden></div>
+<script>
+  (function() {
+    var lang = document.documentElement.lang.slice(0, 2).toLowerCase();
+    if (!/^(pt|es|en|fr)$/.test(lang)) return;
+    document.cookie = "cf_lang=" + lang + "; path=/; max-age=15552000; SameSite=Lax";
+    var sel = document.querySelector('.lang-switcher a[data-lang="' + lang + '"]');
+    if (sel) sel.classList.add("active");
+
+    var prefs = (navigator.languages || [navigator.language || "en"])
+                  .map(function(x){ return x.slice(0,2).toLowerCase(); });
+    var first = prefs.find(function(p){ return ["pt","es","en","fr"].indexOf(p) >= 0; });
+    if (first && first !== lang) {
+      var MSG = {
+        pt: {text: "Você prefere outro idioma?", es: "Español", en: "English", fr: "Français", pt: "Português"},
+        es: {text: "¿Prefieres otro idioma?",    es: "Español", en: "English", fr: "Français", pt: "Português"},
+        en: {text: "Prefer another language?",    es: "Español", en: "English", fr: "Français", pt: "Português"},
+        fr: {text: "Préférer une autre langue ?", es: "Español", en: "English", fr: "Français", pt: "Português"}
+      };
+      var banner = document.getElementById("lang-mismatch");
+      banner.innerHTML = MSG[lang].text + ' <a href="/' + first + '/">' + MSG[lang][first] + '</a>';
+      banner.hidden = false;
+    }
+  })();
+</script>
 
 </body>
 </html>

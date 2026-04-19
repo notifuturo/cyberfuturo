@@ -49,26 +49,31 @@ jobs:
 
       - name: Basic smoke check
         run: |
-          test -f site/index.html          || { echo "site/index.html missing"; exit 1; }
-          test -f site/es/index.html       || { echo "site/es/index.html missing"; exit 1; }
-          test -f site/en/index.html       || { echo "site/en/index.html missing"; exit 1; }
-          test -f site/fr/index.html       || { echo "site/fr/index.html missing"; exit 1; }
-          test -f site/styles.css          || { echo "site/styles.css missing"; exit 1; }
-          test -f site/favicon.svg         || { echo "site/favicon.svg missing"; exit 1; }
-          test -f site/sitemap.xml         || { echo "site/sitemap.xml missing"; exit 1; }
-          test -f site/robots.txt          || { echo "site/robots.txt missing"; exit 1; }
+          test -f site/pt/index.html              || { echo "site/pt/index.html missing"; exit 1; }
+          test -f site/es/index.html              || { echo "site/es/index.html missing"; exit 1; }
+          test -f site/en/index.html              || { echo "site/en/index.html missing"; exit 1; }
+          test -f site/fr/index.html              || { echo "site/fr/index.html missing"; exit 1; }
+          test -f site/pt/obrigado/index.html     || { echo "site/pt/obrigado/ missing"; exit 1; }
+          test -f site/es/gracias/index.html      || { echo "site/es/gracias/ missing"; exit 1; }
+          test -f site/en/thank-you/index.html    || { echo "site/en/thank-you/ missing"; exit 1; }
+          test -f site/fr/merci/index.html        || { echo "site/fr/merci/ missing"; exit 1; }
+          test -f site/functions/index.js         || { echo "root redirect function missing"; exit 1; }
+          test -f site/styles.css                 || { echo "site/styles.css missing"; exit 1; }
+          test -f site/favicon.svg                || { echo "site/favicon.svg missing"; exit 1; }
+          test -f site/sitemap.xml                || { echo "site/sitemap.xml missing"; exit 1; }
+          test -f site/robots.txt                 || { echo "site/robots.txt missing"; exit 1; }
           echo "all required files present"
 
       - name: Validate HTML references
         run: |
-          # Fail if any HTML file references the old /pt/ path (dead after the reorg)
-          if grep -r '"/pt/' site/ --include="*.html" > /dev/null; then
-            echo "Found stale /pt/ references in site/:"
-            grep -rn '"/pt/' site/ --include="*.html"
-            exit 1
-          fi
-          # Fail if any HTML references the bare /gracias.html etc. thank-you pages
-          # with the wrong language form action (safety check).
+          # Fail if any HTML file references the old flat thank-you paths.
+          for stale in '"/obrigado.html"' '"/gracias.html"' '"/thank-you.html"' '"/merci.html"'; do
+            if grep -r "$stale" site/ --include="*.html" > /dev/null; then
+              echo "Found stale $stale references in site/:"
+              grep -rn "$stale" site/ --include="*.html"
+              exit 1
+            fi
+          done
           echo "HTML reference validation passed"
 
       - name: Deploy to Cloudflare Pages
@@ -81,11 +86,42 @@ jobs:
       - name: Post-deploy smoke test
         run: |
           sleep 5
-          for path in "/" "/es/" "/en/" "/fr/" "/obrigado.html" "/gracias.html" "/thank-you.html" "/merci.html"; do
+
+          # Root must 302 to some language (smart redirect Pages Function).
+          root_code=$(curl -sS -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev/")
+          if [ "$root_code" != "302" ]; then
+            echo "FAIL: / expected 302 (smart redirect), got $root_code"
+            exit 1
+          fi
+          printf "  %-24s %s\n" "/" "302 (redirect as expected)"
+
+          # Each language landing must be 200.
+          for path in "/pt/" "/es/" "/en/" "/fr/"; do
             code=$(curl -sSL -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev${path}")
             printf "  %-24s %s\n" "$path" "$code"
             if [ "$code" != "200" ]; then
               echo "FAIL: $path returned $code"
+              exit 1
+            fi
+          done
+
+          # Each thank-you page must be 200 (reachable via trailing-slash directory form).
+          for path in "/pt/obrigado/" "/es/gracias/" "/en/thank-you/" "/fr/merci/"; do
+            code=$(curl -sSL -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev${path}")
+            printf "  %-24s %s\n" "$path" "$code"
+            if [ "$code" != "200" ]; then
+              echo "FAIL: $path returned $code"
+              exit 1
+            fi
+          done
+
+          # Accept-Language routing sanity.
+          for pair in "es:/es/" "en:/en/" "fr:/fr/" "pt:/pt/"; do
+            al="${pair%%:*}"
+            expected="${pair##*:}"
+            loc=$(curl -sS -o /dev/null -w "%{redirect_url}" -H "Accept-Language: ${al}" "https://cyberfuturo.pages.dev/")
+            if [[ "$loc" != *"${expected}" ]]; then
+              echo "FAIL: Accept-Language: $al expected redirect to *${expected}, got $loc"
               exit 1
             fi
           done
