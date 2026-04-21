@@ -7,8 +7,9 @@
 # The database_id below is NOT a secret — D1 access is gated by Cloudflare API
 # credentials, not by knowledge of the ID. Safe to commit.
 
-name                 = "cyberfuturo"
-compatibility_date   = "2026-04-15"
+name                    = "cyberfuturo"
+compatibility_date      = "2026-04-15"
+pages_build_output_dir  = "site"
 
 [[d1_databases]]
 binding       = "CF_TELEMETRY"
