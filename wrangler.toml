@@ -1,0 +1,16 @@
+# Cloudflare Pages — project configuration.
+#
+# Read by `wrangler pages deploy site --project-name=cyberfuturo`.
+# The deploy command argument (`site`) specifies the asset directory;
+# this file declares bindings that get registered with the project on deploy.
+#
+# The database_id below is NOT a secret — D1 access is gated by Cloudflare API
+# credentials, not by knowledge of the ID. Safe to commit.
+
+name                 = "cyberfuturo"
+compatibility_date   = "2026-04-15"
+
+[[d1_databases]]
+binding       = "CF_TELEMETRY"
+database_name = "cf_telemetry"
+database_id   = "97f0f6c2-9d6f-4fb9-9107-d0cd3836e2ac"
