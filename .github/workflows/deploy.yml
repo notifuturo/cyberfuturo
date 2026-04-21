@@ -61,6 +61,10 @@ jobs:
           test -f site/es/privacidad/index.html       || { echo "site/es/privacidad/ missing"; exit 1; }
           test -f site/en/privacy/index.html          || { echo "site/en/privacy/ missing"; exit 1; }
           test -f site/fr/confidentialite/index.html  || { echo "site/fr/confidentialite/ missing"; exit 1; }
+          test -f site/pt/comprar/index.html          || { echo "site/pt/comprar/ missing"; exit 1; }
+          test -f site/es/comprar/index.html          || { echo "site/es/comprar/ missing"; exit 1; }
+          test -f site/en/buy/index.html              || { echo "site/en/buy/ missing"; exit 1; }
+          test -f site/fr/acheter/index.html          || { echo "site/fr/acheter/ missing"; exit 1; }
           test -f site/_worker.js                 || { echo "root redirect _worker.js missing"; exit 1; }
           test -f site/styles.css                 || { echo "site/styles.css missing"; exit 1; }
           test -f site/favicon.svg                || { echo "site/favicon.svg missing"; exit 1; }
@@ -128,6 +132,22 @@ jobs:
               exit 1
             fi
           done
+
+          # Each buy page must be 200.
+          for path in "/pt/comprar/" "/es/comprar/" "/en/buy/" "/fr/acheter/"; do
+            code=$(curl -sSL -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev${path}")
+            printf "  %-24s %s\n" "$path" "$code"
+            if [ "$code" != "200" ]; then
+              echo "FAIL: $path returned $code"
+              exit 1
+            fi
+          done
+
+          # Buy pages carry the Stripe Payment Link.
+          if ! curl -sSL "https://cyberfuturo.pages.dev/pt/comprar/" | grep -q "buy.stripe.com"; then
+            echo "FAIL: /pt/comprar/ does not contain the Stripe Payment Link"
+            exit 1
+          fi
 
           # Telemetry endpoint CORS preflight is up (returns 204).
           ping_code=$(curl -sS -o /dev/null -w "%{http_code}" -X OPTIONS "https://cyberfuturo.pages.dev/api/ping")

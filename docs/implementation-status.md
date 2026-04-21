@@ -18,9 +18,9 @@
 
 **Endpoint returns 503 until you add the D1 binding** (see "Requires you" below).
 
-### Product spec — `docs/product-spec.md` (Phase C — skeleton)
+### Product spec — `docs/product-spec.md` (Phase C — skeleton + Phase D — buy pages)
 
-**CODE APPLIED in working tree.** Not yet committed. Covers the endpoint skeleton + access control. Scope notes after the file list.
+**SHIPPED** commits `20b1199` + `ec2bad9` + `d775540` (endpoint skeleton); **Phase D buy pages applied in working tree** (not yet committed). Scope notes after the file list.
 
 **Files created:**
 
@@ -57,9 +57,17 @@ If the product spec later needs the full Stripe SDK (for refunds, customer porta
 - HMAC-SHA256 roundtrip via Web Crypto produces 64-hex output matching Stripe's expected format
 - `python3 -c "import yaml; yaml.safe_load(open('.github/workflows/deploy.yml'))"` passes
 
+**Phase D — buy pages (new, 2026-04-21):**
+
+Payment Link URL baked into static HTML at `site/pt/comprar/`, `site/es/comprar/`, `site/en/buy/`, `site/fr/acheter/`. Each page: hero with $9 USD + "Stripe auto-converts locally + Pix for BR buyers via Adaptive Pricing" explanation, 5-item value list (chapters / handouts / certs / lifetime / exercises stay free), 4-question FAQ, primary CTA linking to the test Payment Link `https://buy.stripe.com/test_aFa28q9kbet9bXI8AcdIA00`. Landing pages gained a secondary "Buy the book · $9" button between "Open in Codespaces" and "See how it works". Footers cross-link to the localized buy page.
+
+**Architectural decision — no country-routing Pages Function:**
+
+The spec §12.1 wired each buy page to a Pages Function that picked one of two Payment Links based on `CF-IPCountry` (BR-specific BRL link vs. global USD link). With Stripe's Canada-registered account + Adaptive Pricing always-on for Payment Links, a **single** USD Payment Link covers all regions — Stripe shows BR buyers the BRL-converted amount with Pix enabled automatically at checkout. So buy pages are plain static HTML with a single hardcoded Payment Link URL. When flipping to live mode, the test URL needs to be replaced across the 4 files (marker comment in each HTML head notes this). Simpler, fewer moving parts, one URL source of truth.
+
 **Not included in this round** (deferred until founder prerequisites land):
 
-- **Buy pages** (`/pt/comprar/` etc., spec §12) — need Payment Link URLs from Stripe dashboard
+- Removed: ~~buy pages~~ ✓ done
 - **Chapter content refactor** (spec §3) — splits each `lesson.md` into `task.md` + `site/pt/livro/NN-slug/index.html`; chapter prose is founder-authored
 - **52 SVG templates** (spec §10)
 - **Handout/cert PDF generation** (spec §9.3) — Cloudflare Browser Rendering requires the Workers Paid plan (~$5/mo), contradicting the free-tier ADR. SVG-only fallback works on free tier; we'll wire that in once templates exist
