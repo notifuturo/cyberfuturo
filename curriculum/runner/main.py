@@ -15,6 +15,7 @@ Commands:
   ./cf telemetry on      Ativa a telemetria
   ./cf telemetry off     Desativa a telemetria
   ./cf telemetry forget  Apaga o anon_id local e pede ao servidor pra apagar os registros
+  ./cf activate CODIGO   Vincula sua compra ao workspace (desbloqueia certificados)
 
 Internationalization:
   The runner's user-facing strings default to Portuguese (pt-BR). The language
@@ -57,6 +58,8 @@ PROGRESS_FILE = CURRICULUM_DIR / ".progress.json"
 
 TELEMETRY_ENDPOINT = "https://cyberfuturo.com/api/ping"
 TELEMETRY_TIMEOUT_S = 2.0   # ping must not slow the runner perceptibly
+ACTIVATE_ENDPOINT  = "https://cyberfuturo.com/api/activate"
+ACTIVATE_TIMEOUT_S = 5.0    # activation is user-initiated; ok to wait a little
 
 # ---- ANSI colors (Dracula-ish) -------------------------------------------------
 
@@ -581,6 +584,57 @@ def cmd_telemetry(progress: dict, args: list[str]) -> int:
     return 1
 
 
+def cmd_activate(progress: dict, args: list[str]) -> int:
+    if not args:
+        print(color("  Uso: ./cf activate CODIGO", RED))
+        return 1
+    code = args[0].strip().upper()
+
+    # Activation needs an anon_id. If the student skipped the telemetry prompt,
+    # generate one now — activation implies consent to completion pings
+    # (buyers need those pings to earn handouts and certificates).
+    anon_id = progress.get("anon_id")
+    if not anon_id:
+        anon_id = str(uuid.uuid4())
+        progress["anon_id"] = anon_id
+        progress["telemetry_opt_in"] = True
+        save_progress(progress)
+
+    payload = json.dumps({"code": code, "anon_id": anon_id}).encode("utf-8")
+    req = urllib.request.Request(
+        ACTIVATE_ENDPOINT,
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=ACTIVATE_TIMEOUT_S) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        try:
+            err = json.loads(e.read().decode("utf-8")).get("error", f"HTTP {e.code}")
+        except Exception:
+            err = f"HTTP {e.code}"
+        print(color(f"  ✘ {err}", RED))
+        return 1
+    except (urllib.error.URLError, TimeoutError, OSError):
+        print(color("  ✘ Não consegui falar com o servidor. Tente de novo.", RED))
+        return 1
+
+    if not data.get("ok"):
+        print(color(f"  ✘ {data.get('error', 'activation failed')}", RED))
+        return 1
+
+    progress["activated"] = True
+    progress["verify_url"] = data.get("verify_url")
+    save_progress(progress)
+
+    print(color("  ✔ Conta vinculada.", GREEN + BOLD))
+    print(f"  {DIM}Sua página pessoal: {data.get('verify_url')}{RESET}")
+    print(f"  {DIM}Cada capítulo concluído gera um handout lá.{RESET}")
+    return 0
+
+
 # ---- Main ----------------------------------------------------------------------
 
 def main(argv: list[str]) -> int:
@@ -609,6 +663,8 @@ def main(argv: list[str]) -> int:
         return cmd_reset(progress)
     if command == "telemetry":
         return cmd_telemetry(progress, args)
+    if command == "activate":
+        return cmd_activate(progress, args)
     if command in ("help", "-h", "--help"):
         return cmd_help()
 

@@ -2,7 +2,7 @@
 
 > Last updated: 2026-04-21.
 >
-> This doc tracks the progress of the three specs in `docs/*-spec.md` and enumerates what's pending on the founder's side (things I cannot do autonomously because they require external accounts, credentials, content authorship, design decisions, or legal/business judgment).
+> Tracks the three specs in `docs/*-spec.md` and enumerates what's pending on the founder's side (things I cannot do autonomously because they require external accounts, credentials, content authorship, design decisions, or legal/business judgment).
 
 ---
 
@@ -10,149 +10,129 @@
 
 ### URL restructure spec — `docs/url-restructure-spec.md`
 
-**Status: LIVE.** Commits `b5eb2ce` (equalize 4 languages) and `76992cc` (switch to `_worker.js` advanced mode to fix root redirect).
-
-The bare root now 302s to the best language (cookie → Accept-Language → CF-IPCountry → `en`), and all four language homes live under `/pt/`, `/es/`, `/en/`, `/fr/`. Thank-you pages moved into their language folders. `_worker.js` owns all edge routing; the `functions/` directory was retired because static-asset handling couldn't cleanly hand the root over to a Function.
+**LIVE.** Commits `b5eb2ce` + `76992cc`. Bare root 302s to the best language; `/pt/`, `/es/`, `/en/`, `/fr/` are equal. `_worker.js` owns all edge routing.
 
 ### Telemetry spec — `docs/telemetry-spec.md`
 
-**Status: CODE APPLIED in working tree.** Architecture note: because the site now runs in `_worker.js` advanced mode, the spec's `site/functions/api/ping.js` is integrated directly into `site/_worker.js` as a `/api/ping` route branch. Same validation rules, same contract, same CORS — just dispatched by method inside the worker rather than by Pages Functions file conventions. See the `// ---- /api/ping` section in `site/_worker.js`.
+**LIVE.** Commit `1f42c7c`. `/api/ping` POST/OPTIONS/DELETE integrated into `_worker.js` as a route branch. Strict validation, idempotent inserts, tombstone forget table, zero PII. Four privacy pages live in all languages. Runner has opt-in prompt + fire-and-forget `ping()` + `./cf telemetry [status|on|off|forget]`.
+
+**Endpoint returns 503 until you add the D1 binding** (see "Requires you" below).
+
+### Product spec — `docs/product-spec.md` (Phase C — skeleton)
+
+**CODE APPLIED in working tree.** Not yet committed. Covers the endpoint skeleton + access control. Scope notes after the file list.
 
 **Files created:**
 
 | Path | What it does |
 |---|---|
-| `scripts/d1_schema.sql` | D1 schema: `events` (UNIQUE(anon_id,event,lesson)) + `forgotten_ids` tombstones |
-| `site/pt/privacidade/index.html` | Privacy contract in PT (canonical) |
-| `site/es/privacidad/index.html` | Privacy contract in ES |
-| `site/en/privacy/index.html` | Privacy contract in EN |
-| `site/fr/confidentialite/index.html` | Privacy contract in FR |
+| (none new in this round — schema extended in place) | — |
 
 **Files modified:**
 
 | Path | What changed |
 |---|---|
-| `site/_worker.js` | Added `/api/ping` POST/OPTIONS/DELETE handlers bound to `env.CF_TELEMETRY` D1. Strict input validation, `INSERT OR IGNORE` idempotency, tombstone check. Returns 503 if the binding is missing. |
-| `curriculum/runner/main.py` | Telemetry opt-in prompt (PT/ES/EN/FR), fire-and-forget `ping()` (2s timeout, swallows all network errors), wired into `cmd_start` and `cmd_check`, new `./cf telemetry [status\|on\|off\|forget]` subcommand, updated `__doc__` help. All stdlib, no new deps. |
-| `site/pt/index.html` etc. | Footer now links to the language's privacy page |
-| `.github/workflows/deploy.yml` | Basic smoke check: 4 new privacy-page file existence tests. Post-deploy: /pt/privacidade/, /es/privacidad/, /en/privacy/, /fr/confidentialite/ all return 200; `OPTIONS /api/ping` returns 204. |
+| `scripts/d1_schema.sql` | Added `buyers`, `artifacts`, `webhook_log` tables + indexes (spec §4). All `CREATE IF NOT EXISTS`; re-running is safe. |
+| `site/_worker.js` | Added `/api/purchase/stripe` (manual HMAC-SHA256 via Web Crypto, no Stripe SDK), `/api/activate`, `/auth`, and cookie-gate middleware for `/pt/livro/` `/es/libro/` `/en/book/` `/fr/livre/`. Welcome email via Resend, skipped gracefully when `RESEND_API_KEY` is absent. Worker is 572 lines — over CLAUDE.md's 500-line soft cap. Still single-file manageable (every route is a named section); will introduce a bundler + split when it exceeds ~700 or we need npm imports like the full Stripe SDK. |
+| `curriculum/runner/main.py` | Added `./cf activate CODIGO` — POSTs `{code, anon_id}` to `/api/activate`, writes `activated=true` and `verify_url` to progress on success. Auto-generates an `anon_id` and opts-in to telemetry on first activation. |
+| `.github/workflows/deploy.yml` | Post-deploy smoke tests: `/auth` without token → 400/503, `/api/activate` empty body → 400/503, `/api/purchase/stripe` no signature → 400/503, `/pt/livro/foo/` no cookie → 302 to `/pt/comprar/`. |
+
+**Architectural decision — no Stripe SDK:**
+
+Spec §5.2 imports `Stripe` from npm. Advanced-mode `_worker.js` has no bundler, so the SDK isn't loadable without a build step. Instead, HMAC signature verification is implemented directly against the Stripe docs (`t=<ts>,v1=<hmac>` header format, HMAC-SHA256 of `<ts>.<rawBody>` using `STRIPE_WEBHOOK_SECRET`). This is:
+- Smaller (no npm dep, no bundler)
+- Faster (cold-start reduces by a few ms)
+- Auditable (30 lines of cryptography vs. Stripe SDK surface area)
+- Exactly what Stripe officially documents for environments without their SDK
+
+If the product spec later needs the full Stripe SDK (for refunds, customer portal, subscriptions), we introduce a wrangler build step at that point. For the webhook path only, manual HMAC is correct.
 
 **Validation done:**
 
-- `python3 -m py_compile curriculum/runner/main.py` passes
-- `./cf help` shows the four new `telemetry` subcommands
-- `./cf telemetry status` prints "ainda não perguntada" on a fresh progress file
-- No HTML file is orphaned; privacy pages cross-link in all four languages
-- `_worker.js` keeps the root-redirect behavior intact; `/api/ping` is now the only non-root route the worker owns
+- `python3 -m py_compile curriculum/runner/main.py` passes; help lists the new `activate` subcommand
+- `./cf activate` with no arg prints the usage message
+- `./cf activate HELLO123` attempts the network call (currently hits the live prod site which 404s because the route isn't deployed yet — will pass after push + deploy)
+- `sqlite3` in-memory roundtrip: schema applies cleanly, buyer + artifact + webhook_log inserts all succeed, webhook dedup returns rowcount=0 on replay
+- `node --check site/_worker.js` parses; ESM import exposes a `fetch` function
+- HMAC-SHA256 roundtrip via Web Crypto produces 64-hex output matching Stripe's expected format
+- `python3 -c "import yaml; yaml.safe_load(open('.github/workflows/deploy.yml'))"` passes
 
-**What to do to ship this:**
+**Not included in this round** (deferred until founder prerequisites land):
 
-```bash
-cd /home/cypherborg/cyberfuturo
-git status
-git diff
-# Review, then commit + push. After the deploy smoke test passes,
-# the telemetry endpoint will be live but will return 503 until the D1
-# binding is added in the Cloudflare dashboard. That's fine — the runner's
-# fire-and-forget pings swallow 5xx errors and keep working.
-```
+- **Buy pages** (`/pt/comprar/` etc., spec §12) — need Payment Link URLs from Stripe dashboard
+- **Chapter content refactor** (spec §3) — splits each `lesson.md` into `task.md` + `site/pt/livro/NN-slug/index.html`; chapter prose is founder-authored
+- **52 SVG templates** (spec §10)
+- **Handout/cert PDF generation** (spec §9.3) — Cloudflare Browser Rendering requires the Workers Paid plan (~$5/mo), contradicting the free-tier ADR. SVG-only fallback works on free tier; we'll wire that in once templates exist
+- **Verify + backers pages** (spec §11) — nightly GitHub Action that reads D1 artifacts and rebuilds static HTML; depends on populated `artifacts` rows
+- **Orientation pages** (`como-comecar/`, spec §13) — short content page, low priority
+- **Landing-page price card** (spec §14) — updates `site/pt/index.html` etc. with the R$47/$9 CTA next to "Open in Codespaces"
 
-**What still requires YOU (do this to actually start receiving pings):**
+---
 
-1. **Create D1 database** — one-time, requires `wrangler` authenticated:
+## ⏸️ Requires you
+
+These are the external-account / dashboard / content items only you can do.
+
+### For telemetry (do this first; unlocks /api/ping):
+
+1. **Create D1 database** (~5 min, one-time, needs `wrangler` authenticated):
    ```bash
    wrangler d1 create cf_telemetry
    # Copy the database_id from the output.
    wrangler d1 execute cf_telemetry --file scripts/d1_schema.sql
    ```
-
-2. **Bind D1 to the Pages project** — dashboard route (preferred for a public repo):
+2. **Bind D1 to Pages project** (dashboard, ~5 min):
    - Cloudflare dashboard → Workers & Pages → `cyberfuturo` → Settings → Functions → D1 database bindings
    - Add binding: variable name `CF_TELEMETRY`, database `cf_telemetry`
    - Redeploy (push any commit, or click "Retry deployment")
+3. **(Optional)** set `CF_TELEMETRY_DISABLED` env var as an operator escape hatch
 
-3. **(Optional) Set Pages env var** for the operator escape hatch:
-   - `CF_TELEMETRY_DISABLED` — normally unset; set to force-disable without touching the DB
+### For product (do these before the buy flow works end-to-end):
 
-Estimated time on your side: **~15 minutes.**
-
----
-
-## ⏸️ Ready-to-apply but pending founder involvement
-
-### Product spec — `docs/product-spec.md`
-
-Untouched this round; I'll pick this up after the telemetry commit lands and the D1 binding is in place.
-
-**What I can do autonomously (next round):**
-- Extend `scripts/d1_schema.sql` with the `buyers`, `artifacts`, `webhook_log` tables (section 4)
-- Integrate `/api/purchase/stripe`, `/api/activate`, `/auth/*`, and the `/livro/` cookie gate into `site/_worker.js` as additional route branches (same pattern as `/api/ping`)
-- Add `site/_lib/email.js` and `site/_lib/artifacts.js` helpers — these live outside the worker and get imported into it
-- Patch `curriculum/runner/main.py` to add `cmd_activate` (section 7.2)
-- Write the 4 buy-page routes (section 12.1)
-- Write `.github/workflows/rebuild-verify.yml` and `scripts/rebuild_verify_pages.py` (section 11)
-
-**Architecture note for next round:** the product spec was written with Pages Functions (`site/functions/...`) in mind. All of that code integrates into `site/_worker.js` and the `site/_lib/` module tree, following the same pattern the telemetry integration already established. This is simpler than it sounds — each endpoint is a named `handleFoo` function called from the worker's `fetch` switch.
-
-**What requires YOU:**
-
-1. **Create a Stripe account** (if not already) and, if possible, enable BRL + Pix. Stripe onboarding tells you what documentation is needed (personal/MEI/CNPJ).
-
-2. **In Stripe dashboard, create:**
-   - One product: "CyberFuturo — Livro Interativo"
-   - Two Prices on that product: **R$47 BRL** (`PRICE_BR`) and **$9 USD** (`PRICE_GLOBAL`)
-   - Two Payment Links:
-     - BR → `PRICE_BR`, payment methods: `pix`, `boleto`, `card` (with installment support up to 12×), custom field `lang_pref` (dropdown pt/es)
-     - Global → `PRICE_GLOBAL`, payment methods: `card`, `apple_pay`, `google_pay`, `link`, custom field `lang_pref` (dropdown pt/es/en/fr)
-   - One webhook endpoint: `POST https://cyberfuturo.com/api/purchase/stripe`, events: `checkout.session.completed` only, copy the signing secret
-
-3. **Set Pages env vars** (Cloudflare dashboard → Pages → `cyberfuturo` → Settings → Environment variables, Production):
+1. **Stripe account** — enable BRL + Pix if possible
+2. **Stripe product + prices + payment links:**
+   - Product: "CyberFuturo — Livro Interativo"
+   - Prices: `PRICE_BR` = R$47 BRL, `PRICE_GLOBAL` = $9 USD
+   - Payment Links:
+     - BR → `PRICE_BR`, methods: pix, boleto, card (up to 12×), custom field `lang_pref` (pt/es)
+     - Global → `PRICE_GLOBAL`, methods: card, apple_pay, google_pay, link, custom field `lang_pref` (pt/es/en/fr)
+   - Webhook endpoint: `POST https://cyberfuturo.com/api/purchase/stripe`, event: `checkout.session.completed` only, copy signing secret
+3. **Pages env vars** (dashboard → Production):
    - `STRIPE_SECRET_KEY` = `sk_live_...`
    - `STRIPE_WEBHOOK_SECRET` = `whsec_...`
    - `RESEND_API_KEY` = `re_...` (create Resend account first; free tier 3,000/mo)
-
-4. **Create R2 bucket + Browser Rendering binding:**
+4. **R2 bucket** (for artifact PDFs when we get there):
    ```bash
    wrangler r2 bucket create cyberfuturo-artifacts
    ```
-   Then dashboard → Pages → `cyberfuturo` → Settings → Functions:
+   Then dashboard → Pages → Settings → Functions:
    - R2 binding: `CF_ARTIFACTS` → `cyberfuturo-artifacts`
-   - Browser Rendering: enable and name the binding `CF_BROWSER`
+   - Browser Rendering: enable (note: requires Workers Paid plan). If staying on free tier, we ship SVG-only handouts instead.
+5. **DNS records for email** — Resend dashboard generates the SPF/DKIM/DMARC records for `cyberfuturo.com`
+6. **Paste the two Payment Link URLs** once I've written the buy-page routes (I'll leave sentinels for you to swap)
+7. **Author chapter content** — the big unknown-scope item. All 9 chapters × 4 languages need prose teaching content
+8. **Design 52 SVG templates** (9 handouts × 4 languages + 3 module certs × 4 languages + 1 final × 4 languages). One concrete PT example exists in spec §10
 
-5. **DNS records for email** — Resend dashboard will give you the SPF, DKIM, and DMARC records to add at your domain registrar for `cyberfuturo.com`.
-
-6. **Paste Payment Link URLs** into the four buy-page routes (I'll leave them with `REPLACE_WITH_BR_LINK` and `REPLACE_WITH_GLOBAL_LINK` sentinels).
-
-7. **Author chapter content.** This is the big unknown-scope item. All 9 chapters × 4 languages need prose teaching content (not just the task statements). Current `lesson.md` files have some of this but need to be split per the spec's refactor section (section 3) AND expanded into real book chapters with the teaching context / explanations / GUI→CLI translation table for chapter 00.
-
-8. **Design 52 SVG templates** (9 handouts × 4 languages + 3 module certs × 4 languages + 1 final cert × 4 languages). Spec has ONE concrete example (handout for chapter 04 PT). The remaining 51 follow the same pattern. Founder can author these or commission them.
-
-9. **Legal / tax decisions:**
-   - **Brazilian NFe (nota fiscal)**: manual via prefecture site, or subscribe to NFe.io (~R$30-50/mo). Deferred until volume justifies automation.
-   - **Stripe Tax**: optional, enable for automatic VAT in EU/UK/AU. Not required for launch.
-
-Estimated time on your side (excluding chapter-content authorship and template design): **~3-4 hours of account setup + dashboard work**.
+Estimated time on your side for 1-5 (excluding content authorship and template design): **~3-4 hours**.
 
 ---
 
-## 📋 What's left in the wider roadmap (beyond these three specs)
+## 📋 Wider roadmap (no action now)
 
-No action needed now; listed for visibility.
-
-- **Public `/stats/` dashboard** — nightly GitHub Action reads D1, rebuilds an aggregate-only stats page (completions per lesson, country distribution, trend). Separate spec when ready.
-- **YouTube companion channel** (optional) — PT-BR videos driving audience to the site. Separate content strategy, no technical spec needed.
-- **Hook-PDF sharing toolkit** — when a buyer completes a chapter, a "share" button on their verify page opens a one-click LinkedIn / Twitter / WhatsApp share modal with the PDF attached. Nice-to-have, not MVP.
-- **Grant applications** (OEI, CPLP, OIF, Erasmus+, FINEP) — pursued when brand recognition exists and application time is warranted.
-- **Edition-upgrade flow** (v1.x → v2.0) — spec'd briefly in `product-spec.md` section 18; produce a real spec once v2.0 content is in sight.
+- **Public `/stats/` dashboard** — nightly GitHub Action reads D1, rebuilds an aggregate stats page
+- **YouTube companion channel** — optional, content strategy only
+- **Hook-PDF sharing toolkit** — "share" button on verify pages for LinkedIn/Twitter/WhatsApp
+- **Grant applications** — OEI, CPLP, OIF, Erasmus+, FINEP — pursue when brand recognition exists
+- **Edition-upgrade flow** (v1.x → v2.0) — spec when v2.0 content is in sight
 
 ---
 
 ## Suggested order of operations
 
-1. **Today**: review the telemetry diff → commit → push → watch deploy → provision D1 + dashboard binding
-2. **This week**: Stripe + Cloudflare (R2 + Browser Rendering) + Resend account setup (3-4 hours)
-3. **After that**: I come back and ship product-spec code integrated into `_worker.js`
-4. **Parallel track (founder-owned)**: chapter content authorship + SVG template design
-5. **Launch candidate**: when #3 is live AND enough chapter content exists for v1.0 of the book AND Stripe Payment Links + webhook are live end-to-end tested
+1. **Now**: review the Phase C diff → commit → push → watch deploy. Smoke tests cover the new endpoints without needing D1 data
+2. **This week** (you): D1 create + dashboard binding (~15 min) — unlocks telemetry. Then Stripe + Resend + R2 setup (~3h) — unlocks the webhook path
+3. **After that** (me): once Payment Links exist, ship the buy pages + the chapter-splitter tooling + SVG-only handout fallback
+4. **Parallel track (you)**: chapter content authorship + SVG template design
+5. **Launch candidate**: when step 3 is live AND v1.0 content exists AND Stripe Payment Links + webhook are end-to-end tested in Stripe test mode
 
 At that point, the site is a fully self-running paid-book-with-certificates on Cloudflare free tier + Stripe fees. No servers. No ongoing human touch.

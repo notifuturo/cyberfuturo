@@ -137,6 +137,31 @@ jobs:
             exit 1
           fi
 
+          # Product endpoints are wired (503 accepted — D1 binding may be absent pre-provisioning).
+          # /auth without token → 400. With DB absent it'd be 503; accept either.
+          auth_code=$(curl -sS -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev/auth")
+          printf "  %-24s %s\n" "/auth (no token)" "$auth_code"
+          case "$auth_code" in 400|503) ;; *) echo "FAIL: /auth expected 400/503, got $auth_code"; exit 1 ;; esac
+
+          # /api/activate with empty body → 400 or 503. Exercises the handler wiring.
+          act_code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "https://cyberfuturo.pages.dev/api/activate" -H "content-type: application/json" -d "")
+          printf "  %-24s %s\n" "/api/activate (empty)" "$act_code"
+          case "$act_code" in 400|503) ;; *) echo "FAIL: /api/activate expected 400/503, got $act_code"; exit 1 ;; esac
+
+          # /api/purchase/stripe without signature → 400 or 503 (secret/binding may be absent).
+          stripe_code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "https://cyberfuturo.pages.dev/api/purchase/stripe" -d "{}")
+          printf "  %-24s %s\n" "/api/purchase/stripe" "$stripe_code"
+          case "$stripe_code" in 400|503) ;; *) echo "FAIL: /api/purchase/stripe expected 400/503, got $stripe_code"; exit 1 ;; esac
+
+          # Cookie gate — /pt/livro/foo/ without cf_access cookie must 302 to /pt/comprar/.
+          livro_code=$(curl -sS -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev/pt/livro/foo/")
+          livro_loc=$(curl -sS -o /dev/null -w "%{redirect_url}" "https://cyberfuturo.pages.dev/pt/livro/foo/")
+          printf "  %-24s %s -> %s\n" "/pt/livro/ (no cookie)" "$livro_code" "$livro_loc"
+          if [ "$livro_code" != "302" ] || [[ "$livro_loc" != *"/pt/comprar/"* ]]; then
+            echo "FAIL: /pt/livro/foo/ expected 302 to /pt/comprar/, got $livro_code -> $livro_loc"
+            exit 1
+          fi
+
           # Accept-Language routing sanity.
           for pair in "es:/es/" "en:/en/" "fr:/fr/" "pt:/pt/"; do
             al="${pair%%:*}"
