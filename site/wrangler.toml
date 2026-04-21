@@ -1,0 +1,15 @@
+# Cloudflare Pages — project configuration for cyberfuturo.
+#
+# Declares the D1 binding so the Pages deploy picks it up automatically.
+# Avoids the dashboard-click "add D1 binding" step that would otherwise be
+# required. The database_id below is not a secret — D1 access is gated by
+# Cloudflare API credentials, not by this ID.
+
+name                    = "cyberfuturo"
+compatibility_date      = "2026-04-15"
+pages_build_output_dir  = "."
+
+[[d1_databases]]
+binding       = "CF_TELEMETRY"
+database_name = "cf_telemetry"
+database_id   = "97f0f6c2-9d6f-4fb9-9107-d0cd3836e2ac"

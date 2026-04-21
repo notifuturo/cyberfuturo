@@ -81,19 +81,16 @@ The spec §12.1 wired each buy page to a Pages Function that picked one of two P
 
 These are the external-account / dashboard / content items only you can do.
 
-### For telemetry (do this first; unlocks /api/ping):
+### For telemetry — DONE
 
-1. **Create D1 database** (~5 min, one-time, needs `wrangler` authenticated):
-   ```bash
-   wrangler d1 create cf_telemetry
-   # Copy the database_id from the output.
-   wrangler d1 execute cf_telemetry --file scripts/d1_schema.sql
-   ```
-2. **Bind D1 to Pages project** (dashboard, ~5 min):
-   - Cloudflare dashboard → Workers & Pages → `cyberfuturo` → Settings → Functions → D1 database bindings
-   - Add binding: variable name `CF_TELEMETRY`, database `cf_telemetry`
-   - Redeploy (push any commit, or click "Retry deployment")
-3. **(Optional)** set `CF_TELEMETRY_DISABLED` env var as an operator escape hatch
+✅ D1 database `cf_telemetry` created (id `97f0f6c2-9d6f-4fb9-9107-d0cd3836e2ac`, region ENAM) via wrangler CLI.
+✅ Schema applied remotely (events + forgotten_ids + buyers + artifacts + webhook_log, all 5 tables live).
+✅ D1 binding declared in `site/wrangler.toml` — Pages deploy picks it up automatically, no dashboard click needed.
+✅ `STRIPE_WEBHOOK_SECRET` uploaded encrypted via `wrangler pages secret put`.
+
+All this happened via `wrangler` CLI already-authenticated on the dev machine as `futuronoti@gmail.com`. No dashboard work was needed.
+
+**Optional operator escape hatch:** if you ever need to force-disable telemetry without code changes, set `CF_TELEMETRY_DISABLED=1` as a Pages env var. Leaving it unset is the default.
 
 ### For product (do these before the buy flow works end-to-end):
 
@@ -105,10 +102,14 @@ These are the external-account / dashboard / content items only you can do.
      - BR → `PRICE_BR`, methods: pix, boleto, card (up to 12×), custom field `lang_pref` (pt/es)
      - Global → `PRICE_GLOBAL`, methods: card, apple_pay, google_pay, link, custom field `lang_pref` (pt/es/en/fr)
    - Webhook endpoint: `POST https://cyberfuturo.com/api/purchase/stripe`, event: `checkout.session.completed` only, copy signing secret
-3. **Pages env vars** (dashboard → Production):
-   - `STRIPE_SECRET_KEY` = `sk_live_...`
-   - `STRIPE_WEBHOOK_SECRET` = `whsec_...`
-   - `RESEND_API_KEY` = `re_...` (create Resend account first; free tier 3,000/mo)
+3. **Pages env vars:**
+   - ✅ `STRIPE_WEBHOOK_SECRET` — already set for sandbox (rotate + re-put when going live; see §17)
+   - ⏸️ `STRIPE_SECRET_KEY` = `sk_test_...` — reveal from Stripe dashboard → Developers → API keys, then run:
+     ```bash
+     printf 'sk_test_...' | wrangler pages secret put STRIPE_SECRET_KEY --project-name=cyberfuturo
+     ```
+     Or use the Cloudflare dashboard → Pages → cyberfuturo → Settings → Environment variables → Production
+   - ⏸️ `RESEND_API_KEY` = `re_...` (create Resend account first; free tier 3,000/mo). Same `wrangler pages secret put` pattern.
 4. **R2 bucket** (for artifact PDFs when we get there):
    ```bash
    wrangler r2 bucket create cyberfuturo-artifacts
