@@ -26,6 +26,7 @@ on:
       - main
     paths:
       - 'site/**'
+      - 'wrangler.toml'
       - '.github/workflows/deploy.yml'
   workflow_dispatch: {}
 

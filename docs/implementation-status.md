@@ -85,10 +85,13 @@ These are the external-account / dashboard / content items only you can do.
 
 ✅ D1 database `cf_telemetry` created (id `97f0f6c2-9d6f-4fb9-9107-d0cd3836e2ac`, region ENAM) via wrangler CLI.
 ✅ Schema applied remotely (events + forgotten_ids + buyers + artifacts + webhook_log, all 5 tables live).
-✅ D1 binding declared in `site/wrangler.toml` — Pages deploy picks it up automatically, no dashboard click needed.
+✅ D1 binding declared in **repo-root** `wrangler.toml` (with `pages_build_output_dir = "site"`) — Pages deploy picks it up automatically, no dashboard click needed.
 ✅ `STRIPE_WEBHOOK_SECRET` uploaded encrypted via `wrangler pages secret put`.
+✅ End-to-end test: `POST /api/ping` → 204, row inserted in D1 with `country=CA` detected at the edge. `POST /api/activate` returns 400/404 (not 503). `/auth` returns 400. All endpoints are live.
 
 All this happened via `wrangler` CLI already-authenticated on the dev machine as `futuronoti@gmail.com`. No dashboard work was needed.
+
+**Gotcha note:** `wrangler.toml` had to live at the **repo root**, not inside `site/`. When `wrangler pages deploy site` runs, it treats everything in `site/` as static assets — so `site/wrangler.toml` got uploaded as a deployment artifact instead of being read as project config. At the repo root, wrangler finds it via its usual config search path and applies bindings.
 
 **Optional operator escape hatch:** if you ever need to force-disable telemetry without code changes, set `CF_TELEMETRY_DISABLED=1` as a Pages env var. Leaving it unset is the default.
 
