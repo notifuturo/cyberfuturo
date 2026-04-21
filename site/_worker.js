@@ -299,6 +299,30 @@ async function verifyStripeSignature(rawBody, header, secret) {
   return { ok: false, reason: "signature mismatch" };
 }
 
+// Maps Stripe Payment Link language dropdowns to ISO codes. Stripe auto-
+// generates the custom-field `key` from the label (opaque to us), so we don't
+// match on key — we pick whichever dropdown value is recognizable as a
+// language, either as an ISO code directly or as a language name.
+const LANG_NAME_TO_CODE = {
+  "pt": "pt", "português": "pt", "portugues": "pt", "portuguese": "pt",
+  "es": "es", "español": "es", "espanol": "es", "spanish": "es",
+  "en": "en", "english": "en", "inglês": "en", "ingles": "en",
+  "fr": "fr", "français": "fr", "francais": "fr", "french": "fr",
+};
+
+function extractLangPref(session) {
+  const fields = session?.custom_fields || [];
+  for (const f of fields) {
+    const raw = String(
+      f?.dropdown?.value || f?.text?.value || f?.numeric?.value || ""
+    ).trim().toLowerCase();
+    if (!raw) continue;
+    const code = LANG_NAME_TO_CODE[raw];
+    if (code) return code;
+  }
+  return "pt";
+}
+
 function generateActivationCode(len = 8) {
   // Human-friendly alphabet — no 0/O/1/I confusion.
   const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -452,9 +476,7 @@ async function handleStripeWebhook(request, env) {
   const name         = session.customer_details?.name || "CyberFuturo student";
   const amount_cents = Number.isFinite(session.amount_total) ? session.amount_total : null;
   const currency     = String(session.currency || "usd").toLowerCase();
-  const langField    = (session.custom_fields || []).find(f => f.key === "lang_pref");
-  const rawLang      = langField?.dropdown?.value || langField?.text?.value || "pt";
-  const lang_pref    = LANG_SET.has(rawLang) ? rawLang : "pt";
+  const lang_pref    = extractLangPref(session);
 
   if (!external_id || !email) return new Response("bad payload", { status: 400 });
 
