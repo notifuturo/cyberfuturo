@@ -6,6 +6,60 @@
 
 ---
 
+## 🎯 Next session — pick up here
+
+**Infrastructure is fully wired on sandbox.** The remaining gating items are founder account-setup only. In order of payoff:
+
+1. **Add `STRIPE_SECRET_KEY`** so the webhook can complete fulfillment:
+   ```bash
+   cd /home/cypherborg/cyberfuturo
+   # Get sk_test_... from Stripe dashboard → Developers → API keys
+   printf 'sk_test_YOUR_KEY' | wrangler pages secret put STRIPE_SECRET_KEY --project-name=cyberfuturo
+   ```
+
+2. **Create Resend account + add `RESEND_API_KEY`** (free tier 3,000/mo) — without this the webhook inserts the buyer row but sends no welcome email:
+   - Sign up at resend.com
+   - Add + verify the `cyberfuturo.com` domain (DNS records for SPF, DKIM, DMARC)
+   - Create an API key
+   - Upload: `printf 're_YOUR_KEY' | wrangler pages secret put RESEND_API_KEY --project-name=cyberfuturo`
+
+3. **Enable R2** (dashboard → R2 → Enable, one-click, required when we add artifact PDFs next)
+
+4. **Do a sandbox test purchase**:
+   - Visit `https://cyberfuturo.pages.dev/pt/comprar/` in incognito
+   - Pay with test card `4242 4242 4242 4242` (any future expiry, any CVC, any ZIP)
+   - Expect welcome email (if Resend was set up)
+   - Verify in D1: `wrangler d1 execute cf_telemetry --remote --command "SELECT email, substr(access_token,1,8) as tok, activation_code, lang_pref FROM buyers ORDER BY id DESC LIMIT 3"`
+   - Open magic link `https://cyberfuturo.com/auth?t=<access_token>` → should 302 to `/pt/livro/00-bienvenido/` (which will then 404 since chapters don't exist yet)
+   - In a Codespace: `./cf activate <ACTIVATION_CODE>` → expect "✔ Conta vinculada."
+
+5. **Then tell me** — I'll pick up the next spec chunk (chapter content refactor, SVG-only handout fallback, verify pages, or whatever you prioritize).
+
+---
+
+## Current state summary
+
+| Layer | Status |
+|---|---|
+| URL restructure (4-language equal paths) | ✅ Live |
+| Root-redirect language selection | ✅ Live via `_worker.js` |
+| Telemetry ingest + `./cf telemetry` | ✅ Live, D1 bound, end-to-end tested |
+| Privacy pages (all 4 languages) | ✅ Live |
+| Product endpoints (webhook, auth, activate, cookie gate) | ✅ Wired, awaiting Stripe secret |
+| Buy pages (all 4 languages) | ✅ Live, Payment Link hardcoded |
+| D1 schema | ✅ Applied to prod (`cf_telemetry`, id `97f0f6c2-...`) |
+| `STRIPE_WEBHOOK_SECRET` | ✅ Set |
+| `STRIPE_SECRET_KEY` | ⏸️ Founder to add |
+| `RESEND_API_KEY` | ⏸️ Founder to add |
+| R2 bucket for PDFs | ⏸️ Founder to enable R2 feature |
+| Chapter content (`/livro/`) | ⏸️ Founder-authored |
+| SVG handout templates (52 total) | ⏸️ Founder-authored |
+| PDF rendering pipeline | ⏸️ Pending templates + R2 |
+| Verify / backers pages | ⏸️ Pending artifact data |
+
+
+---
+
 ## ✅ Shipped
 
 ### URL restructure spec — `docs/url-restructure-spec.md`
