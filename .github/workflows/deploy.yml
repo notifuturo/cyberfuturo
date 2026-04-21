@@ -143,13 +143,13 @@ jobs:
           printf "  %-24s %s\n" "/auth (no token)" "$auth_code"
           case "$auth_code" in 400|503) ;; *) echo "FAIL: /auth expected 400/503, got $auth_code"; exit 1 ;; esac
 
-          # /api/activate with empty body → 400 or 503. Exercises the handler wiring.
-          act_code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "https://cyberfuturo.pages.dev/api/activate" -H "content-type: application/json" -d "")
-          printf "  %-24s %s\n" "/api/activate (empty)" "$act_code"
+          # /api/activate with garbage body → 400 or 503. Exercises the handler wiring.
+          act_code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "https://cyberfuturo.pages.dev/api/activate" -H "content-type: application/json" --data-raw '{}')
+          printf "  %-24s %s\n" "/api/activate ({})" "$act_code"
           case "$act_code" in 400|503) ;; *) echo "FAIL: /api/activate expected 400/503, got $act_code"; exit 1 ;; esac
 
           # /api/purchase/stripe without signature → 400 or 503 (secret/binding may be absent).
-          stripe_code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "https://cyberfuturo.pages.dev/api/purchase/stripe" -d "{}")
+          stripe_code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "https://cyberfuturo.pages.dev/api/purchase/stripe" -H "content-type: application/json" --data-raw '{}')
           printf "  %-24s %s\n" "/api/purchase/stripe" "$stripe_code"
           case "$stripe_code" in 400|503) ;; *) echo "FAIL: /api/purchase/stripe expected 400/503, got $stripe_code"; exit 1 ;; esac
 
