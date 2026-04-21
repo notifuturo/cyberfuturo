@@ -11,6 +11,10 @@ Commands:
   ./cf progress          Mostra o progresso geral
   ./cf help              Imprime esta ajuda
   ./cf reset             Reinicia o progresso (pede confirmação)
+  ./cf telemetry status  Mostra o estado da telemetria anônima
+  ./cf telemetry on      Ativa a telemetria
+  ./cf telemetry off     Desativa a telemetria
+  ./cf telemetry forget  Apaga o anon_id local e pede ao servidor pra apagar os registros
 
 Internationalization:
   The runner's user-facing strings default to Portuguese (pt-BR). The language
@@ -41,12 +45,18 @@ import os
 import re
 import subprocess
 import sys
+import urllib.error
+import urllib.request
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 
 CURRICULUM_DIR = Path(__file__).resolve().parent.parent
 LESSONS_DIR = CURRICULUM_DIR / "lessons"
 PROGRESS_FILE = CURRICULUM_DIR / ".progress.json"
+
+TELEMETRY_ENDPOINT = "https://cyberfuturo.com/api/ping"
+TELEMETRY_TIMEOUT_S = 2.0   # ping must not slow the runner perceptibly
 
 # ---- ANSI colors (Dracula-ish) -------------------------------------------------
 
@@ -160,6 +170,9 @@ def load_progress() -> dict:
         return {"current": None, "completed": []}
     data.setdefault("current", None)
     data.setdefault("completed", [])
+    data.setdefault("telemetry_opt_in", None)   # None = never asked, True/False = decided
+    data.setdefault("anon_id", None)             # set only if opted in
+    data.setdefault("pinged", {"start": [], "pass": []})
     return data
 
 
@@ -167,6 +180,136 @@ def save_progress(p: dict) -> None:
     with PROGRESS_FILE.open("w", encoding="utf-8") as f:
         json.dump(p, f, indent=2)
         f.write("\n")
+
+
+# ---- Telemetry -----------------------------------------------------------------
+
+TELEMETRY_PROMPT = {
+    "pt": (
+        "\n"
+        "  O CyberFuturo quer contar quantas pessoas começam e concluem cada lição.\n"
+        "  Se você topar, a gente manda um ping anônimo (só o nome da lição, o idioma\n"
+        "  e um ID aleatório gerado agora no seu workspace) pro site.\n"
+        "\n"
+        "  Não coletamos email, código, IP, ou qualquer coisa que te identifique.\n"
+        "  Detalhes em https://cyberfuturo.com/pt/privacidade/\n"
+        "\n"
+        "  Topar? [s/N]: "
+    ),
+    "es": (
+        "\n"
+        "  CyberFuturo quiere contar cuántas personas empiezan y terminan cada lección.\n"
+        "  Si aceptas, enviamos un ping anónimo (solo el slug de la lección, el idioma\n"
+        "  y un ID aleatorio generado ahora en tu workspace) al sitio.\n"
+        "\n"
+        "  No recogemos email, código, IP, ni nada que te identifique.\n"
+        "  Detalles en https://cyberfuturo.com/es/privacidad/\n"
+        "\n"
+        "  ¿Aceptas? [s/N]: "
+    ),
+    "en": (
+        "\n"
+        "  CyberFuturo would like to count how many people start and finish each lesson.\n"
+        "  If you opt in, we send an anonymous ping (just the lesson slug, the language,\n"
+        "  and a random ID generated right now in your workspace) to the site.\n"
+        "\n"
+        "  We do not collect email, code, IP, or anything that could identify you.\n"
+        "  Details at https://cyberfuturo.com/en/privacy/\n"
+        "\n"
+        "  Opt in? [y/N]: "
+    ),
+    "fr": (
+        "\n"
+        "  CyberFuturo aimerait compter combien de personnes commencent et terminent chaque leçon.\n"
+        "  Si vous acceptez, nous envoyons un ping anonyme (juste le slug de la leçon, la langue\n"
+        "  et un ID aléatoire généré maintenant dans votre workspace) au site.\n"
+        "\n"
+        "  Nous ne collectons ni e-mail, ni code, ni IP, ni rien qui puisse vous identifier.\n"
+        "  Détails sur https://cyberfuturo.com/fr/confidentialite/\n"
+        "\n"
+        "  Accepter? [o/N]: "
+    ),
+}
+
+_YES_ANSWERS = {"s", "sim", "y", "yes", "o", "oui", "si", "sí"}
+
+
+def maybe_prompt_telemetry(progress: dict) -> None:
+    """Ask the student once, on the first command that counts, whether to opt in.
+
+    Silent no-op if:
+      - the user has already answered (True or False)
+      - stdin/stdout are not a TTY (Codespaces web UI falls through to the editor;
+        we don't want to block non-interactive flows or CI)
+      - the CF_TELEMETRY_DISABLED env var is set (escape hatch for operators)
+    """
+    if progress.get("telemetry_opt_in") is not None:
+        return
+    if not sys.stdin.isatty() or not sys.stdout.isatty():
+        return
+    if os.environ.get("CF_TELEMETRY_DISABLED"):
+        progress["telemetry_opt_in"] = False
+        save_progress(progress)
+        return
+
+    lang = lesson_lang()
+    prompt = TELEMETRY_PROMPT.get(lang, TELEMETRY_PROMPT["pt"])
+    try:
+        answer = input(prompt).strip().lower()
+    except (KeyboardInterrupt, EOFError):
+        print()
+        progress["telemetry_opt_in"] = False
+        save_progress(progress)
+        return
+
+    if answer in _YES_ANSWERS:
+        progress["telemetry_opt_in"] = True
+        progress["anon_id"] = str(uuid.uuid4())
+    else:
+        progress["telemetry_opt_in"] = False
+    save_progress(progress)
+
+
+def ping(progress: dict, event: str, lesson_slug: str) -> None:
+    """Send a telemetry event. Silent failure on network errors — never blocks the user.
+
+    Guarantees:
+      - No-op if the user declined, or never opted in
+      - No-op if this (event, lesson_slug) has already been pinged from this workspace
+      - Never raises
+      - Never takes more than TELEMETRY_TIMEOUT_S to return
+    """
+    if not progress.get("telemetry_opt_in"):
+        return
+    anon_id = progress.get("anon_id")
+    if not anon_id:
+        return
+    pinged = progress.setdefault("pinged", {"start": [], "pass": []})
+    slot = pinged.setdefault(event, [])
+    if lesson_slug in slot:
+        return
+
+    payload = json.dumps({
+        "event":   event,
+        "lesson":  lesson_slug,
+        "lang":    lesson_lang(),
+        "anon_id": anon_id,
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        TELEMETRY_ENDPOINT,
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=TELEMETRY_TIMEOUT_S) as resp:
+            if 200 <= resp.status < 300:
+                slot.append(lesson_slug)
+                save_progress(progress)
+    except (urllib.error.URLError, TimeoutError, OSError):
+        # Fire-and-forget. If the endpoint is down, we silently drop the event.
+        # The local .progress.json is untouched so we'll try again next time.
+        pass
 
 
 # ---- Commands ------------------------------------------------------------------
@@ -229,6 +372,8 @@ def cmd_start(lessons: list[Lesson], progress: dict, args: list[str]) -> int:
 
     progress["current"] = target.slug
     save_progress(progress)
+    maybe_prompt_telemetry(progress)
+    ping(progress, "start", target.slug)
     _print_lesson(target)
     return 0
 
@@ -311,6 +456,7 @@ def cmd_check(lessons: list[Lesson], progress: dict) -> int:
             completed.append(lesson.slug)
             progress["completed"] = completed
             save_progress(progress)
+        ping(progress, "pass", lesson.slug)
         print(color(f"  ✔ Lição {lesson.number:02d} concluída.", GREEN + BOLD))
         print(f"  {DIM}Próximo: ./cf next{RESET}")
         print()
@@ -389,6 +535,52 @@ def cmd_help() -> int:
     return 0
 
 
+def cmd_telemetry(progress: dict, args: list[str]) -> int:
+    sub = (args[0] if args else "status").lower()
+    if sub == "status":
+        state = progress.get("telemetry_opt_in")
+        if state is True:
+            print(color(f"  Telemetria: ATIVADA. anon_id={progress.get('anon_id')}", GREEN))
+        elif state is False:
+            print(color("  Telemetria: DESATIVADA.", GREY))
+        else:
+            print(color("  Telemetria: ainda não perguntada.", YELLOW))
+        return 0
+    if sub == "on":
+        progress["telemetry_opt_in"] = True
+        if not progress.get("anon_id"):
+            progress["anon_id"] = str(uuid.uuid4())
+        save_progress(progress)
+        print(color("  Telemetria ativada.", GREEN))
+        return 0
+    if sub == "off":
+        progress["telemetry_opt_in"] = False
+        save_progress(progress)
+        print(color("  Telemetria desativada.", YELLOW))
+        return 0
+    if sub == "forget":
+        anon_id = progress.get("anon_id")
+        if anon_id:
+            payload = json.dumps({"anon_id": anon_id}).encode("utf-8")
+            req = urllib.request.Request(
+                TELEMETRY_ENDPOINT, data=payload,
+                headers={"Content-Type": "application/json"},
+                method="DELETE",
+            )
+            try:
+                urllib.request.urlopen(req, timeout=TELEMETRY_TIMEOUT_S).read()
+            except Exception:
+                pass
+        progress["telemetry_opt_in"] = False
+        progress["anon_id"] = None
+        progress["pinged"] = {"start": [], "pass": []}
+        save_progress(progress)
+        print(color("  anon_id local removido. Servidor avisado.", YELLOW))
+        return 0
+    print(color(f"  Uso: ./cf telemetry [status|on|off|forget]", RED))
+    return 1
+
+
 # ---- Main ----------------------------------------------------------------------
 
 def main(argv: list[str]) -> int:
@@ -415,6 +607,8 @@ def main(argv: list[str]) -> int:
         return cmd_progress(lessons, progress)
     if command == "reset":
         return cmd_reset(progress)
+    if command == "telemetry":
+        return cmd_telemetry(progress, args)
     if command in ("help", "-h", "--help"):
         return cmd_help()
 

@@ -57,6 +57,10 @@ jobs:
           test -f site/es/gracias/index.html      || { echo "site/es/gracias/ missing"; exit 1; }
           test -f site/en/thank-you/index.html    || { echo "site/en/thank-you/ missing"; exit 1; }
           test -f site/fr/merci/index.html        || { echo "site/fr/merci/ missing"; exit 1; }
+          test -f site/pt/privacidade/index.html      || { echo "site/pt/privacidade/ missing"; exit 1; }
+          test -f site/es/privacidad/index.html       || { echo "site/es/privacidad/ missing"; exit 1; }
+          test -f site/en/privacy/index.html          || { echo "site/en/privacy/ missing"; exit 1; }
+          test -f site/fr/confidentialite/index.html  || { echo "site/fr/confidentialite/ missing"; exit 1; }
           test -f site/_worker.js                 || { echo "root redirect _worker.js missing"; exit 1; }
           test -f site/styles.css                 || { echo "site/styles.css missing"; exit 1; }
           test -f site/favicon.svg                || { echo "site/favicon.svg missing"; exit 1; }
@@ -114,6 +118,24 @@ jobs:
               exit 1
             fi
           done
+
+          # Each privacy page must be 200.
+          for path in "/pt/privacidade/" "/es/privacidad/" "/en/privacy/" "/fr/confidentialite/"; do
+            code=$(curl -sSL -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev${path}")
+            printf "  %-24s %s\n" "$path" "$code"
+            if [ "$code" != "200" ]; then
+              echo "FAIL: $path returned $code"
+              exit 1
+            fi
+          done
+
+          # Telemetry endpoint CORS preflight is up (returns 204).
+          ping_code=$(curl -sS -o /dev/null -w "%{http_code}" -X OPTIONS "https://cyberfuturo.pages.dev/api/ping")
+          printf "  %-24s %s\n" "/api/ping OPTIONS" "$ping_code"
+          if [ "$ping_code" != "204" ]; then
+            echo "FAIL: /api/ping OPTIONS expected 204, got $ping_code"
+            exit 1
+          fi
 
           # Accept-Language routing sanity.
           for pair in "es:/es/" "en:/en/" "fr:/fr/" "pt:/pt/"; do

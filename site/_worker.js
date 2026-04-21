@@ -1,14 +1,20 @@
 // Cloudflare Pages — Advanced Mode Worker.
-// Handles the bare root / as a smart language redirect; everything else
-// falls through to the static-asset handler (env.ASSETS.fetch).
 //
-// Decision order at root:
-//   1. Cookie cf_lang=xx (set on any language page visit) → redirect to /xx/
-//   2. Accept-Language header best match among {pt, es, en, fr}
-//   3. CF-IPCountry country code → language map
-//   4. Fallback: /en/ (widest lingua franca for visitors without clear signal)
+// Route table (first match wins, otherwise static-asset fallthrough):
+//   1. POST|OPTIONS|DELETE /api/ping → telemetry ingest (D1 binding: CF_TELEMETRY)
+//   2. GET|HEAD            /         → smart language redirect
+//                                      (cookie → Accept-Language → CF-IPCountry → en)
+//   3. anything else                 → env.ASSETS.fetch
+//
+// Why _worker.js instead of functions/: Pages Functions couldn't cleanly
+// override the bare root (static-asset handler wins at '/'). Advanced mode
+// lets the worker take every request and delegate to ASSETS only when we want.
+// One file, one routing table, one place to reason about edge behavior.
+
+// ---- Language config ------------------------------------------------------
 
 const LANGS = ["pt", "es", "en", "fr"];
+const LANG_SET = new Set(LANGS);
 
 // Country-hint → language. Conservative mapping; when in doubt, we fall through
 // to Accept-Language. Only listed countries get a country-based default.
@@ -51,7 +57,7 @@ function pickLang(request) {
   // 2. Accept-Language
   const accept = parseAcceptLanguage(request.headers.get("Accept-Language"));
   for (const prefix of accept) {
-    if (LANGS.includes(prefix)) return prefix;
+    if (LANG_SET.has(prefix)) return prefix;
   }
 
   // 3. Country hint
@@ -62,18 +68,111 @@ function pickLang(request) {
   return "en";
 }
 
+// ---- /api/ping — telemetry ingest -----------------------------------------
+//
+// Contract: docs/telemetry-spec.md §3-§5. Strict validation, idempotent insert
+// via UNIQUE(anon_id, event, lesson), tombstone table for forget requests.
+// Reads only the request body and CF-IPCountry — no IP, UA, referrer, or cookies.
+
+const LESSON_RE = /^[0-9]{2}-[a-z0-9-]+$/;
+const EVENTS    = new Set(["start", "pass"]);
+const UUID_RE   = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const MAX_BODY  = 1024;
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin":  "*",
+  "Access-Control-Allow-Methods": "POST, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "content-type",
+  "Access-Control-Max-Age":       "86400",
+};
+
+function jsonResponse(obj, status) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: { "content-type": "application/json", ...CORS_HEADERS },
+  });
+}
+
+async function handlePingPost(request, env) {
+  if (!env.CF_TELEMETRY) return jsonResponse({ error: "telemetry unavailable" }, 503);
+
+  const raw = await request.text();
+  if (raw.length > MAX_BODY) return jsonResponse({ error: "payload too large" }, 413);
+
+  let body;
+  try { body = JSON.parse(raw); }
+  catch { return jsonResponse({ error: "invalid json" }, 400); }
+
+  const { event, lesson, lang, anon_id } = body || {};
+  if (!EVENTS.has(event))      return jsonResponse({ error: "bad event" }, 400);
+  if (!LESSON_RE.test(lesson)) return jsonResponse({ error: "bad lesson" }, 400);
+  if (!LANG_SET.has(lang))     return jsonResponse({ error: "bad lang" }, 400);
+  if (!UUID_RE.test(anon_id))  return jsonResponse({ error: "bad anon_id" }, 400);
+
+  const country = request.headers.get("CF-IPCountry") || null;
+
+  const tomb = await env.CF_TELEMETRY
+    .prepare("SELECT 1 FROM forgotten_ids WHERE anon_id = ?")
+    .bind(anon_id)
+    .first();
+  if (tomb) return new Response(null, { status: 204, headers: CORS_HEADERS });
+
+  await env.CF_TELEMETRY
+    .prepare("INSERT OR IGNORE INTO events (anon_id, event, lesson, lang, country, created_at) VALUES (?, ?, ?, ?, ?, ?)")
+    .bind(anon_id, event, lesson, lang, country, Math.floor(Date.now() / 1000))
+    .run();
+
+  return new Response(null, { status: 204, headers: CORS_HEADERS });
+}
+
+async function handlePingDelete(request, env) {
+  if (!env.CF_TELEMETRY) return jsonResponse({ error: "telemetry unavailable" }, 503);
+
+  const raw = await request.text();
+  if (raw.length > MAX_BODY) return jsonResponse({ error: "payload too large" }, 413);
+
+  let body;
+  try { body = JSON.parse(raw); }
+  catch { return jsonResponse({ error: "invalid json" }, 400); }
+
+  const { anon_id } = body || {};
+  if (!UUID_RE.test(anon_id)) return jsonResponse({ error: "bad anon_id" }, 400);
+
+  const now = Math.floor(Date.now() / 1000);
+  await env.CF_TELEMETRY.batch([
+    env.CF_TELEMETRY.prepare("INSERT OR IGNORE INTO forgotten_ids (anon_id, created_at) VALUES (?, ?)").bind(anon_id, now),
+    env.CF_TELEMETRY.prepare("DELETE FROM events WHERE anon_id = ?").bind(anon_id),
+  ]);
+  return new Response(null, { status: 204, headers: CORS_HEADERS });
+}
+
+async function handlePing(request, env) {
+  switch (request.method) {
+    case "OPTIONS": return new Response(null, { status: 204, headers: CORS_HEADERS });
+    case "POST":    return handlePingPost(request, env);
+    case "DELETE":  return handlePingDelete(request, env);
+    default:
+      return new Response("Method Not Allowed", {
+        status: 405,
+        headers: { Allow: "POST, DELETE, OPTIONS", ...CORS_HEADERS },
+      });
+  }
+}
+
+// ---- Entry point ----------------------------------------------------------
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Only intercept the bare root. Everything else (including /pt/, /es/,
-    // etc. and all static assets) falls through to the Pages static handler.
+    if (url.pathname === "/api/ping") {
+      return handlePing(request, env);
+    }
+
     if (url.pathname === "/" && (request.method === "GET" || request.method === "HEAD")) {
       const lang = pickLang(request);
       return Response.redirect(`${url.origin}/${lang}/`, 302);
     }
 
-    // Static assets, thank-you pages, sitemap, robots, etc.
     return env.ASSETS.fetch(request);
   }
 };

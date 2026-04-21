@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Confidentialité — CyberFuturo</title>
+  <meta name="description" content="Ce que CyberFuturo collecte, ce que nous ne collectons jamais, et comment désactiver ou supprimer vos données.">
+  <meta name="theme-color" content="#1e1e2e">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://cyberfuturo.com/fr/confidentialite/">
+  <link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/privacidade/">
+  <link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/privacidad/">
+  <link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/privacy/">
+  <link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/confidentialite/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="/fr/">
+      <span class="brand-prompt">&gt;_</span>
+      <span class="brand-name">Cyber<span>Futuro</span></span>
+    </a>
+    <div class="lang-switcher" role="navigation" aria-label="Choisir la langue">
+      <a href="/pt/privacidade/" hreflang="pt" data-lang="pt">PT</a>
+      <a href="/es/privacidad/" hreflang="es" data-lang="es">ES</a>
+      <a href="/en/privacy/" hreflang="en" data-lang="en">EN</a>
+      <a href="/fr/confidentialite/" hreflang="fr" data-lang="fr">FR</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <p class="prompt-line"><span class="muted">user@cyberfuturo</span>:<span style="color:var(--accent-2)">~</span>$ <span class="flash">cat confidentialite.md</span></p>
+    <h1>Confidentialité</h1>
+    <p class="tagline">CyberFuturo collecte le minimum possible. <strong>Tout est opt-in, anonyme et effaçable.</strong></p>
+  </section>
+
+  <section>
+    <h2>Ce que nous collectons <span class="muted">(seulement si vous acceptez)</span></h2>
+    <ul>
+      <li>Quand vous commencez une leçon (slug de la leçon, ex. <code>01-terminal</code>)</li>
+      <li>Quand vous terminez une leçon (<code>./cf check</code> réussit)</li>
+      <li>Un identifiant anonyme aléatoire, généré une fois dans votre environnement, stocké dans <code>curriculum/.progress.json</code></li>
+      <li>La langue de la leçon que vous lisez (<code>pt</code>, <code>es</code>, <code>en</code>, <code>fr</code>)</li>
+      <li>Le pays que Cloudflare détecte en périphérie (BR, MX, FR, ...) &mdash; l'IP elle-même est rejetée</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Ce que nous ne collectons JAMAIS</h2>
+    <ul>
+      <li>Votre e-mail, nom, compte GitHub</li>
+      <li>Votre code, vos fichiers, les messages d'erreur</li>
+      <li>Votre IP (Cloudflare lit le pays en périphérie et rejette l'IP avant qu'elle n'arrive dans notre stockage)</li>
+      <li>Tout ce qui pourrait vous identifier individuellement</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Ce qui arrive aux données</h2>
+    <ul>
+      <li>Stockées dans une base de données Cloudflare (D1) contrôlée par CyberFuturo</li>
+      <li>Utilisées pour générer le tableau de bord public <code>/stats/</code> (uniquement des totaux agrégés, jamais par personne)</li>
+      <li>Jamais vendues, jamais partagées avec des sponsors, jamais croisées avec des tiers</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Comment désactiver ou supprimer</h2>
+    <ul>
+      <li><code>./cf telemetry off</code> &mdash; désactive les pings à partir de maintenant</li>
+      <li><code>./cf telemetry forget</code> &mdash; supprime votre <code>anon_id</code> local et efface les enregistrements du serveur</li>
+      <li>Ouvrir une issue sur <a href="https://github.com/notifuturo/cyberfuturo" target="_blank" rel="noopener">github.com/notifuturo/cyberfuturo</a> demandant la suppression de votre <code>anon_id</code> fonctionne aussi</li>
+    </ul>
+
+    <div class="cta-row" style="margin-top:24px;">
+      <a class="btn btn-secondary" href="/fr/">Retour à l'accueil</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div><strong>CyberFuturo</strong> — apprenez la technologie de haut en bas.</div>
+  <div>
+    <a href="/fr/">Accueil</a>
+    &nbsp;·&nbsp; <a href="/pt/privacidade/">Português</a>
+    &nbsp;·&nbsp; <a href="/es/privacidad/">Español</a>
+    &nbsp;·&nbsp; <a href="/en/privacy/">English</a>
+  </div>
+</footer>
+
+<div id="lang-mismatch" class="lang-mismatch" hidden></div>
+<script>
+  (function() {
+    var lang = document.documentElement.lang.slice(0, 2).toLowerCase();
+    if (!/^(pt|es|en|fr)$/.test(lang)) return;
+    document.cookie = "cf_lang=" + lang + "; path=/; max-age=15552000; SameSite=Lax";
+    var sel = document.querySelector('.lang-switcher a[data-lang="' + lang + '"]');
+    if (sel) sel.classList.add("active");
+  })();
+</script>
+
+</body>
+</html>
