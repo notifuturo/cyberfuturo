@@ -113,8 +113,12 @@ jobs:
 
       - name: Post-deploy smoke test
         run: |
-          # Give CF edge propagation time — 5s was flaky, 12s eliminates races.
-          sleep 12
+          # Give CF edge propagation time. 5s → 12s (2026-04-22a): fixed the 301/302
+          # race during the curso rename. 12s → 20s (2026-04-22b): after the Phase 5
+          # deploy shipped 28 new pages + a worker update simultaneously, a fresh
+          # edge briefly redirected /pt/curso/05-primera-sql/ through the pre-worker
+          # gate. Bigger deploys need more slack.
+          sleep 20
 
           # Root must 302 to some language (smart redirect Pages Function).
           root_code=$(curl -sS -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev/")
