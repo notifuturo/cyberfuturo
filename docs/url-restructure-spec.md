@@ -649,7 +649,7 @@ Cloudflare Pages keeps the last 10 deploys available; worst case, the "Promote t
 
 Because URL-level language equality is now correct, the next specs inherit it cleanly:
 
-- **Ebook/course web reading pages** land at `/pt/livro/`, `/es/libro/`, `/en/book/`, `/fr/livre/` — symmetric from day one.
+- **Course web reading pages** land at `/pt/curso/`, `/es/curso/`, `/en/course/`, `/fr/cours/` — symmetric from day one. *(Spec originally said `/livro/|/libro/|/book/|/livre/`; renamed 2026-04-22 — see Phase G in `implementation-status.md`. `_worker.js` 301s from the legacy paths.)*
 - **Privacy pages** (from telemetry spec) already targeted `/pt/privacidade/`, `/es/privacidad/`, `/en/privacy/`, `/fr/confidentialite/` — this spec validates that choice.
 - **Side-by-side Rosetta Stone reading mode** (`/pt+en/livro/...`) can be implemented as a later Pages Function; the URL namespace is free.
 - **Stats page** lands at `/stats/` (language-neutral — numbers are numbers) or per-language `/pt/stats/` if localized copy matters.

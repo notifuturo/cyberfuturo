@@ -2,6 +2,8 @@
 
 > **Status**: Draft v1.0 — 2026-04-18. Not yet applied. Review → approve → apply.
 >
+> **⚠️ Path rename (2026-04-22):** this spec was drafted with `/pt/livro/`, `/es/libro/`, `/en/book/`, `/fr/livre/` as the paid-chapter paths. Those are now `/pt/curso/`, `/es/curso/`, `/en/course/`, `/fr/cours/` (Phase G in [`implementation-status.md`](./implementation-status.md) — "curso/course/cours" matches how Platzi + Alura frame a single-track EdTech product and better signals the course + progress + certification shape). `_worker.js` serves 301s from the legacy paths. When reading this spec, substitute the new paths wherever the old ones appear.
+>
 > **Purpose**: define the monetized product layer of CyberFuturo: paid reading access to all 9 chapters, per-chapter shareable handouts as buyer-earned artifacts, three-tier credentials (handouts + module certs + final cert), and a fully automated purchase-to-completion pipeline. Built entirely on Cloudflare free-tier + Stripe (single processor, no intermediaries). No servers, no ongoing human touch.
 >
 > **Prerequisites**: [`url-restructure-spec.md`](./url-restructure-spec.md) applied (language-equal URLs at `/pt/`, `/es/`, `/en/`, `/fr/`) and [`telemetry-spec.md`](./telemetry-spec.md) applied (opt-in `/api/ping` + D1 database `cf_telemetry` bound to the Pages project).

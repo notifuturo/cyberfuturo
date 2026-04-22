@@ -1,6 +1,6 @@
 # CyberFuturo — Implementation Status
 
-> Last updated: 2026-04-21.
+> Last updated: 2026-04-22.
 >
 > Tracks the three specs in `docs/*-spec.md` and enumerates what's pending on the founder's side (things I cannot do autonomously because they require external accounts, credentials, content authorship, design decisions, or legal/business judgment).
 
@@ -8,32 +8,25 @@
 
 ## 🎯 Next session — pick up here
 
-**Infrastructure is fully wired on sandbox.** The remaining gating items are founder account-setup only. In order of payoff:
+**Infrastructure is fully wired on sandbox; both Stripe secrets are set.** The remaining gating items are founder account-setup only. In order of payoff:
 
-1. **Add `STRIPE_SECRET_KEY`** so the webhook can complete fulfillment:
-   ```bash
-   cd /home/cypherborg/cyberfuturo
-   # Get sk_test_... from Stripe dashboard → Developers → API keys
-   printf 'sk_test_YOUR_KEY' | wrangler pages secret put STRIPE_SECRET_KEY --project-name=cyberfuturo
-   ```
-
-2. **Create Resend account + add `RESEND_API_KEY`** (free tier 3,000/mo) — without this the webhook inserts the buyer row but sends no welcome email:
+1. **Create Resend account + add `RESEND_API_KEY`** (free tier 3,000/mo) — without this the webhook inserts the buyer row but sends no welcome email:
    - Sign up at resend.com
    - Add + verify the `cyberfuturo.com` domain (DNS records for SPF, DKIM, DMARC)
    - Create an API key
    - Upload: `printf 're_YOUR_KEY' | wrangler pages secret put RESEND_API_KEY --project-name=cyberfuturo`
 
-3. **Enable R2** (dashboard → R2 → Enable, one-click, required when we add artifact PDFs next)
+2. **Enable R2** (dashboard → R2 → Enable, one-click, required when we add artifact PDFs next)
 
-4. **Do a sandbox test purchase**:
+3. **Do a sandbox test purchase**:
    - Visit `https://cyberfuturo.pages.dev/pt/comprar/` in incognito
    - Pay with test card `4242 4242 4242 4242` (any future expiry, any CVC, any ZIP)
    - Expect welcome email (if Resend was set up)
    - Verify in D1: `wrangler d1 execute cf_telemetry --remote --command "SELECT email, substr(access_token,1,8) as tok, activation_code, lang_pref FROM buyers ORDER BY id DESC LIMIT 3"`
-   - Open magic link `https://cyberfuturo.com/auth?t=<access_token>` → should 302 to `/pt/livro/00-bienvenido/` (which will then 404 since chapters don't exist yet)
+   - Open magic link `https://cyberfuturo.com/auth?t=<access_token>` → should 302 to `/pt/curso/00-bienvenido/` (which will then 404 since chapters don't exist yet)
    - In a Codespace: `./cf activate <ACTIVATION_CODE>` → expect "✔ Conta vinculada."
 
-5. **Then tell me** — I'll pick up the next spec chunk (chapter content refactor, SVG-only handout fallback, verify pages, or whatever you prioritize).
+4. **Then tell me** — I'll pick up the next spec chunk (chapter content refactor, SVG-only handout fallback, verify pages, or whatever you prioritize).
 
 ---
 
@@ -49,10 +42,11 @@
 | Buy pages (all 4 languages) | ✅ Live, Payment Link hardcoded |
 | D1 schema | ✅ Applied to prod (`cf_telemetry`, id `97f0f6c2-...`) |
 | `STRIPE_WEBHOOK_SECRET` | ✅ Set |
-| `STRIPE_SECRET_KEY` | ⏸️ Founder to add |
+| `STRIPE_SECRET_KEY` | ✅ Set |
 | `RESEND_API_KEY` | ⏸️ Founder to add |
 | R2 bucket for PDFs | ⏸️ Founder to enable R2 feature |
-| Chapter content (`/livro/`) | ⏸️ Founder-authored |
+| Orientation pages (4 langs) | ✅ Live |
+| Chapter content (`/curso/` etc.) | ⏸️ Founder-authored |
 | SVG handout templates (52 total) | ⏸️ Founder-authored |
 | PDF rendering pipeline | ⏸️ Pending templates + R2 |
 | Verify / backers pages | ⏸️ Pending artifact data |
@@ -119,15 +113,34 @@ Payment Link URL baked into static HTML at `site/pt/comprar/`, `site/es/comprar/
 
 The spec §12.1 wired each buy page to a Pages Function that picked one of two Payment Links based on `CF-IPCountry` (BR-specific BRL link vs. global USD link). With Stripe's Canada-registered account + Adaptive Pricing always-on for Payment Links, a **single** USD Payment Link covers all regions — Stripe shows BR buyers the BRL-converted amount with Pix enabled automatically at checkout. So buy pages are plain static HTML with a single hardcoded Payment Link URL. When flipping to live mode, the test URL needs to be replaced across the 4 files (marker comment in each HTML head notes this). Simpler, fewer moving parts, one URL source of truth.
 
+**Phase E — orientation + footer wiring (new, 2026-04-22):**
+
+Shipped 4 orientation pages per spec §13 at `/pt/como-comecar/`, `/es/como-empezar/`, `/en/getting-started/`, `/fr/comment-commencer/`. Each page: hero + CTA to Codespaces, three numbered steps (open Codespace → `./cf list` → `./cf start NN` + `./cf check`), pitch-back to the buy page for full chapters. Footer on every landing page replaced the old in-page `#comecar` anchor with a link to the dedicated orientation page (now discoverable off-landing); buy-page footers gained the same link. Sitemap adds the 4 new URLs with full hreflang alternates. Fully static, no Pages Function needed.
+
+**Phase F — teaser gate (new, 2026-04-22):**
+
+`_worker.js` cookie gate now allow-lists chapter `00-bienvenido` in all 4 language course paths, in preparation for the "read chapter 00 free, unlock the rest for $9" flow the designer settled on. A new `FREE_TEASER_SLUGS` set + `isFreeTeaser()` helper short-circuits `enforceAccessGate` before the DB + cookie checks. Smoke tests extended in `.github/workflows/deploy.yml` to cover both the gated path (`/pt/curso/foo/` still 302s to buy) and the teaser (`/{lang}/{course}/00-bienvenido/` does NOT redirect to a buy URL). Teaser chapter HTML itself is still unauthored — the gate just stops standing in the way. Validated with a 10-case node unit test of the slug matcher across all 4 language prefixes + nested asset paths + edge cases (bare prefix, trailing slug without slash).
+
+**Phase G — `livro/libro/book/livre` → `curso/curso/course/cours` rename (new, 2026-04-22):**
+
+The paid product is an interactive course with progress tracking and a 4-tier certificate ladder, not a book, so the URL slug and copy both moved. Decision anchored to market research: Platzi (LatAm EdTech leader) uses `/cursos/`; in BR, Alura and Rocketseat reserve "Formação" for multi-curso certificate tracks and use "Curso" for a single linear 9-chapter unit, which CyberFuturo is. `/course/` is the global default (Coursera, Udemy, edX, Frontend Masters). Alternative `formação/formation/formación/formation` was considered but rejected — EN "formation" reads religious/military, not EdTech.
+
+Changes: `_worker.js` `GATED_PATHS` + `/auth` redirect + welcome email body copy (PT/ES/EN/FR); 12 HTML files (hero CTA buttons, FAQ copy referencing "o livro"/"the book", orientation page "part of the book" → "part of the course"); CI smoke tests. Added a new `LEGACY_REDIRECTS` table + `matchLegacyRedirect` in `_worker.js` that 301s any `/{lang}/{livro|libro|book|livre}/...` hit to the new `/{lang}/{curso|curso|course|cours}/...` equivalent — preserves any magic-link URLs already sent out from sandbox testing. Smoke tests verify both the 301 path and the no-gate-on-new-teaser path across all 4 languages.
+
+Chapters inside the course are still "capítulos" / "chapters" / "chapitres" — a curso having capítulos is the natural nesting. One false-positive `livres` string in `site/fr/index.html:222` is intentional: the SQL-lesson example ("Bibliothèque de livres avec filtres") references the SQLite books-library demo, not the CyberFuturo product.
+
+`docs/product-spec.md` and `docs/url-restructure-spec.md` are historical design artifacts from before this rename and still say `/livro|libro|book|livre/`. Both have a banner at the top pointing here. When reading those specs, mentally substitute the new paths.
+
+Landing-page price card (spec §14) remains partial: the secondary "Buy the book · $9" CTA from Phase D is live, but the country-routed R$47/$9 auto-localized card below the hero isn't wired yet (waits on the Pages Function pattern from spec §12.1, which we dropped in favor of Stripe Adaptive Pricing — so this item may already be obsolete; revisit when real BR buyers land).
+
 **Not included in this round** (deferred until founder prerequisites land):
 
 - Removed: ~~buy pages~~ ✓ done
-- **Chapter content refactor** (spec §3) — splits each `lesson.md` into `task.md` + `site/pt/livro/NN-slug/index.html`; chapter prose is founder-authored
+- Removed: ~~orientation pages~~ ✓ done (Phase E)
+- **Chapter content refactor** (spec §3) — splits each `lesson.md` into `task.md` + `site/pt/curso/NN-slug/index.html`; chapter prose is founder-authored
 - **52 SVG templates** (spec §10)
 - **Handout/cert PDF generation** (spec §9.3) — Cloudflare Browser Rendering requires the Workers Paid plan (~$5/mo), contradicting the free-tier ADR. SVG-only fallback works on free tier; we'll wire that in once templates exist
 - **Verify + backers pages** (spec §11) — nightly GitHub Action that reads D1 artifacts and rebuilds static HTML; depends on populated `artifacts` rows
-- **Orientation pages** (`como-comecar/`, spec §13) — short content page, low priority
-- **Landing-page price card** (spec §14) — updates `site/pt/index.html` etc. with the R$47/$9 CTA next to "Open in Codespaces"
 
 ---
 
@@ -161,11 +174,7 @@ All this happened via `wrangler` CLI already-authenticated on the dev machine as
    - Webhook endpoint: `POST https://cyberfuturo.com/api/purchase/stripe`, event: `checkout.session.completed` only, copy signing secret
 3. **Pages env vars:**
    - ✅ `STRIPE_WEBHOOK_SECRET` — already set for sandbox (rotate + re-put when going live; see §17)
-   - ⏸️ `STRIPE_SECRET_KEY` = `sk_test_...` — reveal from Stripe dashboard → Developers → API keys, then run:
-     ```bash
-     printf 'sk_test_...' | wrangler pages secret put STRIPE_SECRET_KEY --project-name=cyberfuturo
-     ```
-     Or use the Cloudflare dashboard → Pages → cyberfuturo → Settings → Environment variables → Production
+   - ✅ `STRIPE_SECRET_KEY` — uploaded via `wrangler pages secret put` (rotate + re-put when flipping to live mode)
    - ⏸️ `RESEND_API_KEY` = `re_...` (create Resend account first; free tier 3,000/mo). Same `wrangler pages secret put` pattern.
 4. **R2 bucket** (for artifact PDFs when we get there):
    ```bash

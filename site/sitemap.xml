@@ -41,4 +41,40 @@
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cyberfuturo.com/"/>
   </url>
+  <url>
+    <loc>https://cyberfuturo.com/pt/como-comecar/</loc>
+    <lastmod>2026-04-22</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/como-comecar/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/como-empezar/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/getting-started/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/comment-commencer/"/>
+  </url>
+  <url>
+    <loc>https://cyberfuturo.com/es/como-empezar/</loc>
+    <lastmod>2026-04-22</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/como-comecar/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/como-empezar/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/getting-started/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/comment-commencer/"/>
+  </url>
+  <url>
+    <loc>https://cyberfuturo.com/en/getting-started/</loc>
+    <lastmod>2026-04-22</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/como-comecar/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/como-empezar/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/getting-started/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/comment-commencer/"/>
+  </url>
+  <url>
+    <loc>https://cyberfuturo.com/fr/comment-commencer/</loc>
+    <lastmod>2026-04-22</lastmod>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/como-comecar/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/como-empezar/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/getting-started/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/comment-commencer/"/>
+  </url>
 </urlset>

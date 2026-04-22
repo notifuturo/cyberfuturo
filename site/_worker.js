@@ -5,7 +5,7 @@
 //   2. POST   /api/activate            → link activation_code → anon_id
 //   3. POST|OPTIONS|DELETE /api/ping   → telemetry ingest (telemetry-spec.md §3-§5)
 //   4. GET    /auth                    → magic link: set cf_access cookie + 302
-//   5. *      /{lang}/{livro|libro|book|livre}/*
+//   5. *      /{lang}/{curso|curso|course|cours}/*
 //                                      → cookie-gated (docs/product-spec.md §8)
 //   6. GET|HEAD /                      → smart language redirect
 //                                      (cookie → Accept-Language → CF-IPCountry → en)
@@ -213,12 +213,12 @@ async function handleAuth(request, env) {
   if (!buyer) return new Response("token not found", { status: 404 });
 
   const lang = buyer.lang_pref || "pt";
-  const bookSlug = { pt: "livro", es: "libro", en: "book", fr: "livre" }[lang] || "livro";
+  const courseSlug = { pt: "curso", es: "curso", en: "course", fr: "cours" }[lang] || "curso";
   return new Response(null, {
     status: 302,
     headers: {
       "Set-Cookie": `${ACCESS_COOKIE}=${token}; Path=/; Max-Age=${ACCESS_COOKIE_MAXAGE}; Secure; HttpOnly; SameSite=Lax`,
-      "Location":   `/${lang}/${bookSlug}/00-bienvenido/`,
+      "Location":   `/${lang}/${courseSlug}/00-bienvenido/`,
     },
   });
 }
@@ -347,9 +347,9 @@ const WELCOME_EMAIL = {
 
 Seu acesso ao CyberFuturo está pronto.
 
-1. Leia o livro no site. Clique para entrar:
+1. Abra o curso no site. Clique para entrar:
    https://cyberfuturo.com/auth?t=${access_token}
-   (Este link abre o livro e te deixa logado por 2 anos.)
+   (Este link abre o curso e te deixa logado por 2 anos.)
 
 2. Pratique no Codespaces:
    https://codespaces.new/notifuturo/cyberfuturo?quickstart=1
@@ -368,9 +368,9 @@ Cada capítulo concluído gera um handout na sua página pessoal.
 
 Tu acceso a CyberFuturo está listo.
 
-1. Lee el libro en el sitio. Clic para entrar:
+1. Abre el curso en el sitio. Clic para entrar:
    https://cyberfuturo.com/auth?t=${access_token}
-   (Este enlace abre el libro y te deja con sesión iniciada por 2 años.)
+   (Este enlace abre el curso y te deja con sesión iniciada por 2 años.)
 
 2. Practica en Codespaces:
    https://codespaces.new/notifuturo/cyberfuturo?quickstart=1
@@ -389,9 +389,9 @@ Cada capítulo completado genera un handout en tu página personal.
 
 Your access to CyberFuturo is ready.
 
-1. Read the book on the site. Click to log in:
+1. Open the course on the site. Click to log in:
    https://cyberfuturo.com/auth?t=${access_token}
-   (This link opens the book and keeps you signed in for 2 years.)
+   (This link opens the course and keeps you signed in for 2 years.)
 
 2. Practice in Codespaces:
    https://codespaces.new/notifuturo/cyberfuturo?quickstart=1
@@ -410,9 +410,9 @@ Every chapter you complete generates a handout on your personal page.
 
 Votre accès à CyberFuturo est prêt.
 
-1. Lisez le livre sur le site. Cliquez pour vous connecter :
+1. Ouvrez le cours sur le site. Cliquez pour vous connecter :
    https://cyberfuturo.com/auth?t=${access_token}
-   (Ce lien ouvre le livre et vous garde connecté pendant 2 ans.)
+   (Ce lien ouvre le cours et vous garde connecté pendant 2 ans.)
 
 2. Pratiquez sur Codespaces :
    https://codespaces.new/notifuturo/cyberfuturo?quickstart=1
@@ -521,16 +521,40 @@ async function handleStripeWebhook(request, env) {
 
 // ---- Cookie gate for paid chapters ----------------------------------------
 //
-// Matches /pt/livro/, /es/libro/, /en/book/, /fr/livre/ (and deeper). Buyers
+// Matches /pt/curso/, /es/curso/, /en/course/, /fr/cours/ (and deeper). Buyers
 // with a valid cf_access cookie fall through to ASSETS; others 302 to the
 // buy page preserving ?from= for post-purchase return.
 
 const GATED_PATHS = [
-  { prefix: "/pt/livro/", lang: "pt", buy: "/pt/comprar/" },
-  { prefix: "/es/libro/", lang: "es", buy: "/es/comprar/" },
-  { prefix: "/en/book/",  lang: "en", buy: "/en/buy/"     },
-  { prefix: "/fr/livre/", lang: "fr", buy: "/fr/acheter/" },
+  { prefix: "/pt/curso/",  lang: "pt", buy: "/pt/comprar/" },
+  { prefix: "/es/curso/",  lang: "es", buy: "/es/comprar/" },
+  { prefix: "/en/course/", lang: "en", buy: "/en/buy/"     },
+  { prefix: "/fr/cours/",  lang: "fr", buy: "/fr/acheter/" },
 ];
+
+// Legacy book paths (pre-2026-04-22). 301 to the new course paths so any
+// bookmarked magic-link redirect from an older welcome email still lands.
+const LEGACY_REDIRECTS = [
+  { from: "/pt/livro/",  to: "/pt/curso/"  },
+  { from: "/es/libro/",  to: "/es/curso/"  },
+  { from: "/en/book/",   to: "/en/course/" },
+  { from: "/fr/livre/",  to: "/fr/cours/"  },
+];
+
+function matchLegacyRedirect(pathname) {
+  for (const r of LEGACY_REDIRECTS) {
+    if (pathname.startsWith(r.from)) {
+      return r.to + pathname.slice(r.from.length);
+    }
+  }
+  return null;
+}
+
+// Chapters anyone can read without paying. The pitch is "read chapter 00 free,
+// unlock chapters 01-08 for $9" — keeping this tight preserves conversion.
+// Slugs are language-agnostic (see curriculum/lessons/NN-slug/), so one set
+// covers all four course paths.
+const FREE_TEASER_SLUGS = new Set(["00-bienvenido"]);
 
 function matchGatedPrefix(pathname) {
   for (const g of GATED_PATHS) {
@@ -539,7 +563,16 @@ function matchGatedPrefix(pathname) {
   return null;
 }
 
+function isFreeTeaser(pathname, gate) {
+  const rest = pathname.slice(gate.prefix.length);
+  const slug = rest.split("/")[0];
+  return FREE_TEASER_SLUGS.has(slug);
+}
+
 async function enforceAccessGate(request, env, url, gate) {
+  // Teaser chapters fall through to static assets without any auth check.
+  if (isFreeTeaser(url.pathname, gate)) return null;
+
   // Without the DB binding we can't verify cookies; redirect to buy page
   // (fail-closed) so paid content is never served unauthenticated.
   if (!env.CF_TELEMETRY) return redirectToBuy(url, gate);
@@ -575,6 +608,10 @@ export default {
     if (path === "/api/activate")        return handleActivate(request, env);
     if (path === "/api/ping")            return handlePing(request, env);
     if (path === "/auth")                return handleAuth(request, env);
+
+    // Legacy /livro/|/libro/|/book/|/livre/ URLs → 301 to the new /curso/|/course/|/cours/ equivalents.
+    const legacy = matchLegacyRedirect(path);
+    if (legacy) return Response.redirect(`${url.origin}${legacy}${url.search}`, 301);
 
     // Cookie gate for paid chapter URLs.
     const gate = matchGatedPrefix(path);

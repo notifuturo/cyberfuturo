@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es-419">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cómo empezar — CyberFuturo</title>
+  <meta name="description" content="Abre el Codespace, ejecuta ./cf list, haz tu primera lección. Sin instalar nada en tu computadora.">
+  <meta property="og:title" content="Cómo empezar — CyberFuturo">
+  <meta property="og:description" content="Abre el Codespace, ejecuta ./cf list, haz tu primera lección. Sin instalar nada.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cyberfuturo.com/es/como-empezar/">
+  <meta property="og:locale" content="es_419">
+  <meta name="theme-color" content="#1e1e2e">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://cyberfuturo.com/es/como-empezar/">
+  <link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/como-comecar/">
+  <link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/como-empezar/">
+  <link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/getting-started/">
+  <link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/comment-commencer/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="/es/">
+      <span class="brand-prompt">&gt;_</span>
+      <span class="brand-name">Cyber<span>Futuro</span></span>
+    </a>
+    <div class="lang-switcher" role="navigation" aria-label="Seleccionar idioma">
+      <a href="/pt/como-comecar/" hreflang="pt" data-lang="pt">PT</a>
+      <a href="/es/como-empezar/" hreflang="es" data-lang="es">ES</a>
+      <a href="/en/getting-started/" hreflang="en" data-lang="en">EN</a>
+      <a href="/fr/comment-commencer/" hreflang="fr" data-lang="fr">FR</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <p class="prompt-line"><span class="muted">user@cyberfuturo</span>:<span style="color:var(--accent-2)">~</span>$ <span class="flash">./cf start</span></p>
+    <h1>Cómo <span class="hl">empezar</span>.</h1>
+    <p class="tagline">Tres pasos, cero instalación. Los ejercicios corren en un Codespace de GitHub — una máquina virtual en el navegador, con Python, Git y SQLite listos para usar.</p>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://codespaces.new/notifuturo/cyberfuturo?quickstart=1" target="_blank" rel="noopener">
+        Abrir en Codespaces
+      </a>
+      <a class="btn btn-secondary" href="https://github.com/notifuturo/cyberfuturo" target="_blank" rel="noopener">Ver el repositorio</a>
+    </div>
+
+    <p class="muted" style="font-size:13px; margin-top:12px;">Solo necesitas una cuenta gratis de GitHub. 60 h/mes de Codespaces gratis cubren todo el curso.</p>
+  </section>
+
+  <section>
+    <h2>Paso 1 — Abre el Codespace</h2>
+    <p>Haz clic en <a href="https://codespaces.new/notifuturo/cyberfuturo?quickstart=1" target="_blank" rel="noopener">Abrir en Codespaces</a>. GitHub crea una máquina virtual con VS Code en el navegador, el repositorio ya clonado y todas las herramientas configuradas.</p>
+    <p class="muted" style="font-size:13px;">¿Prefieres local? <code>git clone https://github.com/notifuturo/cyberfuturo.git</code> y abre la carpeta en tu editor. Necesitarás Python 3.11+ instalado.</p>
+  </section>
+
+  <section>
+    <h2>Paso 2 — Ve las lecciones</h2>
+    <p>Con el terminal abierto en el Codespace, ejecuta:</p>
+
+    <div class="terminal" role="img" aria-label="Salida de ./cf list">
+      <div class="terminal-bar">
+        <span class="dots"><span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span></span>
+        <span class="title">bash — cyberfuturo/curriculum</span>
+      </div>
+      <div class="terminal-body"><span class="tline"><span class="tprompt">user@cyberfuturo</span>:<span class="tpath">~/curriculum</span>$ ./cf list</span>
+<span class="tline"><span class="tinfo">▸ Lecciones disponibles</span></span>
+<span class="tline"></span>
+<span class="tline"><span class="tout">  00  Bienvenida</span></span>
+<span class="tline"><span class="tout">  01  Terminal</span></span>
+<span class="tline"><span class="tout">  02  Primer commit en Git</span></span>
+<span class="tline"><span class="tout">  03  Hello, Python</span></span>
+<span class="tline"><span class="tout">  ...</span></span>
+<span class="tline"></span>
+<span class="tline"><span class="tinfo">Uso: ./cf start NN  para iniciar la lección NN</span></span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Paso 3 — Haz la primera lección</h2>
+    <p>Empieza por la lección 00 y continúa en orden. Para cada lección:</p>
+
+    <ol class="steps">
+      <li>
+        <span class="title"><code>./cf start NN</code></span>
+        <p>Muestra la tarea en el terminal. Si la quieres ver de nuevo, ejecuta <code>./cf show NN</code>.</p>
+      </li>
+      <li>
+        <span class="title">Haz lo que la tarea pide</span>
+        <p>Crea archivos, ejecuta comandos, edita código. Todo en el mismo terminal o en el editor del Codespace.</p>
+      </li>
+      <li>
+        <span class="title"><code>./cf check</code></span>
+        <p>Valida lo que hiciste. Si pasó, la lección queda marcada como completada. Si falta algo, el validador te dice qué.</p>
+      </li>
+      <li>
+        <span class="title"><code>./cf next</code></span>
+        <p>Salta a la siguiente lección. O <code>./cf list</code> para verlas todas otra vez.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>¿Quieres la explicación completa?</h2>
+    <p>Las tareas son gratis para siempre — el repositorio es público. Los <strong>capítulos completos</strong> (las explicaciones, el porqué de cada comando, las analogías) son parte del curso: <a href="/es/comprar/">cómpralo una vez por $9 USD</a> y tienes acceso vitalicio en 4 idiomas, más handouts y certificados al completar cada módulo.</p>
+
+    <div class="cta-row" style="margin-top:18px;">
+      <a class="btn btn-primary" href="/es/comprar/">Comprar el curso · $9</a>
+      <a class="btn btn-secondary" href="/es/">Volver al inicio</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div><strong>CyberFuturo</strong> — aprende tecnología al revés.</div>
+  <div>
+    <a href="/es/">Inicio</a>
+    &nbsp;·&nbsp; <a href="/es/comprar/">Comprar</a>
+    &nbsp;·&nbsp; <a href="/es/privacidad/">Privacidad</a>
+    &nbsp;·&nbsp; <a href="/pt/como-comecar/">Português</a>
+    &nbsp;·&nbsp; <a href="/en/getting-started/">English</a>
+    &nbsp;·&nbsp; <a href="/fr/comment-commencer/">Français</a>
+    &nbsp;·&nbsp; <a href="https://github.com/notifuturo/cyberfuturo" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+<div id="lang-mismatch" class="lang-mismatch" hidden></div>
+<script>
+  (function() {
+    var lang = document.documentElement.lang.slice(0, 2).toLowerCase();
+    if (!/^(pt|es|en|fr)$/.test(lang)) return;
+    document.cookie = "cf_lang=" + lang + "; path=/; max-age=15552000; SameSite=Lax";
+    var sel = document.querySelector('.lang-switcher a[data-lang="' + lang + '"]');
+    if (sel) sel.classList.add("active");
+  })();
+</script>
+
+</body>
+</html>
