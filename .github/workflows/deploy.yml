@@ -66,6 +66,10 @@ jobs:
           test -f site/es/comprar/index.html          || { echo "site/es/comprar/ missing"; exit 1; }
           test -f site/en/buy/index.html              || { echo "site/en/buy/ missing"; exit 1; }
           test -f site/fr/acheter/index.html          || { echo "site/fr/acheter/ missing"; exit 1; }
+          test -f site/pt/curso/00-bienvenido/index.html   || { echo "site/pt/curso/00-bienvenido/ missing"; exit 1; }
+          test -f site/es/curso/00-bienvenido/index.html   || { echo "site/es/curso/00-bienvenido/ missing"; exit 1; }
+          test -f site/en/course/00-bienvenido/index.html  || { echo "site/en/course/00-bienvenido/ missing"; exit 1; }
+          test -f site/fr/cours/00-bienvenido/index.html   || { echo "site/fr/cours/00-bienvenido/ missing"; exit 1; }
           test -f site/_worker.js                 || { echo "root redirect _worker.js missing"; exit 1; }
           test -f site/styles.css                 || { echo "site/styles.css missing"; exit 1; }
           test -f site/favicon.svg                || { echo "site/favicon.svg missing"; exit 1; }
@@ -191,8 +195,8 @@ jobs:
             exit 1
           fi
 
-          # Teaser chapter — /{lang}/{course}/00-bienvenido/ must NOT redirect to the buy page
-          # (content itself may still 404 until chapter HTML is authored; the point is the gate lets it through).
+          # Teaser chapter — /{lang}/{course}/00-bienvenido/ is now authored (Phase 2)
+          # and must return 200, never a redirect to the buy page.
           for path in "/pt/curso/00-bienvenido/" "/es/curso/00-bienvenido/" "/en/course/00-bienvenido/" "/fr/cours/00-bienvenido/"; do
             read -r teaser_code teaser_loc < <(probe "https://cyberfuturo.pages.dev${path}")
             printf "  %-36s %s -> %s\n" "${path} (teaser)" "$teaser_code" "$teaser_loc"
@@ -201,6 +205,10 @@ jobs:
                 echo "FAIL: teaser chapter $path was gated to buy page (redirected to $teaser_loc)"
                 exit 1 ;;
             esac
+            if [ "$teaser_code" != "200" ]; then
+              echo "FAIL: teaser chapter $path expected 200, got $teaser_code"
+              exit 1
+            fi
           done
 
           # Legacy /livro|libro|book|livre/ URLs must 301 to the new /curso|curso|course|cours/ equivalents.

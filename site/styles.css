@@ -701,6 +701,378 @@ hr {
 .cf-compare .cf-x        { color: var(--muted); }
 .cf-compare .cf-partial  { color: var(--warn); }
 
+/* ==========================================================================
+   Chapter reader (Editorial + Terminal direction)
+   —
+   Scoped under .cf. Per the Claude Design handoff (final.css + FinalReader.jsx).
+   Namespace isolates these rules from the existing landing-page styles so the
+   two systems coexist in one stylesheet.
+   ========================================================================== */
+
+.cf { position: relative; }
+
+/* Decorative glow layers inside the reader. */
+.cf > .cf-glow,
+.cf > .cf-glow-pink {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(120px);
+}
+.cf > .cf-glow       { width: 70%; height: 60%; top: -4%; left: -10%; background: var(--glow-accent); }
+.cf > .cf-glow::after { content: ""; position: absolute; width: 85%; height: 80%; top: 20%; right: -50%; background: var(--glow-cyan); border-radius: 50%; filter: inherit; }
+.cf > .cf-glow-pink  { width: 45%; height: 45%; bottom: 5%; left: 25%; background: var(--glow-pink); }
+
+/* Reader header — sticky, blurred, thin border. */
+.cf-header {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(30, 30, 46, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px;
+  font-family: var(--mono);
+}
+.cf-hamb {
+  background: transparent; border: 1px solid var(--border); color: var(--text-dim);
+  padding: 7px 13px; border-radius: 6px; cursor: pointer;
+  font-family: var(--mono); font-size: 12px;
+  display: inline-flex; gap: 9px; align-items: center;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+.cf-hamb:hover { border-color: var(--accent); color: var(--accent); }
+.cf-hamb-icon { font-size: 18px; line-height: 1; }
+.cf-brand {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-weight: 700; font-size: 17px; letter-spacing: -0.01em;
+  color: var(--text); text-decoration: none;
+  font-family: var(--mono);
+}
+.cf-brand .p { color: var(--success); }
+.cf-brand b { color: var(--accent); font-weight: 700; }
+.cf-head-progress {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+  letter-spacing: 0.05em; padding: 0 6px;
+}
+.cf-head-progress .track {
+  width: 140px; height: 3px; background: var(--border);
+  border-radius: 2px; overflow: hidden;
+}
+.cf-head-progress .fill {
+  height: 100%; background: linear-gradient(90deg, var(--accent), var(--pink));
+  border-radius: 2px;
+}
+.cf-head-right { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+.cf-head-right .lang-switcher { gap: 6px; }
+
+/* Reader buttons (smaller footprint than the global .btn). */
+.cf-btn {
+  font-family: var(--mono); font-size: 14px; font-weight: 600;
+  padding: 10px 18px; border-radius: 6px; border: 1px solid transparent;
+  cursor: pointer; text-decoration: none; color: var(--text);
+  transition: background 0.15s, transform 0.08s, border 0.15s, color 0.15s;
+  display: inline-flex; align-items: center; gap: 8px; text-align: left;
+}
+.cf-btn:active { transform: translateY(1px); }
+.cf-btn[aria-disabled="true"] { opacity: 0.4; cursor: not-allowed; }
+.cf-btn-primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.cf-btn-primary:hover { background: #a77bff; color: var(--bg); }
+.cf-btn-ghost { background: transparent; color: var(--text); border-color: var(--border); }
+.cf-btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+.cf-btn-tiny { padding: 7px 13px; font-size: 12px; }
+
+.cf-code {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: 1px 6px;
+  font-family: var(--mono); font-size: 0.88em; color: var(--accent-2);
+}
+
+/* Unlock banner (locked chapters). */
+.cf-banner {
+  position: relative; z-index: 5;
+  background: linear-gradient(90deg, rgba(189,147,249,0.16), rgba(255,121,198,0.08));
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px;
+  font-family: var(--mono); font-size: 13px;
+}
+.cf-banner-text { display: flex; align-items: center; gap: 14px; color: var(--text); flex: 1; min-width: 0; }
+.cf-banner-lock { color: var(--accent); font-size: 16px; flex-shrink: 0; }
+.cf-banner-price { color: var(--accent); font-weight: 700; }
+.cf-banner-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.cf-banner-x {
+  background: transparent; border: 0; color: var(--muted); cursor: pointer;
+  font-family: var(--mono); font-size: 18px; line-height: 1; padding: 0 6px;
+}
+.cf-banner-x:hover { color: var(--text); }
+
+/* Three-column grid: TOC | article | terminal sidecar. */
+.cf-grid {
+  position: relative; z-index: 2;
+  max-width: 1400px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 420px;
+  gap: 48px;
+  padding: 44px 28px 100px;
+}
+
+/* ASCII TOC sidebar. */
+.cf-side { position: sticky; top: 88px; align-self: start; max-height: calc(100vh - 108px); overflow-y: auto; }
+.cf-side::-webkit-scrollbar { width: 6px; }
+.cf-side::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.cf-toc { font-family: var(--mono); padding: 24px 24px 24px 0; color: var(--text-dim); }
+.cf-toc-title { font-size: 11px; letter-spacing: 0.14em; color: var(--muted); margin-bottom: 14px; }
+.cf-toc-root { color: var(--accent-2); font-size: 13px; margin-bottom: 4px; }
+.cf-toc-tree { list-style: none; padding: 0; margin: 0 0 22px; font-size: 13px; }
+.cf-toc-tree li > a,
+.cf-toc-tree li > span {
+  background: transparent; border: 0; color: inherit;
+  font-family: var(--mono); font-size: 13px; width: 100%;
+  padding: 5px 6px; text-align: left; cursor: pointer; text-decoration: none;
+  display: grid; grid-template-columns: 28px 28px 1fr auto;
+  gap: 6px; align-items: center; line-height: 1.5;
+  border-radius: 4px;
+}
+.cf-toc-tree li.locked > a,
+.cf-toc-tree li.locked > span { cursor: not-allowed; }
+.cf-toc-tree li > a:hover { background: rgba(189,147,249,0.08); }
+.cf-toc-tree li.locked > a:hover { background: transparent; }
+.cf-toc-branch { color: var(--border); user-select: none; }
+.cf-toc-num { color: var(--muted); }
+.cf-toc-name { color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cf-toc-tree li.current > span { background: rgba(139,233,253,0.06); }
+.cf-toc-tree li.current .cf-toc-name,
+.cf-toc-tree li.current .cf-toc-num { color: var(--accent-2); }
+.cf-toc-tree li.locked .cf-toc-name { color: var(--muted); }
+.cf-toc-status { font-size: 12px; color: var(--muted); }
+.cf-toc-status.read { color: var(--success); }
+.cf-toc-status.current { color: var(--accent-2); font-weight: 600; }
+.cf-toc-status.next { color: var(--text-dim); }
+.cf-toc-unlock {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; background: rgba(189,147,249,0.05);
+  font-family: var(--mono); font-size: 12px;
+}
+.cf-toc-unlock-label { color: var(--muted); font-size: 11px; letter-spacing: 0.08em; margin-bottom: 6px; }
+.cf-toc-unlock-price { color: var(--accent); font-size: 17px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.01em; }
+.cf-toc-unlock-price span { color: var(--muted); font-size: 11px; font-weight: 400; }
+
+/* Reader terminal (distinct from the landing-page .terminal). */
+.cf-term {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+  margin: 22px 0;
+}
+.cf-term-bar {
+  background: var(--surface-2); padding: 8px 14px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.cf-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.cf-term-title { margin-left: 10px; font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.cf-term-body {
+  padding: 18px 20px; margin: 0;
+  font-family: var(--mono); font-size: 13.5px; line-height: 1.75;
+  color: var(--text-dim); overflow-x: auto;
+  white-space: pre-wrap; word-break: break-word;
+}
+.cf-term-body.compact { font-size: 12.5px; padding: 14px 16px; line-height: 1.7; }
+.cf-term-body .tp { color: var(--success); }
+.cf-term-body .tc { color: var(--text); }
+/* .tpath, .tflag, .tcomment, .tok, .tinfo, .tout, .tcursor already declared above */
+
+/* Chapter head + prose. */
+.cf-eyebrow {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+  color: var(--muted); display: flex; gap: 10px; align-items: center;
+  margin-bottom: 18px; text-transform: uppercase;
+}
+.cf-eyebrow .e-num { color: var(--accent); }
+.cf-eyebrow .e-dot { color: var(--border); }
+.cf-eyebrow .e-free { color: var(--success); }
+.cf-chap-title {
+  font-family: var(--sans); font-size: 48px; line-height: 1.06;
+  letter-spacing: -0.028em; font-weight: 600;
+  margin: 0 0 20px; color: var(--text); text-wrap: balance;
+}
+.cf-chap-lead {
+  font-family: var(--sans); font-size: 22px; line-height: 1.5;
+  color: var(--text-dim); margin: 0 0 44px; max-width: 62ch;
+}
+.cf-article { min-width: 0; }
+.cf-prose {
+  font-family: var(--sans); font-size: 17px; line-height: 1.7;
+  letter-spacing: 0.005em; color: var(--text); max-width: 660px;
+}
+.cf-prose p { margin: 0 0 20px; text-wrap: pretty; color: var(--text); }
+.cf-prose strong { color: var(--text); }
+.cf-prose .cf-code { font-family: var(--mono); font-size: 0.85em; }
+.cf-prose h2 {
+  font-family: var(--sans); font-size: 25px; line-height: 1.25;
+  letter-spacing: -0.015em; font-weight: 600;
+  margin: 40px 0 14px; color: var(--text);
+  border-left: 3px solid var(--accent); padding-left: 14px;
+}
+.cf-prose section { margin: 0 0 12px; }
+
+/* Callout. */
+.cf-callout {
+  display: grid; grid-template-columns: 32px 1fr; gap: 14px;
+  margin: 24px 0; padding: 18px 20px;
+  border-left: 3px solid var(--accent-2);
+  background: rgba(139,233,253,0.04);
+  border-radius: 0 8px 8px 0;
+}
+.cf-callout-mark {
+  font-family: var(--mono); font-size: 20px;
+  color: var(--accent-2); font-weight: 700;
+  line-height: 1; padding-top: 2px;
+}
+.cf-callout-title {
+  font-family: var(--mono); font-weight: 700; font-size: 12px;
+  margin-bottom: 6px; color: var(--text);
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.cf-callout-body {
+  font-family: var(--sans); font-size: 16px; line-height: 1.65;
+  color: var(--text-dim);
+}
+
+/* Command list (verb + description). */
+.cf-cmds {
+  margin: 26px 0;
+  border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border);
+  padding: 4px 0;
+}
+.cf-cmd {
+  display: grid; grid-template-columns: minmax(200px, auto) 1fr;
+  gap: 24px; padding: 12px 0;
+  border-bottom: 1px dashed var(--border);
+  align-items: baseline;
+}
+.cf-cmd:last-child { border-bottom: 0; }
+.cf-cmd dt { margin: 0; font-family: var(--mono); }
+.cf-cmd dd { margin: 0; font-family: var(--sans); font-size: 15.5px; color: var(--text-dim); line-height: 1.55; }
+
+/* Summary card. */
+.cf-summary {
+  margin-top: 56px; padding: 32px 36px;
+  background: linear-gradient(135deg, rgba(189,147,249,0.06), rgba(139,233,253,0.03));
+  border: 1px solid var(--border); border-radius: 12px;
+}
+.cf-summary h2 {
+  margin-top: 0 !important; border-left: 0 !important; padding-left: 0 !important;
+  font-size: 22px !important;
+}
+.cf-summary-lead { font-family: var(--sans); font-size: 16px; color: var(--text-dim); margin-bottom: 18px; }
+
+/* Pager. */
+.cf-pager {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  margin-top: 64px; padding-top: 28px;
+  border-top: 1px dashed var(--border);
+}
+.cf-pager .cf-btn {
+  font-family: var(--mono); font-size: 13px; padding: 16px 18px;
+  align-items: stretch; flex-direction: column; gap: 4px;
+  text-decoration: none;
+}
+.cf-pager .cf-btn span {
+  color: var(--muted); font-size: 11px; letter-spacing: 0.08em; font-weight: 500;
+}
+.cf-pager .cf-btn.cf-btn-primary span { color: rgba(30,30,46,0.7); }
+.cf-pager .cf-btn b { font-weight: 700; font-size: 14px; letter-spacing: -0.005em; }
+.cf-pager .cf-btn.next { text-align: right; align-items: flex-end; }
+
+/* Terminal sidecar. */
+.cf-sidecar {
+  position: sticky; top: 88px; align-self: start;
+  max-height: calc(100vh - 108px);
+  display: flex; flex-direction: column; gap: 14px;
+  font-family: var(--mono);
+}
+.cf-sidecar-label {
+  font-size: 11px; letter-spacing: 0.12em; color: var(--muted);
+  display: flex; align-items: center; gap: 10px; text-transform: uppercase;
+}
+.cf-sidecar-label .dot {
+  width: 7px; height: 7px; background: var(--success); border-radius: 50%;
+  display: inline-block; box-shadow: 0 0 10px var(--success);
+  animation: cf-pulse 1.8s ease-in-out infinite;
+}
+.cf-sidecar .cf-term { margin: 0; }
+.cf-sidecar-tabs { display: flex; border-bottom: 1px solid var(--border); gap: 2px; }
+.cf-sidecar-tab {
+  background: transparent; border: 0; color: var(--muted);
+  font-family: var(--mono); font-size: 12px; padding: 8px 12px;
+  cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.cf-sidecar-tab.active { color: var(--accent-2); border-bottom-color: var(--accent-2); }
+.cf-sidecar-hint {
+  padding: 14px 16px; border: 1px dashed var(--border); border-radius: 6px;
+  font-family: var(--sans); font-size: 14.5px; color: var(--text-dim); line-height: 1.6;
+}
+.cf-sidecar-hint b {
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+  font-weight: 400; display: block; margin-bottom: 6px; letter-spacing: 0.08em;
+}
+.cf-sidecar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+@keyframes cf-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* Mobile TOC drawer — pure CSS via :target. */
+.cf-drawer {
+  position: fixed; inset: 0;
+  background: rgba(30,30,46,0.88); backdrop-filter: blur(6px);
+  z-index: 50; display: none;
+}
+.cf-drawer-inner {
+  width: 380px; max-width: 90vw; height: 100%;
+  background: var(--surface); border-right: 1px solid var(--border);
+  overflow-y: auto; padding: 20px;
+}
+.cf-drawer-close {
+  position: absolute; top: 16px; right: 16px;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 6px 12px; border-radius: 6px;
+  font-family: var(--mono); font-size: 12px; text-decoration: none;
+}
+#toc:target { display: flex; }
+
+/* Responsive breakpoints (matches designer spec). */
+@media (max-width: 1100px) {
+  .cf-grid { grid-template-columns: 260px minmax(0, 1fr); gap: 36px; }
+  .cf-sidecar { display: none; }
+  .cf-sidecar-mobile { display: block; margin-top: 40px; }
+}
+@media (max-width: 820px) {
+  .cf-grid { grid-template-columns: 1fr; gap: 0; padding: 28px 18px 80px; }
+  .cf-side { display: none; }
+  .cf-chap-title { font-size: 32px; }
+  .cf-chap-lead { font-size: 18px; margin-bottom: 32px; }
+  .cf-prose h2 { font-size: 22px; }
+  .cf-cmd { grid-template-columns: 1fr; gap: 4px; }
+  .cf-pager { grid-template-columns: 1fr; }
+  .cf-pager .cf-btn.next { text-align: left; align-items: stretch; }
+  .cf-banner { flex-wrap: wrap; padding: 12px 16px; font-size: 12px; }
+  .cf-banner-text { flex-wrap: wrap; gap: 8px; }
+  .cf-head-progress { display: none; }
+  .cf-hamb { display: inline-flex; }
+  .cf-header { padding: 12px 16px; }
+}
+@media (min-width: 821px) {
+  .cf-drawer { display: none !important; }
+  .cf-hamb { display: none; }
+}
+
 /* First-visit language mismatch banner — shown when browser-preferred language
    differs from the current page's language. Dismissed by clicking the link. */
 .lang-mismatch {

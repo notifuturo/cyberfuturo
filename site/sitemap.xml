@@ -77,4 +77,40 @@
     <xhtml:link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/getting-started/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/comment-commencer/"/>
   </url>
+  <url>
+    <loc>https://cyberfuturo.com/pt/curso/00-bienvenido/</loc>
+    <lastmod>2026-04-22</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/curso/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/curso/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/course/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/cours/00-bienvenido/"/>
+  </url>
+  <url>
+    <loc>https://cyberfuturo.com/es/curso/00-bienvenido/</loc>
+    <lastmod>2026-04-22</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/curso/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/curso/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/course/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/cours/00-bienvenido/"/>
+  </url>
+  <url>
+    <loc>https://cyberfuturo.com/en/course/00-bienvenido/</loc>
+    <lastmod>2026-04-22</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/curso/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/curso/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/course/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/cours/00-bienvenido/"/>
+  </url>
+  <url>
+    <loc>https://cyberfuturo.com/fr/cours/00-bienvenido/</loc>
+    <lastmod>2026-04-22</lastmod>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/curso/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/curso/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/course/00-bienvenido/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/cours/00-bienvenido/"/>
+  </url>
 </urlset>

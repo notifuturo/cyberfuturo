@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boas-vindas — seu primeiro arquivo · CyberFuturo</title>
+  <meta name="description" content="Amostra grátis do CyberFuturo. Capítulo 00: um terminal, quatro comandos, seu primeiro arquivo escrito em linha de comando.">
+  <meta property="og:title" content="CyberFuturo — Boas-vindas, seu primeiro arquivo">
+  <meta property="og:description" content="Leia grátis o capítulo 00 do curso CyberFuturo: pwd, ls, echo, cat. Um terminal, quatro comandos, seu primeiro arquivo.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://cyberfuturo.com/pt/curso/00-bienvenido/">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="theme-color" content="#1e1e2e">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://cyberfuturo.com/pt/curso/00-bienvenido/">
+  <link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/curso/00-bienvenido/">
+  <link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/curso/00-bienvenido/">
+  <link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/course/00-bienvenido/">
+  <link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/cours/00-bienvenido/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+
+<div class="cf">
+  <div class="cf-glow" aria-hidden="true"></div>
+  <div class="cf-glow-pink" aria-hidden="true"></div>
+
+  <header class="cf-header">
+    <a class="cf-hamb" href="#toc" aria-label="Abrir índice"><span class="cf-hamb-icon">≡</span> ÍNDICE</a>
+    <a class="cf-brand" href="/pt/"><span class="p">&gt;_</span><span>Cyber<b>Futuro</b></span></a>
+    <div class="cf-head-progress" aria-hidden="true">
+      <span>CAP. 00</span>
+      <div class="track"><div class="fill" style="width: 12%"></div></div>
+      <span>amostra</span>
+    </div>
+    <div class="cf-head-right">
+      <div class="lang-switcher" role="navigation" aria-label="Selecionar idioma">
+        <a href="/pt/curso/00-bienvenido/" hreflang="pt" data-lang="pt">PT</a>
+        <a href="/es/curso/00-bienvenido/" hreflang="es" data-lang="es">ES</a>
+        <a href="/en/course/00-bienvenido/" hreflang="en" data-lang="en">EN</a>
+        <a href="/fr/cours/00-bienvenido/" hreflang="fr" data-lang="fr">FR</a>
+      </div>
+      <a class="cf-btn cf-btn-tiny cf-btn-primary" href="/pt/comprar/">Comprar · $9</a>
+    </div>
+  </header>
+
+  <div class="cf-grid">
+
+    <aside class="cf-side">
+      <nav class="cf-toc" aria-label="Índice do curso">
+        <div class="cf-toc-title">ÍNDICE DO CURSO</div>
+        <div class="cf-toc-root">curso/</div>
+        <ul class="cf-toc-tree">
+          <li class="current">
+            <span>
+              <span class="cf-toc-branch">├── </span>
+              <span class="cf-toc-num">00</span>
+              <span class="cf-toc-name">Boas-vindas</span>
+              <span class="cf-toc-status current">● lendo</span>
+            </span>
+          </li>
+          <li class="locked"><a href="/pt/comprar/">
+            <span class="cf-toc-branch">├── </span><span class="cf-toc-num">01</span>
+            <span class="cf-toc-name">Terminal como linguagem</span><span class="cf-toc-status">🔒</span>
+          </a></li>
+          <li class="locked"><a href="/pt/comprar/">
+            <span class="cf-toc-branch">├── </span><span class="cf-toc-num">02</span>
+            <span class="cf-toc-name">Primeiro commit em Git</span><span class="cf-toc-status">🔒</span>
+          </a></li>
+          <li class="locked"><a href="/pt/comprar/">
+            <span class="cf-toc-branch">├── </span><span class="cf-toc-num">03</span>
+            <span class="cf-toc-name">Python: olá, mundo</span><span class="cf-toc-status">🔒</span>
+          </a></li>
+          <li class="locked"><a href="/pt/comprar/">
+            <span class="cf-toc-branch">├── </span><span class="cf-toc-num">04</span>
+            <span class="cf-toc-name">Ramos em Git</span><span class="cf-toc-status">🔒</span>
+          </a></li>
+          <li class="locked"><a href="/pt/comprar/">
+            <span class="cf-toc-branch">├── </span><span class="cf-toc-num">05</span>
+            <span class="cf-toc-name">Primeira consulta SQL</span><span class="cf-toc-status">🔒</span>
+          </a></li>
+          <li class="locked"><a href="/pt/comprar/">
+            <span class="cf-toc-branch">├── </span><span class="cf-toc-num">06</span>
+            <span class="cf-toc-name">HTTP &amp; APIs reais</span><span class="cf-toc-status">🔒</span>
+          </a></li>
+          <li class="locked"><a href="/pt/comprar/">
+            <span class="cf-toc-branch">├── </span><span class="cf-toc-num">07</span>
+            <span class="cf-toc-name">Loops com dados reais</span><span class="cf-toc-status">🔒</span>
+          </a></li>
+          <li class="locked"><a href="/pt/comprar/">
+            <span class="cf-toc-branch">└── </span><span class="cf-toc-num">08</span>
+            <span class="cf-toc-name">Dicionários e o mundo real</span><span class="cf-toc-status">🔒</span>
+          </a></li>
+        </ul>
+        <div class="cf-toc-unlock">
+          <div class="cf-toc-unlock-label">DESBLOQUEIE 8 CAPÍTULOS</div>
+          <div class="cf-toc-unlock-price">$9 USD <span>/ R$47 · única</span></div>
+          <a class="cf-btn cf-btn-primary" href="/pt/comprar/" style="width: 100%; justify-content: center;">Comprar acesso</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="cf-article" id="main">
+      <div class="cf-eyebrow">
+        <span class="e-num">CAPÍTULO 00</span>
+        <span class="e-dot">·</span>
+        <span>8 min</span>
+        <span class="e-dot">·</span>
+        <span class="e-free">AMOSTRA GRÁTIS</span>
+      </div>
+      <h1 class="cf-chap-title">Boas-vindas — seu primeiro arquivo.</h1>
+      <p class="cf-chap-lead">Você está em uma máquina virtual, no navegador. Não instalou nada. Aquela janela embaixo com o cursor piscando é um terminal, e a partir de agora ele é sua ferramenta principal.</p>
+
+      <div class="cf-prose">
+        <section>
+          <h2>O que é um terminal</h2>
+          <p>Um terminal é um programa que aceita comandos digitados e executa. Cada comando é uma palavra — às vezes com argumentos. No fim do comando você aperta Enter, o programa faz alguma coisa, e devolve o controle pra você.</p>
+          <p>Antes das janelas, dos ícones e do mouse, todo computador era operado por texto. Esse modelo — chamado de linha de comando — não desapareceu. Ele virou a camada profissional. Quase tudo que um desenvolvedor faz hoje acontece, em algum momento, através de um terminal.</p>
+        </section>
+
+        <section>
+          <h2>Sua primeira tarefa</h2>
+          <p>Dentro do diretório atual você vai criar um arquivo chamado <code class="cf-code">ola.txt</code>. O conteúdo é exatamente o texto <strong>olá mundo</strong> seguido de uma quebra de linha. Use os quatro comandos abaixo na ordem.</p>
+
+          <dl class="cf-cmds">
+            <div class="cf-cmd">
+              <dt><code class="cf-code">pwd</code></dt>
+              <dd>imprime onde você está no sistema de arquivos (<em>print working directory</em>)</dd>
+            </div>
+            <div class="cf-cmd">
+              <dt><code class="cf-code">ls</code></dt>
+              <dd>lista os arquivos do diretório atual — você ainda não deve ver <code class="cf-code">ola.txt</code></dd>
+            </div>
+            <div class="cf-cmd">
+              <dt><code class="cf-code">echo "olá mundo" &gt; ola.txt</code></dt>
+              <dd>cria o arquivo com esse conteúdo em uma única linha</dd>
+            </div>
+            <div class="cf-cmd">
+              <dt><code class="cf-code">cat ola.txt</code></dt>
+              <dd>imprime o conteúdo do arquivo pra confirmar</dd>
+            </div>
+          </dl>
+
+          <div class="cf-term" role="img" aria-label="Exemplo da sequência de comandos no terminal">
+            <div class="cf-term-bar">
+              <span class="cf-dot" style="background: #ff5f56"></span>
+              <span class="cf-dot" style="background: #ffbd2e"></span>
+              <span class="cf-dot" style="background: #27c93f"></span>
+              <span class="cf-term-title">user@cyberfuturo — zsh</span>
+            </div>
+<pre class="cf-term-body"><span class="tp">user@cyberfuturo</span><span class="tpath">:~/curriculum</span><span class="tp">$ </span><span class="tc">pwd</span>
+<span class="tout">/home/user/curriculum</span>
+<span class="tp">user@cyberfuturo</span><span class="tpath">:~/curriculum</span><span class="tp">$ </span><span class="tc">ls</span>
+<span class="tout">README.md  cf  lessons/</span>
+<span class="tp">user@cyberfuturo</span><span class="tpath">:~/curriculum</span><span class="tp">$ </span><span class="tc">echo "olá mundo" &gt; ola.txt</span>
+<span class="tp">user@cyberfuturo</span><span class="tpath">:~/curriculum</span><span class="tp">$ </span><span class="tc">cat ola.txt</span>
+<span class="tout">olá mundo</span>
+<span class="tp">$ </span><span class="tcursor">█</span></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2>O que o <code class="cf-code">&gt;</code> está fazendo</h2>
+          <p>O símbolo <code class="cf-code">&gt;</code> é um redirecionador. Normalmente o <code class="cf-code">echo</code> imprime na tela; com <code class="cf-code">&gt;</code> ele escreve no arquivo à direita. Se o arquivo já existia, é sobrescrito. Se quisesse adicionar sem apagar, usaria <code class="cf-code">&gt;&gt;</code>.</p>
+          <p>Esse é um dos momentos em que o terminal começa a parecer uma linguagem. Você combina pedaços pequenos pra fazer coisas grandes.</p>
+
+          <aside class="cf-callout">
+            <div class="cf-callout-mark">▸</div>
+            <div>
+              <div class="cf-callout-title">A regra do Unix</div>
+              <div class="cf-callout-body">Faça uma coisa, faça bem, e deixe ser combinada com outras coisas. Essa é a filosofia por trás de cada comando que você vai aprender neste curso.</div>
+            </div>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Valide com <code class="cf-code">./cf check</code></h2>
+          <p>Quando estiver pronto, rode <code class="cf-code">./cf check</code> no Codespaces. O validador olha o estado real do seu sistema de arquivos e te diz o que passou e o que faltou. Não tem &ldquo;quase certo&rdquo; — ou <code class="cf-code">ola.txt</code> existe com o conteúdo correto, ou não existe.</p>
+        </section>
+
+        <section>
+          <h2>Se algo der errado</h2>
+          <p>Se o arquivo ficar com aspas dentro do texto, você provavelmente escreveu <code class="cf-code">echo ola mundo</code> sem as aspas, ou usou aspas curvas do editor. Delete com <code class="cf-code">rm ola.txt</code> e tente de novo. Se o conteúdo terminar sem quebra de linha, o teste vai te avisar com uma dica específica. Se você se perdeu e está no diretório errado, volte com <code class="cf-code">cd ~/curriculum</code> e confirme com <code class="cf-code">pwd</code>.</p>
+        </section>
+      </div>
+
+      <div class="cf-summary cf-prose">
+        <h2>O que você acabou de aprender</h2>
+        <div class="cf-summary-lead">Cinco ideias, uma por linha — imprima e cole onde você trabalha.</div>
+        <dl class="cf-cmds">
+          <div class="cf-cmd"><dt><code class="cf-code">pwd</code></dt><dd>onde você está</dd></div>
+          <div class="cf-cmd"><dt><code class="cf-code">ls</code></dt><dd>o que tem aqui</dd></div>
+          <div class="cf-cmd"><dt><code class="cf-code">echo</code></dt><dd>imprime texto (ou redireciona pra um arquivo)</dd></div>
+          <div class="cf-cmd"><dt><code class="cf-code">cat</code></dt><dd>lê o conteúdo de um arquivo</dd></div>
+          <div class="cf-cmd"><dt><code class="cf-code">&gt;</code></dt><dd>redireciona a saída do comando pra um arquivo</dd></div>
+        </dl>
+      </div>
+
+      <section class="cf-proof" aria-label="Garantias técnicas e de produto">
+        <div class="cf-proof-pill tech"><span class="cf-proof-pill-icon">▸</span> stdlib apenas</div>
+        <div class="cf-proof-pill tech"><span class="cf-proof-pill-icon">▸</span> sem build step</div>
+        <div class="cf-proof-pill tech"><span class="cf-proof-pill-icon">▸</span> funciona em 2036</div>
+        <div class="cf-proof-pill tech"><span class="cf-proof-pill-icon">▸</span> 4 idiomas</div>
+        <div class="cf-proof-pill prod"><span class="cf-proof-pill-icon">▸</span> 9 capítulos</div>
+        <div class="cf-proof-pill prod"><span class="cf-proof-pill-icon">▸</span> 3 módulos + 1 final</div>
+        <div class="cf-proof-pill prod"><span class="cf-proof-pill-icon">▸</span> $9 única · vitalício</div>
+        <div class="cf-proof-pill prod"><span class="cf-proof-pill-icon">▸</span> sem mensalidade</div>
+      </section>
+
+      <nav class="cf-pager" aria-label="Navegação entre capítulos">
+        <span class="cf-btn cf-btn-ghost" aria-disabled="true">
+          <span>← CAPÍTULO ANTERIOR</span>
+          <b>—</b>
+        </span>
+        <a class="cf-btn cf-btn-primary next" href="/pt/comprar/">
+          <span>DESBLOQUEAR PRÓXIMO →</span>
+          <b>01. Terminal como linguagem</b>
+        </a>
+      </nav>
+    </main>
+
+    <aside class="cf-sidecar" aria-label="Exercício ao vivo no Codespace">
+      <div class="cf-sidecar-label"><span class="dot"></span> AO VIVO · CODESPACE</div>
+      <div class="cf-sidecar-tabs" role="tablist">
+        <span class="cf-sidecar-tab active" role="tab" aria-selected="true">exercício</span>
+        <span class="cf-sidecar-tab" role="tab" aria-disabled="true">histórico</span>
+        <span class="cf-sidecar-tab" role="tab" aria-disabled="true">dica</span>
+      </div>
+      <div class="cf-term">
+        <div class="cf-term-bar">
+          <span class="cf-dot" style="background: #ff5f56"></span>
+          <span class="cf-dot" style="background: #ffbd2e"></span>
+          <span class="cf-dot" style="background: #27c93f"></span>
+          <span class="cf-term-title">./cf start 00-bienvenido</span>
+        </div>
+<pre class="cf-term-body compact"><span class="tp">user@cyberfuturo</span><span class="tpath">:~/curriculum</span><span class="tp">$ </span><span class="tc">./cf start 00-bienvenido</span>
+<span class="tinfo">▸ carregando capítulo 00...</span>
+
+<span class="tout">tarefa: criar ola.txt com "olá mundo"</span>
+
+<span class="tp">user@cyberfuturo</span><span class="tpath">:~/curriculum</span><span class="tp">$ </span><span class="tc">echo "olá mundo" &gt; ola.txt</span>
+<span class="tp">user@cyberfuturo</span><span class="tpath">:~/curriculum</span><span class="tp">$ </span><span class="tc">./cf check</span>
+<span class="tok">✔ ola.txt existe</span>
+<span class="tok">✔ conteúdo válido</span>
+<span class="tok">✔ lição 00 concluída</span>
+<span class="tinfo">▸ rode ./cf next pra continuar</span>
+<span class="tp">$ </span><span class="tcursor">█</span></pre>
+      </div>
+      <div class="cf-sidecar-actions">
+        <a class="cf-btn cf-btn-tiny cf-btn-ghost" href="https://codespaces.new/notifuturo/cyberfuturo?quickstart=1" target="_blank" rel="noopener">Abrir em Codespaces ↗</a>
+      </div>
+      <div class="cf-sidecar-hint">
+        <b>// dica</b>
+        O símbolo <code class="cf-code">&gt;</code> redireciona a saída do comando pra um arquivo. Se o arquivo já existe, é sobrescrito. Pra acrescentar sem apagar, use <code class="cf-code">&gt;&gt;</code>.
+      </div>
+    </aside>
+
+  </div>
+
+  <div class="cf-drawer" id="toc">
+    <div class="cf-drawer-inner">
+      <a class="cf-drawer-close" href="#">Fechar ✕</a>
+      <nav class="cf-toc" aria-label="Índice (móvel)">
+        <div class="cf-toc-title">ÍNDICE DO CURSO</div>
+        <div class="cf-toc-root">curso/</div>
+        <ul class="cf-toc-tree">
+          <li class="current"><span><span class="cf-toc-branch">├── </span><span class="cf-toc-num">00</span><span class="cf-toc-name">Boas-vindas</span><span class="cf-toc-status current">● lendo</span></span></li>
+          <li class="locked"><a href="/pt/comprar/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">01</span><span class="cf-toc-name">Terminal</span><span class="cf-toc-status">🔒</span></a></li>
+          <li class="locked"><a href="/pt/comprar/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">02</span><span class="cf-toc-name">Primeiro commit</span><span class="cf-toc-status">🔒</span></a></li>
+          <li class="locked"><a href="/pt/comprar/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">03</span><span class="cf-toc-name">Python</span><span class="cf-toc-status">🔒</span></a></li>
+          <li class="locked"><a href="/pt/comprar/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">04</span><span class="cf-toc-name">Ramos Git</span><span class="cf-toc-status">🔒</span></a></li>
+          <li class="locked"><a href="/pt/comprar/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">05</span><span class="cf-toc-name">SQL</span><span class="cf-toc-status">🔒</span></a></li>
+          <li class="locked"><a href="/pt/comprar/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">06</span><span class="cf-toc-name">HTTP</span><span class="cf-toc-status">🔒</span></a></li>
+          <li class="locked"><a href="/pt/comprar/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">07</span><span class="cf-toc-name">Loops</span><span class="cf-toc-status">🔒</span></a></li>
+          <li class="locked"><a href="/pt/comprar/"><span class="cf-toc-branch">└── </span><span class="cf-toc-num">08</span><span class="cf-toc-name">Dicionários</span><span class="cf-toc-status">🔒</span></a></li>
+        </ul>
+        <div class="cf-toc-unlock">
+          <div class="cf-toc-unlock-label">DESBLOQUEIE 8 CAPÍTULOS</div>
+          <div class="cf-toc-unlock-price">$9 USD <span>/ R$47 · única</span></div>
+          <a class="cf-btn cf-btn-primary" href="/pt/comprar/" style="width: 100%; justify-content: center;">Comprar acesso</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div><strong>CyberFuturo</strong> — aprenda tecnologia de trás para frente.</div>
+  <div>
+    <a href="/pt/">Início</a>
+    &nbsp;·&nbsp; <a href="/pt/comprar/">Comprar</a>
+    &nbsp;·&nbsp; <a href="/pt/como-comecar/">Como começar</a>
+    &nbsp;·&nbsp; <a href="/pt/privacidade/">Privacidade</a>
+    &nbsp;·&nbsp; <a href="https://github.com/notifuturo/cyberfuturo" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+<script>
+  (function() {
+    var lang = document.documentElement.lang.slice(0, 2).toLowerCase();
+    if (!/^(pt|es|en|fr)$/.test(lang)) return;
+    document.cookie = "cf_lang=" + lang + "; path=/; max-age=15552000; SameSite=Lax";
+    var sel = document.querySelector('.lang-switcher a[data-lang="' + lang + '"]');
+    if (sel) sel.classList.add("active");
+  })();
+</script>
+
+</body>
+</html>
