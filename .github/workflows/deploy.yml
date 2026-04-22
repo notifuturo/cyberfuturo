@@ -94,7 +94,8 @@ jobs:
 
       - name: Post-deploy smoke test
         run: |
-          sleep 5
+          # Give CF edge propagation time — 5s was flaky, 12s eliminates races.
+          sleep 12
 
           # Root must 302 to some language (smart redirect Pages Function).
           root_code=$(curl -sS -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev/")
@@ -174,9 +175,14 @@ jobs:
           printf "  %-24s %s\n" "/api/purchase/stripe" "$stripe_code"
           case "$stripe_code" in 400|503) ;; *) echo "FAIL: /api/purchase/stripe expected 400/503, got $stripe_code"; exit 1 ;; esac
 
+          # Single-call helper: fetch code + redirect_url in one curl so we can't race
+          # across edges mid-propagation (bit us on 2026-04-22 with a flaky 301/302 mix).
+          probe() {
+            curl -sS -o /dev/null -w "%{http_code} %{redirect_url}" "$1"
+          }
+
           # Cookie gate — non-teaser chapter without cf_access cookie must 302 to buy page.
-          curso_code=$(curl -sS -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev/pt/curso/foo/")
-          curso_loc=$(curl -sS -o /dev/null -w "%{redirect_url}" "https://cyberfuturo.pages.dev/pt/curso/foo/")
+          read -r curso_code curso_loc < <(probe "https://cyberfuturo.pages.dev/pt/curso/foo/")
           printf "  %-36s %s -> %s\n" "/pt/curso/foo/ (no cookie)" "$curso_code" "$curso_loc"
           if [ "$curso_code" != "302" ] || [[ "$curso_loc" != *"/pt/comprar/"* ]]; then
             echo "FAIL: /pt/curso/foo/ expected 302 to /pt/comprar/, got $curso_code -> $curso_loc"
@@ -186,8 +192,7 @@ jobs:
           # Teaser chapter — /{lang}/{course}/00-bienvenido/ must NOT redirect to the buy page
           # (content itself may still 404 until chapter HTML is authored; the point is the gate lets it through).
           for path in "/pt/curso/00-bienvenido/" "/es/curso/00-bienvenido/" "/en/course/00-bienvenido/" "/fr/cours/00-bienvenido/"; do
-            teaser_loc=$(curl -sS -o /dev/null -w "%{redirect_url}" "https://cyberfuturo.pages.dev${path}")
-            teaser_code=$(curl -sS -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev${path}")
+            read -r teaser_code teaser_loc < <(probe "https://cyberfuturo.pages.dev${path}")
             printf "  %-36s %s -> %s\n" "${path} (teaser)" "$teaser_code" "$teaser_loc"
             case "$teaser_loc" in
               *"/comprar/"*|*"/buy/"*|*"/acheter/"*)
@@ -200,8 +205,7 @@ jobs:
           for pair in "/pt/livro/foo/|/pt/curso/foo/" "/es/libro/foo/|/es/curso/foo/" "/en/book/foo/|/en/course/foo/" "/fr/livre/foo/|/fr/cours/foo/"; do
             src="${pair%%|*}"
             expected="${pair##*|}"
-            legacy_code=$(curl -sS -o /dev/null -w "%{http_code}" "https://cyberfuturo.pages.dev${src}")
-            legacy_loc=$(curl -sS -o /dev/null -w "%{redirect_url}" "https://cyberfuturo.pages.dev${src}")
+            read -r legacy_code legacy_loc < <(probe "https://cyberfuturo.pages.dev${src}")
             printf "  %-36s %s -> %s\n" "${src} (legacy)" "$legacy_code" "$legacy_loc"
             if [ "$legacy_code" != "301" ] || [[ "$legacy_loc" != *"${expected}"* ]]; then
               echo "FAIL: legacy ${src} expected 301 to ${expected}, got $legacy_code -> $legacy_loc"
