@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es-419">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diccionarios y el mundo real — muestra · CyberFuturo</title>
+  <meta name="description" content="Diccionarios y el mundo real. Los diccionarios son el tipo de dato más importante de Python. Si entiendes un <code class='cf-code'>dict</code> a fondo">
+  <meta property="og:title" content="CyberFuturo — Diccionarios y el mundo real (muestra)">
+  <meta property="og:description" content="Diccionarios y el mundo real. Lo que vas a entender + fin de la muestra.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://cyberfuturo.com/es/curso/08-dicionarios/">
+  <meta property="og:locale" content="es_419">
+  <meta name="theme-color" content="#1e1e2e">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://cyberfuturo.com/es/curso/08-dicionarios/">
+  <link rel="alternate" hreflang="pt-BR" href="https://cyberfuturo.com/pt/curso/08-dicionarios/">
+  <link rel="alternate" hreflang="es-419" href="https://cyberfuturo.com/es/curso/08-dicionarios/">
+  <link rel="alternate" hreflang="en-US" href="https://cyberfuturo.com/en/course/08-dicionarios/">
+  <link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/cours/08-dicionarios/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Saltar al contenido</a>
+
+<div class="cf">
+  <div class="cf-glow" aria-hidden="true"></div>
+  <div class="cf-glow-pink" aria-hidden="true"></div>
+
+  <header class="cf-header">
+    <a class="cf-hamb" href="#toc" aria-label="Abrir índice"><span class="cf-hamb-icon">≡</span> ÍNDICE</a>
+    <a class="cf-brand" href="/es/"><span class="p">&gt;_</span><span>Cyber<b>Futuro</b></span></a>
+    <div class="cf-head-progress" aria-hidden="true">
+      <span>CAP. 08</span>
+      <div class="track"><div class="fill" style="width: 88%"></div></div>
+      <span>muestra</span>
+    </div>
+    <div class="cf-head-right">
+      <div class="lang-switcher" role="navigation" aria-label="Seleccionar idioma">
+        <a href="https://cyberfuturo.com/pt/curso/08-dicionarios/" hreflang="pt" data-lang="pt">PT</a>
+        <a href="https://cyberfuturo.com/es/curso/08-dicionarios/" hreflang="es" data-lang="es">ES</a>
+        <a href="https://cyberfuturo.com/en/course/08-dicionarios/" hreflang="en" data-lang="en">EN</a>
+        <a href="https://cyberfuturo.com/fr/cours/08-dicionarios/" hreflang="fr" data-lang="fr">FR</a>
+      </div>
+      <a class="cf-btn cf-btn-tiny cf-btn-primary" href="/es/comprar/">Comprar · $9</a>
+    </div>
+  </header>
+
+  <div class="cf-banner" role="note">
+    <div class="cf-banner-text">
+      <span class="cf-banner-lock">🔒</span>
+      <span>Estás leyendo una <strong>muestra</strong> del capítulo 08. Continúa el curso completo por <span class="cf-banner-price">$9 USD</span> — una vez, acceso vitalicio, 4 idiomas.</span>
+    </div>
+    <div class="cf-banner-actions">
+      <a class="cf-btn cf-btn-tiny cf-btn-primary" href="/es/comprar/">Comprar ahora</a>
+    </div>
+  </div>
+
+  <div class="cf-grid">
+
+    <aside class="cf-side">
+      <nav class="cf-toc" aria-label="ÍNDICE DEL CURSO">
+        <div class="cf-toc-title">ÍNDICE DEL CURSO</div>
+        <div class="cf-toc-root">curso/</div>
+        <ul class="cf-toc-tree"><li><a href="/es/curso/00-bienvenido/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">00</span><span class="cf-toc-name">Bienvenida</span><span class="cf-toc-status read">✓ gratis</span></a></li><li><a href="/es/curso/01-terminal/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">01</span><span class="cf-toc-name">Terminal como lenguaje</span><span class="cf-toc-status">· muestra</span></a></li><li class="locked"><a href="/es/curso/02-primer-git-commit/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">02</span><span class="cf-toc-name">Tu primer commit en Git</span><span class="cf-toc-status">🔒</span></a></li><li class="locked"><a href="/es/curso/03-python-hola/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">03</span><span class="cf-toc-name">Python: hola, mundo</span><span class="cf-toc-status">🔒</span></a></li><li class="locked"><a href="/es/curso/04-ramos-git/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">04</span><span class="cf-toc-name">Ramas e historias paralelas</span><span class="cf-toc-status">🔒</span></a></li><li class="locked"><a href="/es/curso/05-primera-sql/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">05</span><span class="cf-toc-name">Tu primera consulta SQL</span><span class="cf-toc-status">🔒</span></a></li><li class="locked"><a href="/es/curso/06-http-apis/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">06</span><span class="cf-toc-name">HTTP: cómo conversa la web</span><span class="cf-toc-status">🔒</span></a></li><li class="locked"><a href="/es/curso/07-loops-dados/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">07</span><span class="cf-toc-name">Loops y colecciones de datos</span><span class="cf-toc-status">🔒</span></a></li><li class="current"><span><span class="cf-toc-branch">└── </span><span class="cf-toc-num">08</span><span class="cf-toc-name">Diccionarios y el mundo real</span><span class="cf-toc-status current">● leyendo</span></span></li></ul>
+        <div class="cf-toc-unlock">
+          <div class="cf-toc-unlock-label">DESBLOQUEA 8 CAPÍTULOS</div>
+          <div class="cf-toc-unlock-price">$9 USD <span>/ una vez</span></div>
+          <a class="cf-btn cf-btn-primary" href="/es/comprar/" style="width: 100%; justify-content: center;">Comprar acceso</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="cf-article" id="main">
+      <div class="cf-eyebrow">
+        <span class="e-num">CAPÍTULO 08</span>
+        <span class="e-dot">·</span>
+        <span>20 min</span>
+        <span class="e-dot">·</span>
+        <span>CAPÍTULO PAGO · MUESTRA</span>
+      </div>
+      <h1 class="cf-chap-title">Diccionarios y el mundo real.</h1>
+      <p class="cf-chap-lead">Los diccionarios son el tipo de dato más importante de Python. Si entiendes un <code class='cf-code'>dict</code> a fondo, entiendes el modelo mental detrás del 90% de las APIs modernas.</p>
+
+      <div class="cf-prose">
+        <section>
+          <h2>Lo que vas a entender</h2>
+          <ul style="padding-left: 22px; margin: 0 0 28px;">
+            <li style='margin-bottom: 10px;'>Por qué un <code class='cf-code'>dict</code> es 10.000× más rápido que una lista para buscar por clave</li>
+            <li style='margin-bottom: 10px;'>La diferencia entre <code class='cf-code'>d['x']</code> y <code class='cf-code'>d.get('x')</code> — y por qué el segundo casi siempre es más seguro</li>
+            <li style='margin-bottom: 10px;'>Cómo los diccionarios anidados representan JSON (y viceversa)</li>
+          </ul>
+        </section>
+      </div>
+
+      <aside class="cf-callout" style="margin-top: 32px; border-left-color: var(--accent); background: rgba(189,147,249,0.06);">
+        <div class="cf-callout-mark" style="color: var(--accent);">🔒</div>
+        <div>
+          <div class="cf-callout-title" style="color: var(--accent);">FIN DE LA MUESTRA</div>
+          <div class="cf-callout-body" style="color: var(--text);">
+            Este capítulo continúa con:
+            <ul style="padding-left: 22px; margin: 12px 0 18px;">
+              <li>el patrón 'agrupa por una clave y cuenta' que aparece en todo análisis de datos</li>
+              <li><code class='cf-code'>collections.Counter</code> y <code class='cf-code'>defaultdict</code>: cuándo vale la pena salir del <code class='cf-code'>dict</code> puro</li>
+              <li>cómo un loop sobre un <code class='cf-code'>dict</code> es diferente de un loop sobre una lista — y qué dice eso sobre lo que quieres</li>
+            </ul>
+            <a class="cf-btn cf-btn-primary" href="/es/comprar/">Desbloquear capítulo completo · $9</a>
+          </div>
+        </div>
+      </aside>
+
+      <section class="cf-proof" style="margin-top: 32px;" aria-label="ÍNDICE DEL CURSO">
+        <div class="cf-proof-pill tech"><span class="cf-proof-pill-icon">▸</span> solo stdlib</div>
+        <div class="cf-proof-pill tech"><span class="cf-proof-pill-icon">▸</span> sin build step</div>
+        <div class="cf-proof-pill tech"><span class="cf-proof-pill-icon">▸</span> funciona en 2036</div>
+        <div class="cf-proof-pill tech"><span class="cf-proof-pill-icon">▸</span> 4 idiomas</div>
+        <div class="cf-proof-pill prod"><span class="cf-proof-pill-icon">▸</span> 9 capítulos</div>
+        <div class="cf-proof-pill prod"><span class="cf-proof-pill-icon">▸</span> 3 módulos + 1 final</div>
+        <div class="cf-proof-pill prod"><span class="cf-proof-pill-icon">▸</span> $9 una vez · vitalicio</div>
+        <div class="cf-proof-pill prod"><span class="cf-proof-pill-icon">▸</span> sin suscripción</div>
+      </section>
+
+      <nav class="cf-pager" aria-label="ÍNDICE DEL CURSO">
+        <a class="cf-btn cf-btn-ghost" href="/es/curso/07-loops-dados/">
+          <span>← CAPÍTULO ANTERIOR</span>
+          <b>07. Loops y colecciones de datos</b>
+        </a>
+        <a class="cf-btn cf-btn-primary next" href="/es/comprar/">
+          <span>DESBLOQUEAR SIGUIENTE →</span>
+          <b>—</b>
+        </a>
+      </nav>
+    </main>
+
+    <aside class="cf-sidecar" aria-label="EN VIVO · CODESPACE">
+      <div class="cf-sidecar-label"><span class="dot"></span> EN VIVO · CODESPACE</div>
+      <div class="cf-sidecar-tabs" role="tablist">
+        <span class="cf-sidecar-tab active" role="tab" aria-selected="true">ejercicio</span>
+        <span class="cf-sidecar-tab" role="tab" aria-disabled="true">historial</span>
+        <span class="cf-sidecar-tab" role="tab" aria-disabled="true">pista</span>
+      </div>
+      <div class="cf-sidecar-hint">
+        <b>// tarea (del repo público)</b>
+        El ejercicio es gratis: <a href="https://github.com/notifuturo/cyberfuturo/tree/main/curriculum/lessons/08-dicionarios" target="_blank" rel="noopener" style="color: var(--accent-2);">ve el task.md en GitHub</a>. La explicación — los porqués, el modelo mental, los atajos — es lo que vende el curso.
+      </div>
+      <div class="cf-sidecar-actions">
+        <a class="cf-btn cf-btn-tiny cf-btn-ghost" href="https://codespaces.new/notifuturo/cyberfuturo?quickstart=1" target="_blank" rel="noopener">Abrir en Codespaces ↗</a>
+      </div>
+    </aside>
+
+  </div>
+
+  <div class="cf-drawer" id="toc">
+    <div class="cf-drawer-inner">
+      <a class="cf-drawer-close" href="#">Cerrar ✕</a>
+      <nav class="cf-toc" aria-label="Índice (móvil)">
+        <div class="cf-toc-title">ÍNDICE DEL CURSO</div>
+        <div class="cf-toc-root">curso/</div>
+        <ul class="cf-toc-tree"><li><a href="/es/curso/00-bienvenido/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">00</span><span class="cf-toc-name">Bienvenida</span><span class="cf-toc-status read">✓ gratis</span></a></li><li><a href="/es/curso/01-terminal/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">01</span><span class="cf-toc-name">Terminal</span><span class="cf-toc-status">· muestra</span></a></li><li class="locked"><a href="/es/curso/02-primer-git-commit/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">02</span><span class="cf-toc-name">Tu</span><span class="cf-toc-status">🔒</span></a></li><li class="locked"><a href="/es/curso/03-python-hola/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">03</span><span class="cf-toc-name">Python:</span><span class="cf-toc-status">🔒</span></a></li><li class="locked"><a href="/es/curso/04-ramos-git/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">04</span><span class="cf-toc-name">Ramas</span><span class="cf-toc-status">🔒</span></a></li><li class="locked"><a href="/es/curso/05-primera-sql/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">05</span><span class="cf-toc-name">Tu</span><span class="cf-toc-status">🔒</span></a></li><li class="locked"><a href="/es/curso/06-http-apis/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">06</span><span class="cf-toc-name">HTTP:</span><span class="cf-toc-status">🔒</span></a></li><li class="locked"><a href="/es/curso/07-loops-dados/"><span class="cf-toc-branch">├── </span><span class="cf-toc-num">07</span><span class="cf-toc-name">Loops</span><span class="cf-toc-status">🔒</span></a></li><li class="current"><span><span class="cf-toc-branch">└── </span><span class="cf-toc-num">08</span><span class="cf-toc-name">Diccionarios</span><span class="cf-toc-status current">● leyendo</span></span></li></ul>
+        <div class="cf-toc-unlock">
+          <div class="cf-toc-unlock-label">DESBLOQUEA 8 CAPÍTULOS</div>
+          <div class="cf-toc-unlock-price">$9 USD <span>/ una vez</span></div>
+          <a class="cf-btn cf-btn-primary" href="/es/comprar/" style="width: 100%; justify-content: center;">Comprar acceso</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div><strong>CyberFuturo</strong> — aprende tecnología al revés.</div>
+  <div>
+    <a href="/es/">Inicio</a>
+    &nbsp;·&nbsp; <a href="/es/curso/">Curso</a>
+    &nbsp;·&nbsp; <a href="/es/comprar/">Comprar</a>
+    &nbsp;·&nbsp; <a href="/es/privacidad/">Privacidad</a>
+  </div>
+</footer>
+
+<script>
+  (function() {
+    var lang = document.documentElement.lang.slice(0, 2).toLowerCase();
+    if (!/^(pt|es|en|fr)$/.test(lang)) return;
+    document.cookie = "cf_lang=" + lang + "; path=/; max-age=15552000; SameSite=Lax";
+    var sel = document.querySelector('.lang-switcher a[data-lang="' + lang + '"]');
+    if (sel) sel.classList.add("active");
+  })();
+</script>
+
+</body>
+</html>

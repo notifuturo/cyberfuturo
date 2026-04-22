@@ -550,14 +550,26 @@ function matchLegacyRedirect(pathname) {
   return null;
 }
 
-// Chapters anyone can read without paying. 00 is the full free sample; 01 is
-// a preview (2 sections + end-of-preview callout). The file on disk handles
-// the locked-state rendering per Claude Design's handoff §5.5 — the worker
-// only has to let the request through. As chapters 02-08 are authored with
-// preview-mode HTML, add their slugs here.
+// Chapters anyone can read without paying. 00 is the full free sample; 01-08
+// are locked-preview pages (intro + "what you'll understand" + end-of-preview
+// callout that pitches the paid chapter). The HTML files themselves render
+// the locked state per Claude Design's handoff §5.5 — the worker only has to
+// let the request through. Full teaching content for 01-08 will be served
+// from _full.html variants once authored; this worker will be updated to
+// rewrite to _full.html when a valid cf_access cookie is present.
 // Slugs are language-agnostic (see curriculum/lessons/NN-slug/), so one set
 // covers all four course paths.
-const FREE_TEASER_SLUGS = new Set(["00-bienvenido", "01-terminal"]);
+const FREE_TEASER_SLUGS = new Set([
+  "00-bienvenido",
+  "01-terminal",
+  "02-primer-git-commit",
+  "03-python-hola",
+  "04-ramos-git",
+  "05-primera-sql",
+  "06-http-apis",
+  "07-loops-dados",
+  "08-dicionarios",
+]);
 
 function matchGatedPrefix(pathname) {
   for (const g of GATED_PATHS) {
