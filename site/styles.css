@@ -702,6 +702,236 @@ hr {
 .cf-compare .cf-partial  { color: var(--warn); }
 
 /* ==========================================================================
+   Certificate (cream paper, A4 landscape, LinkedIn-screenshot-safe)
+   —
+   Scoped under .cf-cert-*. Uses the --paper-* palette. Renders at 900px wide
+   in the mockup; export to PDF at 842×595pt or screenshot at 2x for 1800px
+   social-share resolution. Crimson Pro is only loaded on cert pages to keep
+   the global font budget tight.
+   ========================================================================== */
+
+.cf-cert-frame {
+  background: #e8e3d3;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.cf-cert {
+  width: 900px;
+  max-width: 100%;
+  aspect-ratio: 1.414 / 1;
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-family: var(--mono);
+  padding: 56px 64px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), inset 0 0 0 1px rgba(105, 48, 161, 0.15);
+  border-radius: 2px;
+}
+.cf-cert::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1.5px solid var(--paper-accent);
+  border-radius: 2px;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.cf-cert-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.cf-cert-brand {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--paper-ink);
+}
+.cf-cert-brand .p { color: #2e8b3a; font-weight: 700; }
+.cf-cert-brand b { color: var(--paper-accent); font-weight: 700; }
+.cf-cert-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--paper-accent);
+  text-transform: uppercase;
+  text-align: right;
+}
+
+.cf-cert-center { text-align: center; margin: auto 0; }
+.cf-cert-intro {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #7a7564;
+  margin-bottom: 28px;
+}
+.cf-cert-rule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--paper-accent);
+  font-size: 10px;
+  margin-bottom: 18px;
+}
+.cf-cert-rule::before,
+.cf-cert-rule::after {
+  content: "";
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+  background: var(--paper-accent);
+  opacity: 0.5;
+}
+.cf-cert-name {
+  font-family: var(--serif);
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  color: var(--paper-ink);
+  margin: 0 0 18px;
+}
+.cf-cert-detail {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: #3a3a48;
+  max-width: 52ch;
+  margin: 0 auto;
+}
+.cf-cert-detail b { color: var(--paper-accent); font-weight: 600; }
+
+.cf-cert-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  font-size: 11px;
+  color: #7a7564;
+  letter-spacing: 0.05em;
+}
+.cf-cert-foot .col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cf-cert-foot .col .k {
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--paper-accent-2);
+}
+.cf-cert-foot .col .v {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--paper-ink);
+}
+.cf-cert-sig {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--paper-accent);
+  border-bottom: 1px solid var(--paper-accent);
+  padding-bottom: 4px;
+  min-width: 180px;
+  text-align: center;
+}
+
+.cf-cert-seal {
+  position: absolute;
+  right: 54px;
+  top: 50%;
+  transform: translateY(-20%);
+  width: 88px;
+  height: 88px;
+  border: 1.5px solid var(--paper-accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--paper-accent);
+  line-height: 1.4;
+  opacity: 0.4;
+  text-transform: uppercase;
+  padding: 10px;
+}
+.cf-cert-seal b {
+  display: block;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--paper-accent);
+  margin-bottom: 2px;
+}
+
+/* Verify-page chrome around the certificate. */
+.cf-verify-intro {
+  max-width: 900px;
+  margin: 0 auto 24px;
+  padding: 0 24px;
+  font-family: var(--sans);
+  color: var(--text);
+}
+.cf-verify-intro .eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.cf-verify-intro h1 {
+  font-family: var(--sans);
+  font-size: 36px;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: var(--text);
+}
+.cf-verify-intro p {
+  font-family: var(--sans);
+  font-size: 17px;
+  color: var(--text-dim);
+  margin: 0;
+  line-height: 1.6;
+}
+.cf-verify-actions {
+  max-width: 900px;
+  margin: 24px auto 0;
+  padding: 0 24px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media print {
+  body { background: white !important; }
+  .site-header, .footer, .cf-verify-intro, .cf-verify-actions, .skip-link { display: none !important; }
+  .cf-cert-frame { padding: 0; background: white; }
+  .cf-cert { box-shadow: none; }
+  @page { size: A4 landscape; margin: 0; }
+}
+
+@media (max-width: 900px) {
+  .cf-cert {
+    padding: 36px 32px;
+    aspect-ratio: auto;
+  }
+  .cf-cert-name { font-size: 40px; }
+  .cf-cert-seal { display: none; }
+  .cf-cert-foot { flex-direction: column; align-items: flex-start; gap: 18px; }
+}
+
+/* ==========================================================================
    Chapter reader (Editorial + Terminal direction)
    —
    Scoped under .cf. Per the Claude Design handoff (final.css + FinalReader.jsx).

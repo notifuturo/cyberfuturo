@@ -78,6 +78,7 @@ jobs:
           test -f site/es/curso/01-terminal/index.html     || { echo "site/es/curso/01-terminal/ missing"; exit 1; }
           test -f site/en/course/01-terminal/index.html    || { echo "site/en/course/01-terminal/ missing"; exit 1; }
           test -f site/fr/cours/01-terminal/index.html     || { echo "site/fr/cours/01-terminal/ missing"; exit 1; }
+          test -f site/verify/cf-2026-sample/index.html    || { echo "site/verify/cf-2026-sample/ missing"; exit 1; }
           test -f site/_worker.js                 || { echo "root redirect _worker.js missing"; exit 1; }
           test -f site/styles.css                 || { echo "site/styles.css missing"; exit 1; }
           test -f site/favicon.svg                || { echo "site/favicon.svg missing"; exit 1; }
@@ -229,6 +230,14 @@ jobs:
               exit 1
             fi
           done
+
+          # Sample verify page (cream-paper certificate) — returns 200.
+          read -r verify_code verify_loc < <(probe "https://cyberfuturo.pages.dev/verify/cf-2026-sample/")
+          printf "  %-36s %s -> %s\n" "/verify/cf-2026-sample/" "$verify_code" "$verify_loc"
+          if [ "$verify_code" != "200" ]; then
+            echo "FAIL: /verify/cf-2026-sample/ expected 200, got $verify_code"
+            exit 1
+          fi
 
           # Non-teaser chapter slugs (e.g. 02-primer-git-commit) must STILL 302 to
           # the buy page — confirms the gate still works for unauthored chapters.
