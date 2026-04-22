@@ -8,7 +8,23 @@
 
 ## 🎯 Next session — pick up here
 
-**Infrastructure is fully wired on sandbox; both Stripe secrets are set.** The remaining gating items are founder account-setup only. In order of payoff:
+**State at end of 2026-04-22:** the public website is comprehensively shipped. 56 URLs in the sitemap, all 9 chapter slots have pages in 4 languages (chapter 00 full free sample, chapter 01 substantive preview, 02-08 minimal locked previews), cream-paper certificate design + shareable handout template are live as renderable samples, CI smoke tests cover every public URL + regression paths. Last green deploy: `bee1e14` at https://cyberfuturo.pages.dev.
+
+### What I (the agent) can do autonomously next
+
+Pick whichever gives you most leverage; any of these runs without blocking on you:
+
+1. **Expand handout SVG templates to chapters 01-08** — Phase 6 shipped chapter 00's handout in 4 langs. Replicating the pattern for chapters 01-08 is mechanical: per-chapter command list + flow + mental rule + pitfalls. Output = 32 more SVG files + an updated gallery. Content would draw from `curriculum/lessons/NN-*/lesson.md` + the chapter-preview pitches we already wrote.
+
+2. **Wire `renderArtifactPdf()` in `_worker.js`** — fetch the SVG from `/_templates/handouts/<slug>/<lang>.svg`, substitute `{{BUYER_NAME}}` + `{{DATE}}`, store the filled SVG in R2 (once R2 binding exists). Nightly rebuild of `/verify/<id>/` pages from the D1 `artifacts` table via a GitHub Action. Spec §11.
+
+3. **Full chapter prose for chapters 02-08** — currently 5-line previews. Promoting any chapter to "substantive preview" (like chapter 01) is ~500 words of prose per language. Priorities could be chapter 02 (Git commit) since that's the natural next step for a reader who finished chapter 00.
+
+4. **Authored backers wall at `/backers/`** — static empty-state page with opt-in pitch. Gets rebuilt nightly once real buyer data exists.
+
+5. **README refresh** — the repo's top-level `README.md` still describes the old "indices publication" product. Aligning it with the EdTech pivot is low-effort, high-signal for GitHub discoverability.
+
+### What's founder-gated (unchanged from before)
 
 1. **Create Resend account + add `RESEND_API_KEY`** (free tier 3,000/mo) — without this the webhook inserts the buyer row but sends no welcome email:
    - Sign up at resend.com
@@ -16,17 +32,19 @@
    - Create an API key
    - Upload: `printf 're_YOUR_KEY' | wrangler pages secret put RESEND_API_KEY --project-name=cyberfuturo`
 
-2. **Enable R2** (dashboard → R2 → Enable, one-click, required when we add artifact PDFs next)
+2. **Enable R2** (dashboard → R2 → Enable, one-click) — needed before `renderArtifactPdf()` can upload filled handouts/certs.
 
 3. **Do a sandbox test purchase**:
    - Visit `https://cyberfuturo.pages.dev/pt/comprar/` in incognito
    - Pay with test card `4242 4242 4242 4242` (any future expiry, any CVC, any ZIP)
-   - Expect welcome email (if Resend was set up)
+   - Expect welcome email if Resend is set up, silently skipped otherwise
    - Verify in D1: `wrangler d1 execute cf_telemetry --remote --command "SELECT email, substr(access_token,1,8) as tok, activation_code, lang_pref FROM buyers ORDER BY id DESC LIMIT 3"`
-   - Open magic link `https://cyberfuturo.com/auth?t=<access_token>` → should 302 to `/pt/curso/00-bienvenido/` (which will then 404 since chapters don't exist yet)
+   - Open magic link `https://cyberfuturo.com/auth?t=<access_token>` → should 302 to `/pt/curso/00-bienvenido/` and render the real chapter 00 page
    - In a Codespace: `./cf activate <ACTIVATION_CODE>` → expect "✔ Conta vinculada."
 
-4. **Then tell me** — I'll pick up the next spec chunk (chapter content refactor, SVG-only handout fallback, verify pages, or whatever you prioritize).
+4. **Swap Payment Links test → live** when ready. The 4 buy pages have a marker comment in the `<head>` pointing at the string to replace; `STRIPE_WEBHOOK_SECRET` also needs to be rotated from sandbox to live.
+
+5. **DNS cutover** — `cyberfuturo.com` → `cyberfuturo.pages.dev` custom domain (Cloudflare dashboard).
 
 ---
 
@@ -52,10 +70,11 @@
 | Chapters 02–08 (locked previews, 4 langs × 7 = 28 pages) | ✅ Live |
 | Chapter reader design (editorial + terminal sidecar) | ✅ Live |
 | Certificate template (cream paper, sample at /verify/cf-2026-sample/) | ✅ Live |
+| Handout SVG template — chapter 00 only, 4 langs (sample at /verify/handout-sample/) | ✅ Live |
+| Handout SVG templates — chapters 01–08 × 4 langs (32 files) | ⏸️ Agent can ship, pattern in place |
 | Sitemap (generated, 56 URLs) | ✅ Live |
 | Full teaching content for paid chapters 01–08 | ⏸️ Founder-authored (previews ship the pitch; full prose pending) |
-| SVG handout templates (52 total) | ⏸️ Founder-authored |
-| PDF rendering pipeline | ⏸️ Pending templates + R2 |
+| PDF/SVG rendering pipeline (`renderArtifactPdf()`) | ⏸️ Agent can wire, needs R2 binding |
 | Real /verify/ pages per buyer | ⏸️ Pending D1 `artifacts` rows |
 | Backers wall | ⏸️ Pending buyer opt-ins |
 
@@ -128,6 +147,16 @@ Shipped 4 orientation pages per spec §13 at `/pt/como-comecar/`, `/es/como-empe
 **Phase F — teaser gate (new, 2026-04-22):**
 
 `_worker.js` cookie gate now allow-lists chapter `00-bienvenido` in all 4 language course paths, in preparation for the "read chapter 00 free, unlock the rest for $9" flow the designer settled on. A new `FREE_TEASER_SLUGS` set + `isFreeTeaser()` helper short-circuits `enforceAccessGate` before the DB + cookie checks. Smoke tests extended in `.github/workflows/deploy.yml` to cover both the gated path (`/pt/curso/foo/` still 302s to buy) and the teaser (`/{lang}/{course}/00-bienvenido/` does NOT redirect to a buy URL). Teaser chapter HTML itself is still unauthored — the gate just stops standing in the way. Validated with a 10-case node unit test of the slug matcher across all 4 language prefixes + nested asset paths + edge cases (bare prefix, trailing slug without slash).
+
+**Phase H.6 — SVG handout templates (new, 2026-04-22):**
+
+Shipped the shareable per-chapter artifact promised in spec §9–10. Files:
+
+  - `site/_templates/handouts/00-bienvenido/{pt,es,en,fr}.svg` — A5 portrait, JetBrains Mono, Dracula palette. Each contains `{{BUYER_NAME}}` + `{{DATE}}` placeholders that the future `renderArtifactPdf()` substitutes before uploading to R2.
+  - `site/verify/handout-sample/index.html` — live gallery showing all 4 language variants side-by-side, with explainer describing how the placeholder system works in production.
+  - CI smoke tests: verify the SVGs serve 200 from `/_templates/...` (confirms CF Pages doesn't block underscore-prefixed paths by default).
+
+Deploy note: commit `e5e91d9` tripped a known CF Pages API glitch — "Invalid commit message, it must be a valid UTF-8 string" despite the message being valid UTF-8. Files uploaded successfully; only the deployment registration failed. Fixed by follow-up ASCII-only commit `bee1e14`. Saved to memory so future sessions don't re-diagnose.
 
 **Phase H — Claude Design handoff implementation (new, 2026-04-22):**
 
