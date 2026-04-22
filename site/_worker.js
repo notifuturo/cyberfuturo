@@ -614,6 +614,16 @@ function redirectToBuy(url, gate) {
 }
 
 // ---- Entry point ----------------------------------------------------------
+//
+// Route table (first-match wins, otherwise ASSETS fallthrough). See the
+// route-table comment at the top of this file for the authoritative list.
+//
+// Notes:
+//   - Legacy book paths 301 to the new course paths (see LEGACY_REDIRECTS).
+//   - The cookie gate delegates to HTML-rendered locked-state for all
+//     chapter paths in FREE_TEASER_SLUGS; chapters not in that set still
+//     redirect to the buy page. Future work: rewrite to _full.html when a
+//     valid cf_access cookie is present, so buyers see unlocked content.
 
 export default {
   async fetch(request, env) {
