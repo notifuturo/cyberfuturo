@@ -177,8 +177,10 @@ jobs:
 
           # Single-call helper: fetch code + redirect_url in one curl so we can't race
           # across edges mid-propagation (bit us on 2026-04-22 with a flaky 301/302 mix).
+          # The trailing \n is required — `read` returns 1 on EOF-without-newline, which
+          # fires set -e and kills the script silently.
           probe() {
-            curl -sS -o /dev/null -w "%{http_code} %{redirect_url}" "$1"
+            curl -sS -o /dev/null -w "%{http_code} %{redirect_url}\n" "$1"
           }
 
           # Cookie gate — non-teaser chapter without cf_access cookie must 302 to buy page.
