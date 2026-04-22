@@ -60,6 +60,9 @@ TELEMETRY_ENDPOINT = "https://cyberfuturo.com/api/ping"
 TELEMETRY_TIMEOUT_S = 2.0   # ping must not slow the runner perceptibly
 ACTIVATE_ENDPOINT  = "https://cyberfuturo.com/api/activate"
 ACTIVATE_TIMEOUT_S = 5.0    # activation is user-initiated; ok to wait a little
+# Identify ourselves so Cloudflare Bot Management doesn't 403 us (default
+# Python-urllib UA is on their blocklist).
+USER_AGENT = "CyberFuturo-Runner/1.0 (+https://cyberfuturo.com)"
 
 # ---- ANSI colors (Dracula-ish) -------------------------------------------------
 
@@ -301,7 +304,7 @@ def ping(progress: dict, event: str, lesson_slug: str) -> None:
     req = urllib.request.Request(
         TELEMETRY_ENDPOINT,
         data=payload,
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json", "User-Agent": USER_AGENT},
         method="POST",
     )
     try:
@@ -567,7 +570,7 @@ def cmd_telemetry(progress: dict, args: list[str]) -> int:
             payload = json.dumps({"anon_id": anon_id}).encode("utf-8")
             req = urllib.request.Request(
                 TELEMETRY_ENDPOINT, data=payload,
-                headers={"Content-Type": "application/json"},
+                headers={"Content-Type": "application/json", "User-Agent": USER_AGENT},
                 method="DELETE",
             )
             try:
@@ -604,7 +607,7 @@ def cmd_activate(progress: dict, args: list[str]) -> int:
     req = urllib.request.Request(
         ACTIVATE_ENDPOINT,
         data=payload,
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json", "User-Agent": USER_AGENT},
         method="POST",
     )
     try:
