@@ -66,10 +66,18 @@ jobs:
           test -f site/es/comprar/index.html          || { echo "site/es/comprar/ missing"; exit 1; }
           test -f site/en/buy/index.html              || { echo "site/en/buy/ missing"; exit 1; }
           test -f site/fr/acheter/index.html          || { echo "site/fr/acheter/ missing"; exit 1; }
+          test -f site/pt/curso/index.html                 || { echo "site/pt/curso/ missing"; exit 1; }
+          test -f site/es/curso/index.html                 || { echo "site/es/curso/ missing"; exit 1; }
+          test -f site/en/course/index.html                || { echo "site/en/course/ missing"; exit 1; }
+          test -f site/fr/cours/index.html                 || { echo "site/fr/cours/ missing"; exit 1; }
           test -f site/pt/curso/00-bienvenido/index.html   || { echo "site/pt/curso/00-bienvenido/ missing"; exit 1; }
           test -f site/es/curso/00-bienvenido/index.html   || { echo "site/es/curso/00-bienvenido/ missing"; exit 1; }
           test -f site/en/course/00-bienvenido/index.html  || { echo "site/en/course/00-bienvenido/ missing"; exit 1; }
           test -f site/fr/cours/00-bienvenido/index.html   || { echo "site/fr/cours/00-bienvenido/ missing"; exit 1; }
+          test -f site/pt/curso/01-terminal/index.html     || { echo "site/pt/curso/01-terminal/ missing"; exit 1; }
+          test -f site/es/curso/01-terminal/index.html     || { echo "site/es/curso/01-terminal/ missing"; exit 1; }
+          test -f site/en/course/01-terminal/index.html    || { echo "site/en/course/01-terminal/ missing"; exit 1; }
+          test -f site/fr/cours/01-terminal/index.html     || { echo "site/fr/cours/01-terminal/ missing"; exit 1; }
           test -f site/_worker.js                 || { echo "root redirect _worker.js missing"; exit 1; }
           test -f site/styles.css                 || { echo "site/styles.css missing"; exit 1; }
           test -f site/favicon.svg                || { echo "site/favicon.svg missing"; exit 1; }
@@ -195,9 +203,20 @@ jobs:
             exit 1
           fi
 
-          # Teaser chapter — /{lang}/{course}/00-bienvenido/ is now authored (Phase 2)
-          # and must return 200, never a redirect to the buy page.
-          for path in "/pt/curso/00-bienvenido/" "/es/curso/00-bienvenido/" "/en/course/00-bienvenido/" "/fr/cours/00-bienvenido/"; do
+          # Course TOC index — /{lang}/{course}/ must return 200 (browsable catalog).
+          for path in "/pt/curso/" "/es/curso/" "/en/course/" "/fr/cours/"; do
+            read -r toc_code toc_loc < <(probe "https://cyberfuturo.pages.dev${path}")
+            printf "  %-36s %s -> %s\n" "${path} (course index)" "$toc_code" "$toc_loc"
+            if [ "$toc_code" != "200" ]; then
+              echo "FAIL: course index $path expected 200, got $toc_code"
+              exit 1
+            fi
+          done
+
+          # Teaser chapters (00 full sample, 01 preview) — must return 200, never
+          # redirect to buy.
+          for path in "/pt/curso/00-bienvenido/" "/es/curso/00-bienvenido/" "/en/course/00-bienvenido/" "/fr/cours/00-bienvenido/" \
+                       "/pt/curso/01-terminal/" "/es/curso/01-terminal/" "/en/course/01-terminal/" "/fr/cours/01-terminal/"; do
             read -r teaser_code teaser_loc < <(probe "https://cyberfuturo.pages.dev${path}")
             printf "  %-36s %s -> %s\n" "${path} (teaser)" "$teaser_code" "$teaser_loc"
             case "$teaser_loc" in
@@ -210,6 +229,15 @@ jobs:
               exit 1
             fi
           done
+
+          # Non-teaser chapter slugs (e.g. 02-primer-git-commit) must STILL 302 to
+          # the buy page — confirms the gate still works for unauthored chapters.
+          read -r ungated_code ungated_loc < <(probe "https://cyberfuturo.pages.dev/pt/curso/02-primer-git-commit/")
+          printf "  %-36s %s -> %s\n" "/pt/curso/02-... (gated)" "$ungated_code" "$ungated_loc"
+          if [ "$ungated_code" != "302" ] || [[ "$ungated_loc" != *"/pt/comprar/"* ]]; then
+            echo "FAIL: non-teaser chapter expected 302 to /pt/comprar/, got $ungated_code -> $ungated_loc"
+            exit 1
+          fi
 
           # Legacy /livro|libro|book|livre/ URLs must 301 to the new /curso|curso|course|cours/ equivalents.
           for pair in "/pt/livro/foo/|/pt/curso/foo/" "/es/libro/foo/|/es/curso/foo/" "/en/book/foo/|/en/course/foo/" "/fr/livre/foo/|/fr/cours/foo/"; do

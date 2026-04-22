@@ -550,11 +550,14 @@ function matchLegacyRedirect(pathname) {
   return null;
 }
 
-// Chapters anyone can read without paying. The pitch is "read chapter 00 free,
-// unlock chapters 01-08 for $9" — keeping this tight preserves conversion.
+// Chapters anyone can read without paying. 00 is the full free sample; 01 is
+// a preview (2 sections + end-of-preview callout). The file on disk handles
+// the locked-state rendering per Claude Design's handoff §5.5 — the worker
+// only has to let the request through. As chapters 02-08 are authored with
+// preview-mode HTML, add their slugs here.
 // Slugs are language-agnostic (see curriculum/lessons/NN-slug/), so one set
 // covers all four course paths.
-const FREE_TEASER_SLUGS = new Set(["00-bienvenido"]);
+const FREE_TEASER_SLUGS = new Set(["00-bienvenido", "01-terminal"]);
 
 function matchGatedPrefix(pathname) {
   for (const g of GATED_PATHS) {
@@ -566,6 +569,8 @@ function matchGatedPrefix(pathname) {
 function isFreeTeaser(pathname, gate) {
   const rest = pathname.slice(gate.prefix.length);
   const slug = rest.split("/")[0];
+  // Bare /pt/curso/ → the course-TOC index page. Always browsable.
+  if (!slug) return true;
   return FREE_TEASER_SLUGS.has(slug);
 }
 
