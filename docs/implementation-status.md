@@ -46,10 +46,18 @@
 | `RESEND_API_KEY` | ⏸️ Founder to add |
 | R2 bucket for PDFs | ⏸️ Founder to enable R2 feature |
 | Orientation pages (4 langs) | ✅ Live |
-| Chapter content (`/curso/` etc.) | ⏸️ Founder-authored |
+| Course TOC landing (4 langs) | ✅ Live |
+| Chapter 00 (free full sample, 4 langs) | ✅ Live |
+| Chapter 01 (substantive preview, 4 langs) | ✅ Live |
+| Chapters 02–08 (locked previews, 4 langs × 7 = 28 pages) | ✅ Live |
+| Chapter reader design (editorial + terminal sidecar) | ✅ Live |
+| Certificate template (cream paper, sample at /verify/cf-2026-sample/) | ✅ Live |
+| Sitemap (generated, 56 URLs) | ✅ Live |
+| Full teaching content for paid chapters 01–08 | ⏸️ Founder-authored (previews ship the pitch; full prose pending) |
 | SVG handout templates (52 total) | ⏸️ Founder-authored |
 | PDF rendering pipeline | ⏸️ Pending templates + R2 |
-| Verify / backers pages | ⏸️ Pending artifact data |
+| Real /verify/ pages per buyer | ⏸️ Pending D1 `artifacts` rows |
+| Backers wall | ⏸️ Pending buyer opt-ins |
 
 
 ---
@@ -120,6 +128,27 @@ Shipped 4 orientation pages per spec §13 at `/pt/como-comecar/`, `/es/como-empe
 **Phase F — teaser gate (new, 2026-04-22):**
 
 `_worker.js` cookie gate now allow-lists chapter `00-bienvenido` in all 4 language course paths, in preparation for the "read chapter 00 free, unlock the rest for $9" flow the designer settled on. A new `FREE_TEASER_SLUGS` set + `isFreeTeaser()` helper short-circuits `enforceAccessGate` before the DB + cookie checks. Smoke tests extended in `.github/workflows/deploy.yml` to cover both the gated path (`/pt/curso/foo/` still 302s to buy) and the teaser (`/{lang}/{course}/00-bienvenido/` does NOT redirect to a buy URL). Teaser chapter HTML itself is still unauthored — the gate just stops standing in the way. Validated with a 10-case node unit test of the slug matcher across all 4 language prefixes + nested asset paths + edge cases (bare prefix, trailing slug without slash).
+
+**Phase H — Claude Design handoff implementation (new, 2026-04-22):**
+
+Received hi-fi handoff from Claude Design in `_private/design-handoff-2026-04-22/` (gitignored). Direction: **"Editorial + Terminal"** — three-column chapter reader with Inter Tight prose body, persistent terminal sidecar, ASCII-tree TOC. Shipped across five commits:
+
+  - **Phase H.1** (`76bda45` + `0fd3d1d`) — Foundation: `--surface-3`, `--glow-*`, `--paper-*` tokens, `--mono/--sans/--serif` font variables, Inter Tight loaded on every page, ambient radial hero glow, proof strip (8 pills, 4 langs), comparison table (regional competitors, 4 langs).
+  - **Phase H.2** (`964a4df`) — Chapter 00 reader in 4 langs (editorial prose, in-article terminal mock, summary card, live-Codespace sidecar, pure-CSS mobile drawer via `:target`).
+  - **Phase H.3** (`aa2cfc0`) — Course TOC landing + chapter 01 preview in 4 langs + worker `FREE_TEASER_SLUGS` expanded + smoke tests.
+  - **Phase H.4** (`eb22fef`) — Cream-paper certificate at `/verify/cf-2026-sample/` (cf-cert-* CSS, Crimson Pro serif for buyer name, `@media print A4 landscape`).
+  - **Phase H.5** (`788ae8c`) — Chapters 02–08 preview pages × 4 langs = 28 pages via `scripts/gen_chapter_previews.py` (stdlib Python generator, single source of truth for chapter metadata + per-language copy). Worker opens all 9 chapter slugs to anon browsing. Follow-up `ab90453` bumped post-deploy smoke sleep 12s → 20s to absorb edge propagation on large deploys.
+
+Generators under `scripts/`:
+  - `gen_chapter_previews.py` — writes `site/{lang}/{course_dir}/NN-slug/index.html` for chapters 02–08 × 4 langs (skips 00/01 which are hand-authored). Idempotent.
+  - `gen_sitemap.py` — walks the expected page shapes across 4 langs, verifies every file exists, emits `site/sitemap.xml` with hreflang alternates + x-default. 56 URLs today.
+
+Shipped from Claude Design's "Open questions" (first-brief §10) answered by the designer:
+  - Reader typography: mono chrome + Inter Tight body prose ✓
+  - Light/dark: dark site, cream certificates ✓
+  - Imagery: type-only, no illustration ✓
+  - Locked state: preview + banner, no hard redirect ✓
+  - Mobile-first reader ✓
 
 **Phase G — `livro/libro/book/livre` → `curso/curso/course/cours` rename (new, 2026-04-22):**
 
