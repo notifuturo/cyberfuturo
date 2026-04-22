@@ -85,6 +85,11 @@ jobs:
             done
           done
           test -f site/verify/cf-2026-sample/index.html    || { echo "site/verify/cf-2026-sample/ missing"; exit 1; }
+          test -f site/verify/handout-sample/index.html    || { echo "site/verify/handout-sample/ missing"; exit 1; }
+          test -f site/_templates/handouts/00-bienvenido/pt.svg || { echo "handout PT svg missing"; exit 1; }
+          test -f site/_templates/handouts/00-bienvenido/es.svg || { echo "handout ES svg missing"; exit 1; }
+          test -f site/_templates/handouts/00-bienvenido/en.svg || { echo "handout EN svg missing"; exit 1; }
+          test -f site/_templates/handouts/00-bienvenido/fr.svg || { echo "handout FR svg missing"; exit 1; }
           test -f site/_worker.js                 || { echo "root redirect _worker.js missing"; exit 1; }
           test -f site/styles.css                 || { echo "site/styles.css missing"; exit 1; }
           test -f site/favicon.svg                || { echo "site/favicon.svg missing"; exit 1; }
@@ -241,13 +246,28 @@ jobs:
             fi
           done
 
-          # Sample verify page (cream-paper certificate) — returns 200.
-          read -r verify_code verify_loc < <(probe "https://cyberfuturo.pages.dev/verify/cf-2026-sample/")
-          printf "  %-36s %s -> %s\n" "/verify/cf-2026-sample/" "$verify_code" "$verify_loc"
-          if [ "$verify_code" != "200" ]; then
-            echo "FAIL: /verify/cf-2026-sample/ expected 200, got $verify_code"
-            exit 1
-          fi
+          # Sample verify pages (cream-paper certificate + handout gallery) — return 200.
+          for path in "/verify/cf-2026-sample/" "/verify/handout-sample/"; do
+            read -r verify_code verify_loc < <(probe "https://cyberfuturo.pages.dev${path}")
+            printf "  %-36s %s -> %s\n" "${path}" "$verify_code" "$verify_loc"
+            if [ "$verify_code" != "200" ]; then
+              echo "FAIL: ${path} expected 200, got $verify_code"
+              exit 1
+            fi
+          done
+
+          # Handout SVG templates must serve as static assets from /_templates/.
+          # CF Pages doesn't block underscore-prefixed paths by default, but let's
+          # verify — this is where the worker renderArtifactPdf() will substitute
+          # placeholders in production.
+          for lang in pt es en fr; do
+            read -r svg_code svg_loc < <(probe "https://cyberfuturo.pages.dev/_templates/handouts/00-bienvenido/${lang}.svg")
+            printf "  %-36s %s\n" "/_templates/...${lang}.svg" "$svg_code"
+            if [ "$svg_code" != "200" ]; then
+              echo "FAIL: handout ${lang}.svg expected 200, got $svg_code"
+              exit 1
+            fi
+          done
 
           # Chapter 02-08 previews across all 4 languages must return 200 and not
           # redirect to the buy page (the locked state is rendered in HTML now).

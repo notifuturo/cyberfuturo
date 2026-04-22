@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 595" width="420" height="595" role="img" aria-label="Handout CyberFuturo — Capítulo 00 — Boas-vindas">
+  <title>CyberFuturo · Capítulo 00 · Boas-vindas — seu primeiro arquivo</title>
+  <desc>Handout compartilhável do capítulo 00 do curso CyberFuturo. Resume pwd, ls, echo, cat e o operador &gt; em um único cartão A5. Preenchido automaticamente com o nome do aluno e a data de conclusão.</desc>
+  <style>
+    .bg    { fill: #1e1e2e; }
+    .title { fill: #e879f9; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 22px; font-weight: 700; }
+    .brand { fill: #e879f9; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; }
+    .brandg{ fill: #50fa7b; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; font-weight: 700; }
+    .h     { fill: #a5b4fc; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+    .cmd   { fill: #84cc16; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 11px; }
+    .gloss { fill: #cbd5e1; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; }
+    .body  { fill: #cbd5e1; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 10px; }
+    .foot  { fill: #94a3b8; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 9px; }
+    .hl    { fill: #8be9fd; }
+    .divider { stroke: #3b3b4f; stroke-width: 1; }
+  </style>
+
+  <rect class="bg" width="420" height="595"/>
+
+  <!-- Brand header -->
+  <text x="20" y="38" class="brandg">&gt;_</text>
+  <text x="34" y="38" class="brand">CyberFuturo · Capítulo 00</text>
+
+  <!-- Title -->
+  <text x="20" y="72" class="title">Boas-vindas.</text>
+  <text x="20" y="92" class="body">Um terminal, quatro comandos, seu primeiro arquivo.</text>
+
+  <!-- Commands block -->
+  <text x="20" y="124" class="h">os comandos</text>
+  <text x="20" y="144" class="cmd">pwd</text>
+  <text x="130" y="144" class="gloss">onde você está no sistema</text>
+  <text x="20" y="160" class="cmd">ls</text>
+  <text x="130" y="160" class="gloss">lista o diretório atual</text>
+  <text x="20" y="176" class="cmd">echo "texto" &gt; arq</text>
+  <text x="130" y="176" class="gloss">cria arquivo com texto</text>
+  <text x="20" y="192" class="cmd">cat arq</text>
+  <text x="130" y="192" class="gloss">imprime o conteúdo</text>
+
+  <!-- Flow -->
+  <text x="20" y="228" class="h">fluxo típico</text>
+  <text x="20" y="248" class="body">1. pwd              (onde estou?)</text>
+  <text x="20" y="264" class="body">2. ls               (o que tem aqui?)</text>
+  <text x="20" y="280" class="body">3. echo "olá mundo" &gt; ola.txt</text>
+  <text x="20" y="296" class="body">4. cat ola.txt      (confirma)</text>
+
+  <!-- The > operator -->
+  <text x="20" y="332" class="h">a chave: o operador &gt;</text>
+  <text x="20" y="352" class="body">echo imprime na tela. com &gt;</text>
+  <text x="20" y="366" class="body">a saída vai pro arquivo.</text>
+  <text x="20" y="380" class="body">&gt;  sobrescreve o arquivo.</text>
+  <text x="20" y="394" class="body">&gt;&gt; adiciona ao final.</text>
+
+  <!-- Regra do Unix -->
+  <text x="20" y="430" class="h">regra do unix</text>
+  <text x="20" y="450" class="body">faça uma coisa, faça bem,</text>
+  <text x="20" y="464" class="body">combine com outras coisas.</text>
+
+  <!-- Pitfalls -->
+  <text x="20" y="500" class="h">armadilhas</text>
+  <text x="20" y="520" class="gloss">✗ esquecer as aspas no echo</text>
+  <text x="20" y="536" class="gloss">✗ &gt; sobrescrever por engano</text>
+
+  <!-- Footer divider -->
+  <line x1="20" y1="554" x2="400" y2="554" class="divider"/>
+  <text x="20" y="568" class="foot">Concluído por <tspan class="hl">{{BUYER_NAME}}</tspan> · {{DATE}}</text>
+  <text x="20" y="582" class="foot">cyberfuturo.com/pt/curso/00-bienvenido/  ·  $9 USD · vitalício · 4 idiomas</text>
+</svg>
