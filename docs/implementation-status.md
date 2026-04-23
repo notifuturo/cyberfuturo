@@ -1,12 +1,14 @@
 # CyberFuturo — Implementation Status
 
-> Last updated: 2026-04-22.
+> Last updated: 2026-04-23.
 >
 > Tracks the three specs in `docs/*-spec.md` and enumerates what's pending on the founder's side (things I cannot do autonomously because they require external accounts, credentials, content authorship, design decisions, or legal/business judgment).
 
 ---
 
 ## 🎯 Next session — pick up here
+
+**State at end of 2026-04-23:** landing-copy rewrite shipped (all 4 languages). Founder feedback was that the hero was too generic — readers couldn't tell what CyberFuturo actually is. Fix anchored on market research (LATAM competitor hero audit + vagas.com.br/gupy.io junior dev posting sample + payment-friction data): replaced "Aprenda tecnologia de trás para frente" with a concrete $9-as-hero-number + "prerequisite-gap" positioning across all 4 landings + 4 buy pages + README. Added a new "Depois de 4 horas, você sai com:" outcome-promise section between proof pills and stack section. Proof pills reshuffled to drop dev-plumbing ("stdlib only", "works in 2036", "no build step") and add buyer-facing ("0 install", "real Git repo at the end", "runs on a Chromebook"). Source of truth for the new copy: [`docs/personas-and-positioning.md`](./personas-and-positioning.md). Previous state (through 2026-04-22) summarized below is unchanged structurally; only the message layer moved.
 
 **State at end of 2026-04-22:** the public website is comprehensively shipped. 56 URLs in the sitemap, all 9 chapter slots have pages in 4 languages (chapter 00 full free sample, chapter 01 substantive preview, 02-08 minimal locked previews), cream-paper certificate design + shareable handout template are live as renderable samples, CI smoke tests cover every public URL + regression paths. Last green deploy: `bee1e14` at https://cyberfuturo.pages.dev.
 
