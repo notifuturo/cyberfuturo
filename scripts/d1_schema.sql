@@ -42,12 +42,22 @@ CREATE TABLE IF NOT EXISTS buyers (
   currency        TEXT,                                 -- 'brl' or 'usd' (lowercase, Stripe convention)
   backers_opt_in  INTEGER NOT NULL DEFAULT 0,         -- 0 private, 1 public on /backers/
   lang_pref       TEXT    CHECK (lang_pref IN ('pt','es','en','fr')),
-  external_id     TEXT                                 -- Stripe checkout session id (cs_live_...)
+  external_id     TEXT,                                -- Stripe checkout session id (cs_live_...)
+  public_id       TEXT    UNIQUE                       -- random public verify id for /verify/<id>/ (never the sequential id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_buyers_token ON buyers(access_token);
 CREATE INDEX IF NOT EXISTS idx_buyers_code  ON buyers(activation_code);
 CREATE INDEX IF NOT EXISTS idx_buyers_anon  ON buyers(anon_id);
+-- Idempotent uniqueness backstop for Stripe session ids (re-run safe; SQLite
+-- treats NULLs as distinct, so legacy NULL rows are unaffected).
+CREATE UNIQUE INDEX IF NOT EXISTS idx_buyers_external ON buyers(external_id);
+
+-- ONE-TIME MIGRATION for buyers tables created before public_id existed.
+-- Fresh installs already get public_id from the CREATE TABLE above; the worker
+-- tolerates the column being absent until this runs. Apply once on a live DB:
+--   wrangler d1 execute cf_telemetry --command "ALTER TABLE buyers ADD COLUMN public_id TEXT;"
+--   wrangler d1 execute cf_telemetry --command "CREATE UNIQUE INDEX IF NOT EXISTS idx_buyers_public ON buyers(public_id);"
 
 -- Artifacts. One row per handout / module cert / final cert earned.
 CREATE TABLE IF NOT EXISTS artifacts (

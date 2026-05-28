@@ -273,11 +273,22 @@ async function handleActivate(request, env) {
   if (anonTaken) return corsJson({ ok: false, error: "anon_id already linked" }, 409);
 
   const now = Math.floor(Date.now() / 1000);
-  await env.CF_TELEMETRY
-    .prepare("UPDATE buyers SET anon_id = ?, activated_at = ?, activation_code = NULL WHERE id = ?")
-    .bind(anon_id, now, buyer.id).run();
+  // Random, non-enumerable public verify id — never the sequential buyers.id
+  // (which leaked the customer count and enabled enumeration of buyer names).
+  const publicId = generateVerifyId();
+  try {
+    await env.CF_TELEMETRY
+      .prepare("UPDATE buyers SET anon_id = ?, activated_at = ?, activation_code = NULL, public_id = ? WHERE id = ?")
+      .bind(anon_id, now, publicId, buyer.id).run();
+  } catch {
+    // Tolerate a DB where the public_id column has not been migrated yet: still
+    // complete activation, and still never expose the sequential id.
+    await env.CF_TELEMETRY
+      .prepare("UPDATE buyers SET anon_id = ?, activated_at = ?, activation_code = NULL WHERE id = ?")
+      .bind(anon_id, now, buyer.id).run();
+  }
 
-  return corsJson({ ok: true, verify_url: `https://cyberfuturo.com/verify/buyer-${buyer.id}/` }, 200);
+  return corsJson({ ok: true, verify_url: `https://cyberfuturo.com/verify/${publicId}/` }, 200);
 }
 
 // ---- /api/purchase/stripe — Stripe webhook --------------------------------
@@ -347,6 +358,13 @@ function generateActivationCode(len = 8) {
 function generateAccessToken() {
   // 32 hex chars, matches ACCESS_TOKEN_RE.
   return crypto.randomUUID().replace(/-/g, "");
+}
+
+function generateVerifyId() {
+  // Public, unguessable verification id used in /verify/<id>/ URLs. Replaces the
+  // sequential buyers.id (which leaked customer count and enabled enumeration of
+  // buyer names). Random — mirrors the artifacts.verify_id scheme.
+  return "cf-" + crypto.randomUUID().replace(/-/g, "").slice(0, 12);
 }
 
 // Welcome email (all 4 languages). Sent via Resend if RESEND_API_KEY is set;
@@ -600,10 +618,14 @@ function matchGatedPrefix(pathname) {
 
 function isFreeTeaser(pathname, gate) {
   const rest = pathname.slice(gate.prefix.length);
-  const slug = rest.split("/")[0];
   // Bare /pt/curso/ → the course-TOC index page. Always browsable.
-  if (!slug) return true;
-  return FREE_TEASER_SLUGS.has(slug);
+  if (!rest) return true;
+  const parts = rest.split("/").filter(Boolean);
+  if (!FREE_TEASER_SLUGS.has(parts[0])) return false;
+  // Only the chapter index itself is free — never a deeper asset nested under a
+  // teaser slug. Without this, anything under e.g. /pt/curso/01-terminal/ (a
+  // future _full.html, answer keys, downloads) would inherit the free pass.
+  return parts.length === 1 || (parts.length === 2 && parts[1] === "index.html");
 }
 
 async function enforceAccessGate(request, env, url, gate) {

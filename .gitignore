@@ -43,3 +43,7 @@ build/
 # Private / internal (never publish — even if repo flips public)
 _private/
 CLAUDE.md
+
+# Ruflo/AgentDB runtime artifacts
+agentdb.rvf
+agentdb.rvf.lock
