@@ -41,7 +41,7 @@
   <section class="hero">
     <p class="prompt-line"><span class="muted">user@cyberfuturo</span>:<span style="color:var(--accent-2)">~</span>$ <span class="flash">cat privacidad.md</span></p>
     <h1>Privacidad</h1>
-    <p class="tagline">CyberFuturo recopila lo mínimo posible. <strong>Todo es opt-in, anónimo y borrable.</strong></p>
+    <p class="tagline">CyberFuturo recopila lo mínimo posible. <strong>El progreso del curso es opt-in y anónimo; los datos de compra son solo lo necesario para darte acceso — y son borrables.</strong></p>
   </section>
 
   <section>
@@ -56,13 +56,14 @@
   </section>
 
   <section>
-    <h2>Lo que NUNCA recopilamos</h2>
+    <h2>Lo que la telemetría de progreso NUNCA recopila</h2>
     <ul>
-      <li>Tu email, nombre, cuenta de GitHub</li>
+      <li>Tu cuenta de GitHub</li>
       <li>Tu código, tus archivos, los mensajes de error</li>
       <li>Tu IP (Cloudflare lee el país en el borde y descarta la IP antes de llegar a nuestro almacenamiento)</li>
-      <li>Cualquier cosa capaz de identificarte individualmente</li>
+      <li>Cualquier cosa en la telemetría capaz de identificarte individualmente</li>
     </ul>
+    <p class="muted">Tu nombre y email no forman parte de la telemetría — solo los recibimos cuando compras el curso (ver abajo). Si más tarde ejecutas <code>./cf activate</code> para reclamar tu certificado, tu progreso hasta entonces anónimo queda vinculado a esa compra, para poder emitirlo.</p>
   </section>
 
   <section>
@@ -75,12 +76,38 @@
   </section>
 
   <section>
-    <h2>Cómo desactivar o borrar</h2>
+    <h2>Cuando compras el curso</h2>
+    <p>Una compra es diferente del progreso anónimo de arriba. Para darte acceso y enviarte tu login, recopilamos:</p>
+    <ul>
+      <li>Tu <strong>nombre</strong> y <strong>email</strong>, tal como los ingresas en el checkout de Stripe</li>
+      <li>Metadatos de pago de Stripe: importe, moneda y el id de la sesión de checkout &mdash; nunca vemos ni guardamos el número de tu tarjeta</li>
+      <li>Tu preferencia de idioma y las credenciales de acceso que generamos para ti</li>
+    </ul>
+    <p><strong>Base legal:</strong> tratamos estos datos para cumplir nuestro contrato contigo &mdash; entregarte el curso que pagaste (GDPR Art. 6(1)(b) / LGPD Art. 7(V)).</p>
+    <p><strong>Cuánto tiempo los conservamos:</strong> mientras tengas acceso al curso. El registro de la transacción se conserva hasta 5 años para cumplir obligaciones fiscales y contables, y luego se elimina. Puedes pedir que borremos tus datos antes &mdash; salvo el registro de la transacción que estamos legalmente obligados a conservar.</p>
+  </section>
+
+  <section>
+    <h2>Con quién compartimos datos</h2>
+    <p>Nunca vendemos tus datos. Un pequeño conjunto de proveedores de confianza los tratan en nuestro nombre, cada uno bajo sus propios términos de tratamiento de datos:</p>
+    <ul>
+      <li><strong>Stripe</strong> &mdash; procesa tu pago. <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Política de privacidad</a></li>
+      <li><strong>Resend</strong> &mdash; entrega tu email de bienvenida/acceso. <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener">Política de privacidad</a></li>
+      <li><strong>Cloudflare</strong> &mdash; aloja el sitio y la base de datos y detecta tu país en el borde. <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">Política de privacidad</a></li>
+      <li><strong>GitHub</strong> &mdash; proporciona el entorno de práctica Codespaces, solo si lo usas. <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Política de privacidad</a></li>
+    </ul>
+    <p>Algunos de estos proveedores operan fuera de tu país; cuando hay transferencia internacional de datos personales, se apoya en las salvaguardas que ofrece cada proveedor.</p>
+  </section>
+
+  <section>
+    <h2>Tus derechos — desactivar o borrar</h2>
+    <p><strong>Progreso del curso (telemetría):</strong></p>
     <ul>
       <li><code>./cf telemetry off</code> &mdash; desactiva los pings desde ahora</li>
       <li><code>./cf telemetry forget</code> &mdash; elimina tu <code>anon_id</code> local y borra los registros del servidor</li>
-      <li>Abrir un issue en <a href="https://github.com/notifuturo/cyberfuturo" target="_blank" rel="noopener">github.com/notifuturo/cyberfuturo</a> pidiendo la eliminación de tu <code>anon_id</code> también funciona</li>
+      <li>O abre un issue en <a href="https://github.com/notifuturo/cyberfuturo" target="_blank" rel="noopener">github.com/notifuturo/cyberfuturo</a> pidiendo la eliminación de tu <code>anon_id</code></li>
     </ul>
+    <p><strong>Datos de compra (nombre, email):</strong> escribe a <a href="mailto:ola@cyberfuturo.com">ola@cyberfuturo.com</a> (o responde a tu email de bienvenida) y borraremos tus datos personales en un plazo de 30 días, conservando solo lo que exige la ley fiscal. También puedes solicitar una copia de tus datos y presentar una reclamación ante tu autoridad de protección de datos.</p>
 
     <div class="cta-row" style="margin-top:24px;">
       <a class="btn btn-secondary" href="/es/">Volver al inicio</a>
