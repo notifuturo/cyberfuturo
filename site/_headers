@@ -1,0 +1,20 @@
+# Cloudflare Pages — security headers for all static assets.
+#
+# NOTE: In Advanced Mode (_worker.js takes every request), this file is applied
+# by the static-asset server, i.e. only to responses served via env.ASSETS.fetch.
+# The worker's OWN responses (/auth, /api/*, redirects) do NOT inherit these —
+# those set their headers in _worker.js directly (see jsonResponse() + handleAuth()).
+#
+# CSP rationale (verified against the site 2026-05-28): there are NO external
+# <script src> includes, so script-src 'self' is safe. 'unsafe-inline' is required
+# because pages use small static inline <script>/<style> blocks (lang cookie, etc.).
+# External origins in use: Google Fonts (css + font files), the formsubmit.co
+# contact form, and the buy.stripe.com Payment Link (a navigation/form target).
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co https://buy.stripe.com; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=(self "https://buy.stripe.com")

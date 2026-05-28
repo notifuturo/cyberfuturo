@@ -81,10 +81,20 @@ const CORS_HEADERS = {
   "Access-Control-Max-Age":       "86400",
 };
 
+// Security headers applied to worker-GENERATED responses. Static assets get
+// their headers from site/_headers (the ASSETS handler), but worker responses
+// (/auth, /api/*, redirects) bypass that file, so we attach the essentials here.
+// Referrer-Policy is the critical one: the /auth magic link carries the access
+// token in the URL, and no-referrer prevents it leaking via the Referer header.
+const SECURITY_HEADERS = {
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy":        "no-referrer",
+};
+
 function jsonResponse(obj, status, extraHeaders = {}) {
   return new Response(JSON.stringify(obj), {
     status,
-    headers: { "content-type": "application/json", ...extraHeaders },
+    headers: { "content-type": "application/json", ...SECURITY_HEADERS, ...extraHeaders },
   });
 }
 
@@ -219,6 +229,9 @@ async function handleAuth(request, env) {
     headers: {
       "Set-Cookie": `${ACCESS_COOKIE}=${token}; Path=/; Max-Age=${ACCESS_COOKIE_MAXAGE}; Secure; HttpOnly; SameSite=Lax`,
       "Location":   `/${lang}/${courseSlug}/00-bienvenido/`,
+      // The request URL is /auth?t=<token> — no-referrer stops that token from
+      // leaking to any resource the landing page loads.
+      ...SECURITY_HEADERS,
     },
   });
 }
@@ -472,13 +485,20 @@ async function handleStripeWebhook(request, env) {
   if (session.payment_status !== "paid") return new Response(null, { status: 204 });
 
   const external_id  = session.id;
-  const email        = String(session.customer_details?.email || "").toLowerCase();
-  const name         = session.customer_details?.name || "CyberFuturo student";
+  const email        = String(session.customer_details?.email || "").toLowerCase().trim();
+  // Strip CR/LF from the name — it is interpolated into the Resend email body and
+  // persisted; this prevents any header/line-break smuggling if the template ever
+  // moves from a plaintext `text:` field to `html:` or a subject interpolation.
+  const name         = String(session.customer_details?.name || "CyberFuturo student").replace(/[\r\n]+/g, " ").trim();
   const amount_cents = Number.isFinite(session.amount_total) ? session.amount_total : null;
   const currency     = String(session.currency || "usd").toLowerCase();
   const lang_pref    = extractLangPref(session);
 
-  if (!external_id || !email) return new Response("bad payload", { status: 400 });
+  // Validate the email shape before it becomes the Resend `To` address and the
+  // unique buyer identity. Stripe already validated it at checkout, so this is
+  // defense-in-depth that matches the strict-validation posture used elsewhere.
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!external_id || !EMAIL_RE.test(email)) return new Response("bad payload", { status: 400 });
 
   // Dedup via webhook_log UNIQUE(source, external_id).
   const dup = await env.CF_TELEMETRY
