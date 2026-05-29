@@ -102,6 +102,38 @@ function corsJson(obj, status) {
   return jsonResponse(obj, status, CORS_HEADERS);
 }
 
+// Fixed-window rate limiter backed by D1. Used to slow brute-force of the 40-bit
+// activation code (the credential the $9 actually buys) and magic-link guessing.
+// A Cloudflare WAF rate-limiting rule is the primary edge defense; this is the
+// in-worker backstop. Fails OPEN if the DB binding is absent — we never lock
+// legitimate buyers out because telemetry storage is down.
+const clientIp = (request) => request.headers.get("CF-Connecting-IP") || "unknown";
+
+async function rateLimited(env, bucket, limit, windowSec) {
+  if (!env.CF_TELEMETRY) return false;
+  try {
+    const now = Math.floor(Date.now() / 1000);
+    const row = await env.CF_TELEMETRY
+      .prepare("SELECT count, window_start FROM rate_limits WHERE bucket = ?")
+      .bind(bucket).first();
+    if (!row || now - row.window_start >= windowSec) {
+      await env.CF_TELEMETRY
+        .prepare("INSERT INTO rate_limits (bucket, count, window_start) VALUES (?, 1, ?) ON CONFLICT(bucket) DO UPDATE SET count = 1, window_start = excluded.window_start")
+        .bind(bucket, now).run();
+      return false;
+    }
+    if (row.count >= limit) return true;
+    await env.CF_TELEMETRY
+      .prepare("UPDATE rate_limits SET count = count + 1 WHERE bucket = ?")
+      .bind(bucket).run();
+    return false;
+  } catch {
+    // Fail OPEN: if the rate_limits table isn't migrated yet or D1 errors,
+    // never block a legitimate login/activation. The WAF rule is the backstop.
+    return false;
+  }
+}
+
 async function hmacSha256Hex(secret, message) {
   const enc = new TextEncoder();
   const key = await crypto.subtle.importKey(
@@ -212,6 +244,9 @@ async function handleAuth(request, env) {
     return new Response("Method Not Allowed", { status: 405, headers: { Allow: "GET" } });
   }
   if (!env.CF_TELEMETRY) return new Response("auth unavailable", { status: 503 });
+  if (await rateLimited(env, "auth:" + clientIp(request), 15, 60)) {
+    return new Response("too many attempts, try again later", { status: 429, headers: SECURITY_HEADERS });
+  }
 
   const url = new URL(request.url);
   const token = url.searchParams.get("t") || "";
@@ -249,6 +284,9 @@ async function handleActivate(request, env) {
     });
   }
   if (!env.CF_TELEMETRY) return corsJson({ ok: false, error: "unavailable" }, 503);
+  if (await rateLimited(env, "activate:" + clientIp(request), 10, 60)) {
+    return corsJson({ ok: false, error: "too many attempts, try again later" }, 429);
+  }
 
   const raw = await request.text();
   if (raw.length > MAX_ACTIVATE_BODY) return corsJson({ ok: false, error: "payload too large" }, 413);
@@ -557,11 +595,15 @@ async function handleStripeWebhook(request, env) {
   return new Response(null, { status: 200 });
 }
 
-// ---- Cookie gate for paid chapters ----------------------------------------
+// ---- Course-path gate -----------------------------------------------------
 //
-// Matches /pt/curso/, /es/curso/, /en/course/, /fr/cours/ (and deeper). Buyers
-// with a valid cf_access cookie fall through to ASSETS; others 302 to the
-// buy page preserving ?from= for post-purchase return.
+// Product model: course CONTENT is free (public repo + Codespaces curriculum).
+// The $9 buys the CERTIFICATE, unlocked via the activation code — not website
+// access. So every authored chapter (00-08) is a public preview/landing page.
+// This gate only soft-redirects requests for chapter paths that don't exist
+// (e.g. a future 09+) to the buy page as a conversion nudge; cf_access cookie
+// holders fall through to ASSETS. There is intentionally no _full.html content
+// gate — full teaching happens in the Codespaces runner, not here.
 
 const GATED_PATHS = [
   { prefix: "/pt/curso/",  lang: "pt", buy: "/pt/comprar/" },
@@ -588,15 +630,12 @@ function matchLegacyRedirect(pathname) {
   return null;
 }
 
-// Chapters anyone can read without paying. 00 is the full free sample; 01-08
-// are locked-preview pages (intro + "what you'll understand" + end-of-preview
-// callout that pitches the paid chapter). The HTML files themselves render
-// the locked state per Claude Design's handoff §5.5 — the worker only has to
-// let the request through. Full teaching content for 01-08 will be served
-// from _full.html variants once authored; this worker will be updated to
-// rewrite to _full.html when a valid cf_access cookie is present.
-// Slugs are language-agnostic (see curriculum/lessons/NN-slug/), so one set
-// covers all four course paths.
+// Publicly browsable chapter slugs. 00 is the full free sample; 01-08 are
+// preview/landing pages (intro + "what you'll understand" + end-of-preview
+// callout that pitches the $9 certificate). All are free by design — the paid
+// product is the certificate, earned via the Codespaces curriculum after
+// ./cf activate, not gated web content. Slugs are language-agnostic (see
+// curriculum/lessons/NN-slug/), so one set covers all four course paths.
 const FREE_TEASER_SLUGS = new Set([
   "00-bienvenido",
   "01-terminal",
@@ -622,9 +661,9 @@ function isFreeTeaser(pathname, gate) {
   if (!rest) return true;
   const parts = rest.split("/").filter(Boolean);
   if (!FREE_TEASER_SLUGS.has(parts[0])) return false;
-  // Only the chapter index itself is free — never a deeper asset nested under a
-  // teaser slug. Without this, anything under e.g. /pt/curso/01-terminal/ (a
-  // future _full.html, answer keys, downloads) would inherit the free pass.
+  // Only the chapter index page itself is served — never an arbitrary deeper
+  // asset nested under a chapter slug. Defensive hygiene: if any non-public file
+  // is ever dropped under a chapter dir, it won't inherit the free pass.
   return parts.length === 1 || (parts.length === 2 && parts[1] === "index.html");
 }
 
@@ -662,10 +701,10 @@ function redirectToBuy(url, gate) {
 //
 // Notes:
 //   - Legacy book paths 301 to the new course paths (see LEGACY_REDIRECTS).
-//   - The cookie gate delegates to HTML-rendered locked-state for all
-//     chapter paths in FREE_TEASER_SLUGS; chapters not in that set still
-//     redirect to the buy page. Future work: rewrite to _full.html when a
-//     valid cf_access cookie is present, so buyers see unlocked content.
+//   - Course content is free (see the course-path gate comment). Chapter paths
+//     in FREE_TEASER_SLUGS are served as public previews; chapter paths that
+//     don't exist soft-redirect to the buy page as a conversion nudge. The $9
+//     product is the certificate (activation flow), not gated web content.
 
 export default {
   async fetch(request, env) {

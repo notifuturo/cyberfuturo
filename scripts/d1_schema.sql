@@ -83,3 +83,14 @@ CREATE TABLE IF NOT EXISTS webhook_log (
   received_at   INTEGER NOT NULL,
   UNIQUE(source, external_id)
 );
+
+-- Fixed-window rate-limit counters (worker rateLimited()). One row per
+-- bucket, e.g. 'activate:<ip>' / 'auth:<ip>'. Backstops the Cloudflare WAF
+-- rate-limiting rule against brute-force of the activation code. Rows are
+-- self-resetting per window; prune stale rows occasionally if desired:
+--   DELETE FROM rate_limits WHERE window_start < strftime('%s','now') - 86400;
+CREATE TABLE IF NOT EXISTS rate_limits (
+  bucket        TEXT    PRIMARY KEY,
+  count         INTEGER NOT NULL,
+  window_start  INTEGER NOT NULL
+);
