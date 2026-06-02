@@ -5,51 +5,51 @@
 <line x1="80" y1="390.0" x2="830" y2="390.0" stroke="#e2e8f0" stroke-width="1"/>
 <text x="70" y="394.0" font-size="11" fill="#64748b" text-anchor="end">0</text>
 <line x1="80" y1="326.0" x2="830" y2="326.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="70" y="330.0" font-size="11" fill="#64748b" text-anchor="end">1,600</text>
+<text x="70" y="330.0" font-size="11" fill="#64748b" text-anchor="end">4,000</text>
 <line x1="80" y1="262.0" x2="830" y2="262.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="70" y="266.0" font-size="11" fill="#64748b" text-anchor="end">3,200</text>
+<text x="70" y="266.0" font-size="11" fill="#64748b" text-anchor="end">8,000</text>
 <line x1="80" y1="198.0" x2="830" y2="198.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="70" y="202.0" font-size="11" fill="#64748b" text-anchor="end">4,800</text>
+<text x="70" y="202.0" font-size="11" fill="#64748b" text-anchor="end">12,000</text>
 <line x1="80" y1="134.0" x2="830" y2="134.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="70" y="138.0" font-size="11" fill="#64748b" text-anchor="end">6,400</text>
+<text x="70" y="138.0" font-size="11" fill="#64748b" text-anchor="end">16,000</text>
 <line x1="80" y1="70.0" x2="830" y2="70.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="70" y="74.0" font-size="11" fill="#64748b" text-anchor="end">8,000</text>
+<text x="70" y="74.0" font-size="11" fill="#64748b" text-anchor="end">20,000</text>
 <line x1="80" y1="390" x2="830" y2="390" stroke="#94a3b8" stroke-width="1"/>
-<text x="80.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2024-04</text>
-<text x="177.8" y="408" font-size="11" fill="#64748b" text-anchor="middle">2024-07</text>
-<text x="275.7" y="408" font-size="11" fill="#64748b" text-anchor="middle">2024-10</text>
-<text x="373.5" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-01</text>
-<text x="471.3" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-04</text>
-<text x="569.1" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-07</text>
-<text x="667.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-10</text>
-<text x="764.8" y="408" font-size="11" fill="#64748b" text-anchor="middle">2026-01</text>
-<text x="830.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2026-03</text>
-<polyline fill="none" stroke="#1e40af" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="80.0,224.8 112.6,178.9 145.2,168.0 177.8,209.1 210.4,230.8 243.0,206.6 275.7,113.7 308.3,200.7 340.9,183.1 373.5,212.8 406.1,136.0 438.7,158.3 471.3,193.9 503.9,74.6 536.5,134.7 569.1,165.2 601.7,154.2 634.3,114.8 667.0,76.9 699.6,137.9 732.2,171.8 764.8,129.9 797.4,98.6 830.0,93.8"/>
-<circle cx="80.0" cy="224.8" r="3.5" fill="#1e40af"/>
-<circle cx="112.6" cy="178.9" r="3.5" fill="#1e40af"/>
-<circle cx="145.2" cy="168.0" r="3.5" fill="#1e40af"/>
-<circle cx="177.8" cy="209.1" r="3.5" fill="#1e40af"/>
-<circle cx="210.4" cy="230.8" r="3.5" fill="#1e40af"/>
-<circle cx="243.0" cy="206.6" r="3.5" fill="#1e40af"/>
-<circle cx="275.7" cy="113.7" r="3.5" fill="#1e40af"/>
-<circle cx="308.3" cy="200.7" r="3.5" fill="#1e40af"/>
-<circle cx="340.9" cy="183.1" r="3.5" fill="#1e40af"/>
-<circle cx="373.5" cy="212.8" r="3.5" fill="#1e40af"/>
-<circle cx="406.1" cy="136.0" r="3.5" fill="#1e40af"/>
-<circle cx="438.7" cy="158.3" r="3.5" fill="#1e40af"/>
-<circle cx="471.3" cy="193.9" r="3.5" fill="#1e40af"/>
-<circle cx="503.9" cy="74.6" r="3.5" fill="#1e40af"/>
-<circle cx="536.5" cy="134.7" r="3.5" fill="#1e40af"/>
-<circle cx="569.1" cy="165.2" r="3.5" fill="#1e40af"/>
-<circle cx="601.7" cy="154.2" r="3.5" fill="#1e40af"/>
-<circle cx="634.3" cy="114.8" r="3.5" fill="#1e40af"/>
-<circle cx="667.0" cy="76.9" r="3.5" fill="#1e40af"/>
-<circle cx="699.6" cy="137.9" r="3.5" fill="#1e40af"/>
-<circle cx="732.2" cy="171.8" r="3.5" fill="#1e40af"/>
-<circle cx="764.8" cy="129.9" r="3.5" fill="#1e40af"/>
-<circle cx="797.4" cy="98.6" r="3.5" fill="#1e40af"/>
-<circle cx="830.0" cy="93.8" r="3.5" fill="#1e40af"/>
+<text x="80.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2024-06</text>
+<text x="177.8" y="408" font-size="11" fill="#64748b" text-anchor="middle">2024-09</text>
+<text x="275.7" y="408" font-size="11" fill="#64748b" text-anchor="middle">2024-12</text>
+<text x="373.5" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-03</text>
+<text x="471.3" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-06</text>
+<text x="569.1" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-09</text>
+<text x="667.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2025-12</text>
+<text x="764.8" y="408" font-size="11" fill="#64748b" text-anchor="middle">2026-03</text>
+<text x="830.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2026-05</text>
+<polyline fill="none" stroke="#1e40af" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="80.0,301.2 112.6,317.6 145.2,326.3 177.8,316.6 210.4,279.5 243.0,314.3 275.7,307.2 308.3,319.1 340.9,288.4 373.5,297.3 406.1,311.5 438.7,263.8 471.3,287.9 503.9,300.1 536.5,295.7 569.1,279.9 601.7,264.7 634.3,289.2 667.0,302.7 699.6,285.7 732.2,272.5 764.8,266.7 797.4,272.5 830.0,219.0"/>
+<circle cx="80.0" cy="301.2" r="3.5" fill="#1e40af"/>
+<circle cx="112.6" cy="317.6" r="3.5" fill="#1e40af"/>
+<circle cx="145.2" cy="326.3" r="3.5" fill="#1e40af"/>
+<circle cx="177.8" cy="316.6" r="3.5" fill="#1e40af"/>
+<circle cx="210.4" cy="279.5" r="3.5" fill="#1e40af"/>
+<circle cx="243.0" cy="314.3" r="3.5" fill="#1e40af"/>
+<circle cx="275.7" cy="307.2" r="3.5" fill="#1e40af"/>
+<circle cx="308.3" cy="319.1" r="3.5" fill="#1e40af"/>
+<circle cx="340.9" cy="288.4" r="3.5" fill="#1e40af"/>
+<circle cx="373.5" cy="297.3" r="3.5" fill="#1e40af"/>
+<circle cx="406.1" cy="311.5" r="3.5" fill="#1e40af"/>
+<circle cx="438.7" cy="263.8" r="3.5" fill="#1e40af"/>
+<circle cx="471.3" cy="287.9" r="3.5" fill="#1e40af"/>
+<circle cx="503.9" cy="300.1" r="3.5" fill="#1e40af"/>
+<circle cx="536.5" cy="295.7" r="3.5" fill="#1e40af"/>
+<circle cx="569.1" cy="279.9" r="3.5" fill="#1e40af"/>
+<circle cx="601.7" cy="264.7" r="3.5" fill="#1e40af"/>
+<circle cx="634.3" cy="289.2" r="3.5" fill="#1e40af"/>
+<circle cx="667.0" cy="302.7" r="3.5" fill="#1e40af"/>
+<circle cx="699.6" cy="285.7" r="3.5" fill="#1e40af"/>
+<circle cx="732.2" cy="272.5" r="3.5" fill="#1e40af"/>
+<circle cx="764.8" cy="266.7" r="3.5" fill="#1e40af"/>
+<circle cx="797.4" cy="272.5" r="3.5" fill="#1e40af"/>
+<circle cx="830.0" cy="219.0" r="3.5" fill="#1e40af"/>
 <text x="20" y="230.0" font-size="11" fill="#64748b" text-anchor="middle" transform="rotate(-90 20 230.0)">papers / month</text>
-<text x="80" y="438" font-size="12" fill="#0f172a" font-weight="500">2026-03: 7,406 papers · +79% vs 2024-04</text>
+<text x="80" y="438" font-size="12" fill="#0f172a" font-weight="500">2026-05: 10,688 papers · +93% vs 2024-06</text>
 <text x="80" y="452" font-size="10" fill="#94a3b8">cyberfuturo.com — how fast the future is arriving, by the numbers</text>
 </svg>
