@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Methodology: arXiv AI research velocity — CyberFuturo Index</title>
+  <meta name="description" content="Versioned methodology for the arXiv AI research velocity index — what it measures, exact query, pipeline, known limitations, and deprecation criteria (ADR-0007, BR-11).">
+  <meta property="og:title" content="Methodology: arXiv AI research velocity — CyberFuturo Index">
+  <meta property="og:description" content="What it measures, exact query, known limitations, and deprecation criteria for the arXiv AI research velocity index.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://cyberfuturo.com/methodology/arxiv-ai-velocity.html">
+  <meta name="theme-color" content="#1e1e2e">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://cyberfuturo.com/methodology/arxiv-ai-velocity.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .doc { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+    .doc table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .doc th, .doc td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    .doc th { color: var(--text-dim); font-weight: 600; }
+    .doc ol, .doc ul { padding-left: 22px; }
+    .doc li { margin: 6px 0; }
+    .doc .meta-list { list-style: none; padding: 0; font-size: 14px; color: var(--text-dim); }
+    .doc .meta-list li { margin: 4px 0; }
+    .doc .meta-list strong { color: var(--text); }
+    .doc pre { background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; overflow-x: auto; font-family: var(--mono); font-size: 13px; }
+    .doc code { font-family: var(--mono); font-size: 0.92em; }
+    .doc hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  </style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="/en/">
+      <span class="brand-prompt">&gt;_</span>
+      <span class="brand-name">Cyber<span>Futuro</span></span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="/en/indices/">Indices</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="doc">
+
+    <section class="hero" style="padding-top: 32px;">
+      <p class="prompt-line"><span class="muted">user@cyberfuturo</span>:<span style="color:var(--accent-2)">~</span>$ <span class="flash">cat methodology.md</span></p>
+      <h1>Index: arXiv AI research velocity</h1>
+      <p class="tagline">Versioned methodology — ADR-0007 (per-index methodology as first-class artifact) and BR-11 (deprecation criteria).</p>
+    </section>
+
+    <ul class="meta-list">
+      <li><strong>Slug:</strong> <code>arxiv-ai-velocity</code></li>
+      <li><strong>Current version:</strong> v0.1</li>
+      <li><strong>Unit:</strong> papers submitted per calendar month (UTC)</li>
+      <li><strong>Cadence:</strong> monthly, refreshed on the 2nd of each month</li>
+      <li><strong>Window:</strong> trailing 24 calendar months</li>
+      <li><strong>Source:</strong> <a href="https://export.arxiv.org/api/query" target="_blank" rel="noopener">arXiv API</a></li>
+      <li><strong>License:</strong> arXiv metadata is public; this derived index is released under CC-BY-4.0</li>
+      <li><strong>Active as of:</strong> 2026-04-11</li>
+    </ul>
+
+    <hr>
+
+    <section>
+      <h2>What this measures</h2>
+      <p>The count of distinct papers first submitted to arXiv within a given calendar month whose primary or secondary category is either <code>cs.AI</code> (Artificial Intelligence) or <code>cs.LG</code> (Machine Learning).</p>
+      <p>Read it as: a raw velocity signal for the AI/ML research surface area — how many new papers are being produced per month.</p>
+    </section>
+
+    <section>
+      <h2>What this does not measure</h2>
+      <ul>
+        <li>Paper quality, novelty, or reproducibility</li>
+        <li>Citation impact</li>
+        <li>Whether research is original or derivative</li>
+        <li>Industrial vs. academic output</li>
+        <li>Geographic distribution</li>
+        <li>Duplicate, withdrawn, or replaced papers (v0.1 — see Known limitations)</li>
+      </ul>
+      <p>If you want any of those, combine this index with other sources. On its own it is a volumetric indicator, nothing more.</p>
+    </section>
+
+    <section>
+      <h2>Exact query</h2>
+      <p>For each calendar month in the trailing 24-month window:</p>
+      <pre>(cat:cs.AI OR cat:cs.LG) AND submittedDate:[YYYYMMDD0000 TO YYYYMMDDHHMM2359]</pre>
+      <p>Evaluated against <code>https://export.arxiv.org/api/query</code>. Count is read from the <code>opensearch:totalResults</code> element of the returned Atom XML response.</p>
+      <p><strong>Deduplication:</strong> arXiv's search backend returns unique entries for OR queries across categories. A paper cross-listed in both <code>cs.AI</code> and <code>cs.LG</code> is counted once per query.</p>
+      <p><strong>Rate limit:</strong> 3.1 seconds between requests (arXiv polite-use guidance).</p>
+    </section>
+
+    <section>
+      <h2>Pipeline</h2>
+      <p>Source: <a href="https://github.com/notifuturo/cyberfuturo/blob/main/scripts/build_index_arxiv_ai.py" target="_blank" rel="noopener"><code>scripts/build_index_arxiv_ai.py</code></a></p>
+      <pre>arXiv API → XML parse → monthly counts → CSV → SVG</pre>
+      <p>Implementation: Python 3.11+ stdlib only. No third-party dependencies. Fully reproducible from a clean Python environment in ~75 seconds.</p>
+    </section>
+
+    <section>
+      <h2>Outputs</h2>
+      <table>
+        <tr><th>File</th><th>Purpose</th><th>Overwritten each run?</th></tr>
+        <tr><td><code>data/indices/arxiv-ai-velocity.csv</code></td><td>Canonical time series</td><td>Yes</td></tr>
+        <tr><td><code>data/indices/arxiv-ai-velocity.svg</code></td><td>Rendered line chart</td><td>Yes</td></tr>
+        <tr><td><code>site/data/arxiv-ai-velocity.csv</code></td><td>Public mirror for site</td><td>Yes</td></tr>
+        <tr><td><code>site/data/arxiv-ai-velocity.svg</code></td><td>Public mirror for site</td><td>Yes</td></tr>
+      </table>
+      <p>Git history preserves every past state — that is the audit trail for any brief that cited a specific value at publication time.</p>
+
+      <h3 style="font-size:1.05rem;">Output schema</h3>
+      <p>Canonical CSV: <code>data/indices/arxiv-ai-velocity.csv</code></p>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Example</th><th>Constraint</th></tr>
+        <tr><td><code>month</code></td><td>string (<code>YYYY-MM</code>)</td><td><code>2026-03</code></td><td>Always a valid calendar month in the trailing 24-month window</td></tr>
+        <tr><td><code>papers</code></td><td>integer</td><td><code>7406</code></td><td>&ge; 0; derived from <code>opensearch:totalResults</code></td></tr>
+      </table>
+      <p class="muted" style="font-size:13px;">Header row is exactly <code>month,papers</code>. Rows sorted chronologically ascending. Exactly 24 data rows. UTF-8, LF line endings, no BOM.</p>
+    </section>
+
+    <section>
+      <h2>Known limitations (v0.1)</h2>
+      <ol>
+        <li><strong>No resubmission handling.</strong> arXiv <code>submittedDate</code> refers to first submission; papers replaced or updated within a month may or may not recount depending on arXiv index behavior.</li>
+        <li><strong>No withdrawal filter.</strong> Papers later withdrawn are still counted in the month they were first submitted. This is correct behavior for a velocity signal but worth stating.</li>
+        <li><strong>No seasonality adjustment.</strong> The raw series shows conference-deadline clustering (NeurIPS, ICML, ICLR, CVPR). A seasonally adjusted variant is planned for v0.2.</li>
+        <li><strong>Category overlap with non-AI fields.</strong> <code>cs.LG</code> includes some papers that are ML-method applied to non-AI domains. Accepted as part of the definition.</li>
+        <li><strong>Single-point-in-time snapshots.</strong> arXiv backfills corrections and reclassifications. See <a href="https://github.com/notifuturo/cyberfuturo/blob/main/docs/adr/0010-trailing-window-time-series.md" target="_blank" rel="noopener">ADR-0010</a>.</li>
+        <li><strong>Timezone:</strong> arXiv UTC. No adjustment.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Changelog</h2>
+      <p><strong>v0.1 — 2026-04-11</strong> — Initial release. 24-month trailing window, monthly cadence, stdlib-only pipeline, SVG rendering.</p>
+      <p class="muted" style="font-size:13px;">Methodology changes bump the version and append here. Historical CSV values are preserved in git so briefs citing older versions remain verifiable.</p>
+    </section>
+
+    <section>
+      <h2>How to reproduce</h2>
+      <pre>git clone https://github.com/notifuturo/cyberfuturo
+cd cyberfuturo
+python3 scripts/build_index_arxiv_ai.py
+# Writes data/indices/arxiv-ai-velocity.{csv,svg}
+# Takes ~75 seconds (24 requests at 3.1s rate limit)</pre>
+      <p>Zero third-party packages. No API keys. No environment variables.</p>
+    </section>
+
+    <section>
+      <h2>Deprecation criteria</h2>
+      <p>Per business rule BR-11, every index has pre-committed conditions for deprecation, renaming, or retirement. This index is deprecated when <strong>any one</strong> of the following becomes true:</p>
+      <ol>
+        <li><strong>Source deprecation</strong> — arXiv removes or rate-limits the public <code>/api/query</code> endpoint, or requires authentication that blocks free-tier usage.</li>
+        <li><strong>Source drift beyond tolerance</strong> — re-snapshots show &gt;3% drift on month values older than 12 months, indicating backfill behavior that breaks the trailing-window assumption.</li>
+        <li><strong>Category restructuring</strong> — arXiv reorganizes the <code>cs.AI</code> / <code>cs.LG</code> hierarchy in a way that makes a single query no longer meaningful.</li>
+        <li><strong>Measurement becomes unrepresentative</strong> — if AI/ML research shifts away from arXiv to a successor preprint server.</li>
+        <li><strong>Replaced by a better version</strong> — a v2.x index with the same slug and stricter methodology can supersede v0.x.</li>
+      </ol>
+      <p class="muted" style="font-size:13px;">Deprecation process: publish a final versioned snapshot, announce with explicit reasoning, archive the CSV/SVG, and strike through the index with a link to the final snapshot. The index is never silently removed — every deprecation is logged in this document's changelog.</p>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <p>Methodology errors, data disputes, or reproducibility problems: <a href="https://github.com/notifuturo/cyberfuturo/issues" target="_blank" rel="noopener">open an issue on the repo</a>.</p>
+      <div class="cta-row" style="margin: 24px 0 40px;">
+        <a class="btn btn-secondary" href="/en/indices/">&larr; Back to Indices</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div><strong>CyberFuturo</strong> — how fast the future is arriving, by the numbers.</div>
+  <div>
+    <a href="/en/indices/">Indices</a>
+    &nbsp;·&nbsp; <a href="https://github.com/notifuturo/cyberfuturo" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>

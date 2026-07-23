@@ -68,6 +68,7 @@ PAGE_SHAPES = [
     ("/{lang}/{course}/08-dicionarios/",      0.85),
     ("/{lang}/{buy}/",                        0.8),
     ("/{lang}/{start}/",                      0.8),
+    ("/{lang}/indices/",                      0.7),
     ("/{lang}/{priv}/",                       0.6),
 ]
 
