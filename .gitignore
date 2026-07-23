@@ -39,6 +39,7 @@ build/
 .env
 .env.*
 !.env.example
+.envrc
 
 # Private / internal (never publish — even if repo flips public)
 _private/

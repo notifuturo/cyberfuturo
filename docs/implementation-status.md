@@ -44,7 +44,7 @@ Pick whichever gives you most leverage; any of these runs without blocking on yo
    - Open magic link `https://cyberfuturo.com/auth?t=<access_token>` → should 302 to `/pt/curso/00-bienvenido/` and render the real chapter 00 page
    - In a Codespace: `./cf activate <ACTIVATION_CODE>` → expect "✔ Conta vinculada."
 
-4. **Swap Payment Links test → live** when ready. The 4 buy pages have a marker comment in the `<head>` pointing at the string to replace; `STRIPE_WEBHOOK_SECRET` also needs to be rotated from sandbox to live.
+4. ~~**Swap Payment Links test → live**~~ — done 2026-07-23. Live Payment Link (`buy.stripe.com/3cI3cx8O2fZV3wZglz3sI00`) is live across all 4 buy pages. `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` rotation to live-mode values still pending founder action (getting the live keys from the Stripe dashboard).
 
 5. **DNS cutover** — `cyberfuturo.com` → `cyberfuturo.pages.dev` custom domain (Cloudflare dashboard).
 
