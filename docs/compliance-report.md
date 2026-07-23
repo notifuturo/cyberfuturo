@@ -1,7 +1,7 @@
 # CyberFuturo — Compliance Report
 
-**Generated**: 2026-07-23 16:52  
-**Overall**: FAIL ❌
+**Generated**: 2026-07-23 17:06  
+**Overall**: PASS ✅
 
 This report is produced by `scripts/compliance_check.py` and audits the repo against every [ADR](./adr/README.md) and business rule in [`docs/domain/business-concepts.md`](./domain/business-concepts.md).
 
@@ -21,15 +21,9 @@ python3 scripts/compliance_check.py
 
 ## Required public pages
 
-**Status**: FAIL ❌
+**Status**: PASS ✅
 
-Missing:
-- site/index.html — landing page
-- site/rules.html — editorial rules (BR-01/02/07/08/09/10)
-- site/about.html — about / mission
-- site/privacy.html — privacy policy (BR-10)
-- site/methodology.html — methodology index (BR-04)
-- site/issues/01.html — issue #01
+All required public pages present.
 
 ## Lint output
 
@@ -80,7 +74,7 @@ PASS  lint_indices: scanned 1 index/indices, all compliant
 | BR-07 sponsors below the fold | future template constraint | — |
 | BR-08 editorial independence | editorial process (manual) | — |
 | BR-09 AI disclosure | lint_briefs.py disclosure-marker check | PASS ✅ |
-| BR-10 subscribers never shared | privacy page presence + policy statement | FAIL ❌ |
+| BR-10 subscribers never shared | privacy page presence + policy statement | PASS ✅ |
 | BR-11 every index has kill crit | lint_indices.py deprecation-criteria check | PASS ✅ |
 | BR-12 git history audit trail | git history — manual review | — |
 

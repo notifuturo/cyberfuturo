@@ -83,6 +83,41 @@ def expand(shape: str, lang: str) -> str:
     )
 
 
+# Single-canonical pages that live outside the 4-language shape system —
+# governance/traceability artifacts (rules, about, briefs, per-index
+# methodology), same treatment as ADR-0007's per-index methodology docs:
+# one authoritative version, not translated 4 ways.
+STANDALONE_PAGES = [
+    ("/rules/",                                0.6),
+    ("/about/",                                0.6),
+    ("/issues/01/",                            0.6),
+    ("/methodology/arxiv-ai-velocity",         0.6),
+]
+
+
+def verify_standalone_files_exist(site_root: Path) -> list[str]:
+    missing = []
+    for path, _ in STANDALONE_PAGES:
+        if path.endswith("/"):
+            file_path = site_root / (path.lstrip("/") + "index.html")
+        else:
+            file_path = site_root / (path.lstrip("/") + ".html")
+        if not file_path.exists():
+            missing.append(str(file_path))
+    return missing
+
+
+def render_standalone_entry(path: str, priority: float) -> str:
+    loc = BASE + path
+    return (
+        f"  <url>\n"
+        f"    <loc>{escape(loc)}</loc>\n"
+        f"    <lastmod>{TODAY}</lastmod>\n"
+        f"    <priority>{priority:.2f}</priority>\n"
+        f"  </url>"
+    )
+
+
 def verify_files_exist(site_root: Path) -> list[str]:
     """Sanity check: every expected file exists on disk."""
     missing = []
@@ -122,7 +157,7 @@ def main() -> int:
     root = Path(__file__).resolve().parent.parent
     site_root = root / "site"
 
-    missing = verify_files_exist(site_root)
+    missing = verify_files_exist(site_root) + verify_standalone_files_exist(site_root)
     if missing:
         print("ERROR — sitemap shapes reference missing files:", file=sys.stderr)
         for m in missing:
@@ -136,14 +171,17 @@ def main() -> int:
     ]
     for shape, priority in PAGE_SHAPES:
         out.append(render_url_entry(shape, priority))
+    for path, priority in STANDALONE_PAGES:
+        out.append(render_standalone_entry(path, priority))
     out.append("</urlset>")
     out.append("")  # trailing newline
 
     target = site_root / "sitemap.xml"
     target.write_text("\n".join(out), encoding="utf-8")
 
-    n = len(PAGE_SHAPES) * len(LANGS)
-    print(f"wrote {target.relative_to(root)} — {n} URLs ({len(PAGE_SHAPES)} page shapes × {len(LANGS)} languages)")
+    n = len(PAGE_SHAPES) * len(LANGS) + len(STANDALONE_PAGES)
+    print(f"wrote {target.relative_to(root)} — {n} URLs "
+          f"({len(PAGE_SHAPES)} page shapes × {len(LANGS)} languages + {len(STANDALONE_PAGES)} standalone)")
     return 0
 
 

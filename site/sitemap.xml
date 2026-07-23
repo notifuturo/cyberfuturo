@@ -601,4 +601,24 @@
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://cyberfuturo.com/fr/confidentialite/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cyberfuturo.com/pt/privacidade/"/>
   </url>
+  <url>
+    <loc>https://cyberfuturo.com/rules/</loc>
+    <lastmod>2026-07-23</lastmod>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://cyberfuturo.com/about/</loc>
+    <lastmod>2026-07-23</lastmod>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://cyberfuturo.com/issues/01/</loc>
+    <lastmod>2026-07-23</lastmod>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://cyberfuturo.com/methodology/arxiv-ai-velocity</loc>
+    <lastmod>2026-07-23</lastmod>
+    <priority>0.60</priority>
+  </url>
 </urlset>

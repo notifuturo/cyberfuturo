@@ -34,16 +34,34 @@ LINTS = [
     ("scripts/lint_indices.py",   "ADR-0007 / BR-11", "Versioned methodology + kill criteria"),
 ]
 
+# Each entry: (description, [relative paths that must ALL exist]).
+# Historical note: prior to the 2026-04-22 i18n restructure (4 parallel
+# /pt //es //en //fr trees), this list checked single flat English pages
+# (site/index.html, site/privacy.html, site/methodology.html). Those paths
+# were never coming back — the restructure superseded them by design — so
+# landing/privacy/methodology-index checks now point at the real per-language
+# pages that already carry that role. rules/about/issue-01 are governance
+# artifacts, not marketing content, so — like the per-index methodology page
+# — they stay single canonical (non-i18n) pages rather than 4-way translated.
 REQUIRED_PUBLIC_PAGES = [
-    ("site/index.html",                               "landing page"),
-    ("site/rules.html",                               "editorial rules (BR-01/02/07/08/09/10)"),
-    ("site/about.html",                               "about / mission"),
-    ("site/privacy.html",                             "privacy policy (BR-10)"),
-    ("site/methodology.html",                         "methodology index (BR-04)"),
-    ("site/issues/01.html",                           "issue #01"),
-    ("site/methodology/arxiv-ai-velocity.html",       "arxiv methodology"),
-    ("site/robots.txt",                               "robots"),
-    ("site/sitemap.xml",                              "sitemap"),
+    ("landing page (4 languages)", [
+        "site/pt/index.html", "site/es/index.html",
+        "site/en/index.html", "site/fr/index.html",
+    ]),
+    ("editorial rules (BR-01/02/07/08/09/10)", ["site/rules/index.html"]),
+    ("about / mission", ["site/about/index.html"]),
+    ("privacy policy (BR-10, 4 languages)", [
+        "site/pt/privacidade/index.html", "site/es/privacidad/index.html",
+        "site/en/privacy/index.html", "site/fr/confidentialite/index.html",
+    ]),
+    ("methodology / indices listing (BR-04, 4 languages)", [
+        "site/pt/indices/index.html", "site/es/indices/index.html",
+        "site/en/indices/index.html", "site/fr/indices/index.html",
+    ]),
+    ("issue #01", ["site/issues/01/index.html"]),
+    ("arxiv methodology", ["site/methodology/arxiv-ai-velocity.html"]),
+    ("robots", ["site/robots.txt"]),
+    ("sitemap", ["site/sitemap.xml"]),
 ]
 
 
@@ -61,9 +79,10 @@ def run_lint(script_rel: str) -> tuple[int, str]:
 
 def check_public_pages() -> tuple[int, list[str]]:
     missing: list[str] = []
-    for rel, description in REQUIRED_PUBLIC_PAGES:
-        if not (REPO_ROOT / rel).exists():
-            missing.append(f"{rel} — {description}")
+    for description, rels in REQUIRED_PUBLIC_PAGES:
+        for rel in rels:
+            if not (REPO_ROOT / rel).exists():
+                missing.append(f"{rel} — {description}")
     return (0 if not missing else 1), missing
 
 
