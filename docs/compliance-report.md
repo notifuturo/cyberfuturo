@@ -1,6 +1,6 @@
 # CyberFuturo — Compliance Report
 
-**Generated**: 2026-07-23 16:48  
+**Generated**: 2026-07-23 16:52  
 **Overall**: FAIL ❌
 
 This report is produced by `scripts/compliance_check.py` and audits the repo against every [ADR](./adr/README.md) and business rule in [`docs/domain/business-concepts.md`](./domain/business-concepts.md).
