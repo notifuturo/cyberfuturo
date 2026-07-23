@@ -24,7 +24,7 @@
 <text x="667.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2026-01</text>
 <text x="764.8" y="408" font-size="11" fill="#64748b" text-anchor="middle">2026-04</text>
 <text x="830.0" y="408" font-size="11" fill="#64748b" text-anchor="middle">2026-06</text>
-<polyline fill="none" stroke="#1e40af" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="80.0,317.6 112.6,326.3 145.2,316.6 177.8,279.5 210.4,314.3 243.0,307.2 275.7,319.2 308.3,288.3 340.9,297.3 373.5,311.5 406.1,263.8 438.7,287.9 471.3,300.1 503.9,295.7 536.5,279.9 569.1,264.7 601.7,289.1 634.3,302.6 667.0,285.6 699.6,272.5 732.2,266.5 764.8,270.7 797.4,214.2 830.0,259.1"/>
+<polyline fill="none" stroke="#1e40af" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="80.0,317.6 112.6,326.3 145.2,316.6 177.8,279.5 210.4,314.3 243.0,307.2 275.7,319.2 308.3,288.3 340.9,297.3 373.5,311.5 406.1,263.8 438.7,287.9 471.3,300.1 503.9,295.7 536.5,279.9 569.1,264.7 601.7,289.1 634.3,302.6 667.0,285.6 699.6,272.5 732.2,266.5 764.8,270.2 797.4,212.7 830.0,256.0"/>
 <circle cx="80.0" cy="317.6" r="3.5" fill="#1e40af"/>
 <circle cx="112.6" cy="326.3" r="3.5" fill="#1e40af"/>
 <circle cx="145.2" cy="316.6" r="3.5" fill="#1e40af"/>
@@ -46,10 +46,10 @@
 <circle cx="667.0" cy="285.6" r="3.5" fill="#1e40af"/>
 <circle cx="699.6" cy="272.5" r="3.5" fill="#1e40af"/>
 <circle cx="732.2" cy="266.5" r="3.5" fill="#1e40af"/>
-<circle cx="764.8" cy="270.7" r="3.5" fill="#1e40af"/>
-<circle cx="797.4" cy="214.2" r="3.5" fill="#1e40af"/>
-<circle cx="830.0" cy="259.1" r="3.5" fill="#1e40af"/>
+<circle cx="764.8" cy="270.2" r="3.5" fill="#1e40af"/>
+<circle cx="797.4" cy="212.7" r="3.5" fill="#1e40af"/>
+<circle cx="830.0" cy="256.0" r="3.5" fill="#1e40af"/>
 <text x="20" y="230.0" font-size="11" fill="#64748b" text-anchor="middle" transform="rotate(-90 20 230.0)">papers / month</text>
-<text x="80" y="438" font-size="12" fill="#0f172a" font-weight="500">2026-06: 8,184 papers · +81% vs 2024-07</text>
+<text x="80" y="438" font-size="12" fill="#0f172a" font-weight="500">2026-06: 8,377 · +85% vs 2024-07</text>
 <text x="80" y="452" font-size="10" fill="#94a3b8">cyberfuturo.com — how fast the future is arriving, by the numbers</text>
 </svg>

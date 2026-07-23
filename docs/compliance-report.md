@@ -1,6 +1,6 @@
 # CyberFuturo — Compliance Report
 
-**Generated**: 2026-07-23 17:06  
+**Generated**: 2026-07-23 17:48  
 **Overall**: PASS ✅
 
 This report is produced by `scripts/compliance_check.py` and audits the repo against every [ADR](./adr/README.md) and business rule in [`docs/domain/business-concepts.md`](./domain/business-concepts.md).
@@ -30,13 +30,13 @@ All required public pages present.
 ### `scripts/lint_editorial.py`
 
 ```
-PASS  lint_editorial: scanned 3 files, zero forbidden words
+PASS  lint_editorial: scanned 4 files, zero forbidden words
 ```
 
 ### `scripts/lint_pipeline.py`
 
 ```
-PASS  lint_pipeline: scanned 1 pipeline file(s), zero violations
+PASS  lint_pipeline: scanned 2 pipeline file(s), zero violations
 ```
 
 ### `scripts/lint_briefs.py`
@@ -48,7 +48,7 @@ PASS  lint_briefs: scanned 1 brief(s), all compliant
 ### `scripts/lint_indices.py`
 
 ```
-PASS  lint_indices: scanned 1 index/indices, all compliant
+PASS  lint_indices: scanned 2 index/indices, all compliant
 ```
 
 ## Coverage matrix

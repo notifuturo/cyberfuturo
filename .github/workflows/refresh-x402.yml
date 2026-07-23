@@ -1,0 +1,52 @@
+name: Refresh x402 repo velocity index
+
+on:
+  schedule:
+    # 06:10 UTC on the 2nd of every month — 10 minutes after the arXiv
+    # refresh, staggered to avoid both jobs hitting GitHub Actions runners
+    # at the exact same instant.
+    - cron: '10 6 2 * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-x402
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
+        with:
+          python-version: '3.12'
+
+      - name: Fetch GitHub x402-repo counts and rebuild chart
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/build_index_x402_repos.py
+          cp data/indices/x402-repo-velocity.csv site/data/
+          cp data/indices/x402-repo-velocity.svg site/data/
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name "cyberfuturo-bot"
+          git config user.email "bot@cyberfuturo.com"
+          git add data/indices/x402-repo-velocity.csv \
+                  data/indices/x402-repo-velocity.svg \
+                  site/data/x402-repo-velocity.csv \
+                  site/data/x402-repo-velocity.svg
+          if git diff --cached --quiet; then
+            echo "No changes — x402 repo-velocity data is unchanged this month."
+            exit 0
+          fi
+          git commit -m "data: refresh x402-repo-velocity $(date -u +%Y-%m)"
+          git push

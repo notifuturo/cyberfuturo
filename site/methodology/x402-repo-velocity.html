@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Methodology: x402 repository velocity — CyberFuturo Index</title>
+  <meta name="description" content="Versioned methodology for the x402 repository velocity index — what it measures, why we rejected on-chain volume, exact query, known limitations, and deprecation criteria (ADR-0007, BR-11).">
+  <meta property="og:title" content="Methodology: x402 repository velocity — CyberFuturo Index">
+  <meta property="og:description" content="What it measures, why we rejected on-chain volume tracking, exact query, and deprecation criteria for the x402 repository velocity index.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://cyberfuturo.com/methodology/x402-repo-velocity">
+  <meta name="theme-color" content="#1e1e2e">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://cyberfuturo.com/methodology/x402-repo-velocity">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .doc { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+    .doc table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .doc th, .doc td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    .doc th { color: var(--text-dim); font-weight: 600; }
+    .doc ol, .doc ul { padding-left: 22px; }
+    .doc li { margin: 6px 0; }
+    .doc .meta-list { list-style: none; padding: 0; font-size: 14px; color: var(--text-dim); }
+    .doc .meta-list li { margin: 4px 0; }
+    .doc .meta-list strong { color: var(--text); }
+    .doc pre { background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; overflow-x: auto; font-family: var(--mono); font-size: 13px; }
+    .doc code { font-family: var(--mono); font-size: 0.92em; }
+    .doc hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+    .why-note { background: var(--surface-2); border-left: 3px solid var(--accent-2); border-radius: 0 8px 8px 0; padding: 14px 16px; margin: 18px 0; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="/en/">
+      <span class="brand-prompt">&gt;_</span>
+      <span class="brand-name">Cyber<span>Futuro</span></span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="/en/indices/">Indices</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="doc">
+
+    <section class="hero" style="padding-top: 32px;">
+      <p class="prompt-line"><span class="muted">user@cyberfuturo</span>:<span style="color:var(--accent-2)">~</span>$ <span class="flash">cat methodology.md</span></p>
+      <h1>Index: x402 repository velocity</h1>
+      <p class="tagline">Versioned methodology — ADR-0007 (per-index methodology as first-class artifact) and BR-11 (deprecation criteria).</p>
+    </section>
+
+    <ul class="meta-list">
+      <li><strong>Slug:</strong> <code>x402-repo-velocity</code></li>
+      <li><strong>Current version:</strong> v0.1</li>
+      <li><strong>Unit:</strong> new GitHub repositories created per calendar month (UTC)</li>
+      <li><strong>Cadence:</strong> monthly, refreshed on the 2nd of each month</li>
+      <li><strong>Window:</strong> trailing 24 calendar months</li>
+      <li><strong>Source:</strong> <a href="https://docs.github.com/en/rest/search/search#search-repositories" target="_blank" rel="noopener">GitHub Search API</a></li>
+      <li><strong>License:</strong> repository metadata is public; this derived index is released under CC-BY-4.0</li>
+      <li><strong>Active as of:</strong> 2026-07-23</li>
+    </ul>
+
+    <hr>
+
+    <section>
+      <h2>What this measures</h2>
+      <p>The count of non-fork GitHub repositories, first created within a given calendar month, whose name, description, or topics contain the string <code>x402</code> — the open payment standard (built on HTTP 402) used for AI-agent and API micropayments.</p>
+      <p>Read it as: a raw velocity signal for how many new, independent projects are being started around the x402 ecosystem per month — tooling, facilitators, SDKs, demos, integrations.</p>
+    </section>
+
+    <section>
+      <h2>What this does not measure</h2>
+      <ul>
+        <li>Actual x402 payment/transaction volume, or dollar value settled on-chain</li>
+        <li>Code quality, project maturity, or whether a repo is maintained after creation</li>
+        <li>Deduplication of near-identical demo/tutorial repos — each still counts once</li>
+        <li>Non-GitHub activity (GitLab, self-hosted git, private repos)</li>
+        <li>Mentions of x402 buried in README body text only (not in name/description/topics)</li>
+        <li>Forks — explicitly excluded, a fork is not a new independent project</li>
+      </ul>
+
+      <div class="why-note">
+        <strong>Why repo velocity instead of transaction volume?</strong> We looked at tracking on-chain x402 settlement volume first and rejected it. x402 has no single shared settlement contract — facilitators (Coinbase's, Cloudflare's, and community-run ones) are independently self-hostable by design. Picking one facilitator's on-chain volume would systematically undercount the ecosystem while being published under a name that implies the whole thing. That's a mislabeled measurement, not an honest one, so we didn't ship it. If you're looking for payment-volume data, this index is not that.
+      </div>
+    </section>
+
+    <section>
+      <h2>Exact query</h2>
+      <p>For each calendar month in the trailing 24-month window:</p>
+      <pre>x402 in:name,description,topics created:{YYYY-MM-01}..{YYYY-MM-DD} fork:false</pre>
+      <p>Evaluated against <code>https://api.github.com/search/repositories</code>. Count is read from the <code>total_count</code> field of the returned JSON response.</p>
+      <p><strong>Deduplication:</strong> none needed — a repository has exactly one creation date, so it falls into exactly one monthly bucket.</p>
+      <p><strong>Rate limit:</strong> 3.1 seconds between requests (10 req/min unauthenticated, 30 req/min with a token — either comfortably covers 24 monthly requests).</p>
+    </section>
+
+    <section>
+      <h2>Pipeline</h2>
+      <p>Source: <a href="https://github.com/notifuturo/cyberfuturo/blob/main/scripts/build_index_x402_repos.py" target="_blank" rel="noopener"><code>scripts/build_index_x402_repos.py</code></a></p>
+      <pre>GitHub Search API → JSON parse → monthly counts → CSV → SVG</pre>
+      <p>Implementation: Python 3.11+ stdlib only. No third-party dependencies. Shares its chart renderer with the arXiv index via <a href="https://github.com/notifuturo/cyberfuturo/blob/main/scripts/_svg_chart.py" target="_blank" rel="noopener"><code>scripts/_svg_chart.py</code></a>. Fully reproducible from a clean Python environment in ~75 seconds. No required API keys — a <code>GITHUB_TOKEN</code> is optional and only raises the rate ceiling; CI supplies one automatically via the Actions built-in token, no account setup needed.</p>
+    </section>
+
+    <section>
+      <h2>Outputs</h2>
+      <table>
+        <tr><th>File</th><th>Purpose</th><th>Overwritten each run?</th></tr>
+        <tr><td><code>data/indices/x402-repo-velocity.csv</code></td><td>Canonical time series</td><td>Yes</td></tr>
+        <tr><td><code>data/indices/x402-repo-velocity.svg</code></td><td>Rendered line chart</td><td>Yes</td></tr>
+        <tr><td><code>site/data/x402-repo-velocity.csv</code></td><td>Public mirror for site</td><td>Yes</td></tr>
+        <tr><td><code>site/data/x402-repo-velocity.svg</code></td><td>Public mirror for site</td><td>Yes</td></tr>
+      </table>
+
+      <h3 style="font-size:1.05rem;">Output schema</h3>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Example</th><th>Constraint</th></tr>
+        <tr><td><code>month</code></td><td>string (<code>YYYY-MM</code>)</td><td><code>2026-06</code></td><td>Always a valid calendar month in the trailing 24-month window</td></tr>
+        <tr><td><code>repos</code></td><td>integer</td><td><code>996</code></td><td>&ge; 0; derived from <code>total_count</code></td></tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>Known limitations (v0.1)</h2>
+      <ol>
+        <li><strong>Ecosystem-activity proxy, not a usage/volume metric — by design.</strong> See the "why repo velocity" note above.</li>
+        <li><strong>Text-match noise.</strong> A keyword match, not a curated allowlist — some matches may be unrelated projects or duplicate onboarding/tutorial repos. Same posture as the arXiv index's category-overlap limitation.</li>
+        <li><strong>No survivorship filter.</strong> An abandoned repo still counts in its creation month forever. This measures <em>starting</em> activity, not <em>sustained</em> activity.</li>
+        <li><strong>GitHub-only.</strong> Misses GitLab, Codeberg, self-hosted git, and private repositories.</li>
+        <li><strong>Search index lag</strong> of up to a few minutes; irrelevant at monthly granularity.</li>
+        <li><strong>Timezone:</strong> UTC dates, no adjustment.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Changelog</h2>
+      <p><strong>v0.1 — 2026-07-23</strong> — Initial release. 24-month trailing window, monthly cadence, stdlib-only pipeline sharing the arXiv index's chart renderer. Chosen after rejecting an on-chain-volume approach for methodology-honesty reasons.</p>
+    </section>
+
+    <section>
+      <h2>How to reproduce</h2>
+      <pre>git clone https://github.com/notifuturo/cyberfuturo
+cd cyberfuturo
+python3 scripts/build_index_x402_repos.py
+# Writes data/indices/x402-repo-velocity.{csv,svg}
+# ~75s unauthenticated. Optionally: export GITHUB_TOKEN=$(gh auth token)
+# first for the higher authenticated rate limit.</pre>
+      <p>Zero required third-party packages. No required API keys.</p>
+    </section>
+
+    <section>
+      <h2>Deprecation criteria</h2>
+      <p>Per business rule BR-11, this index is deprecated when <strong>any one</strong> of the following becomes true:</p>
+      <ol>
+        <li><strong>Source deprecation</strong> — GitHub removes or materially restricts public repository search.</li>
+        <li><strong>Query saturation</strong> — "x402" stops being specific enough (manual review shows &gt;20% off-topic matches in a month).</li>
+        <li><strong>A real usage-volume alternative appears</strong> — a documented, reproducible x402 transaction-volume API would supersede or demote this index.</li>
+        <li><strong>The protocol is abandoned or superseded</strong> industry-wide.</li>
+        <li><strong>Replaced by a better version</strong> — a stricter v2.x methodology (e.g. weighted by post-creation activity) can supersede v0.x.</li>
+      </ol>
+      <p class="muted" style="font-size:13px;">The index is never silently removed. Every deprecation is logged in this document's changelog.</p>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <p>Methodology errors, data disputes, or reproducibility problems: <a href="https://github.com/notifuturo/cyberfuturo/issues" target="_blank" rel="noopener">open an issue on the repo</a>.</p>
+      <div class="cta-row" style="margin: 24px 0 40px;">
+        <a class="btn btn-secondary" href="/en/indices/">&larr; Back to Indices</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div><strong>CyberFuturo</strong> — how fast the future is arriving, by the numbers.</div>
+  <div>
+    <a href="/en/indices/">Indices</a>
+    &nbsp;·&nbsp; <a href="https://github.com/notifuturo/cyberfuturo" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>

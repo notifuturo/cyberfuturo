@@ -27,6 +27,16 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 
 STDLIB = sys.stdlib_module_names
 
+
+def is_local_module(top: str) -> bool:
+    """True if `top` resolves to a same-repo module in scripts/, e.g. the
+    shared _svg_chart.py renderer. ADR-0002's concern is third-party pip
+    packages (supply chain, version drift, install time) — a sibling file
+    reviewed in the same PR carries none of that risk, so it isn't a
+    violation. Only scripts/*.py is in scope (matches SCAN_GLOBS); a local
+    module elsewhere in the repo would still be flagged, which is correct."""
+    return (REPO_ROOT / "scripts" / f"{top}.py").exists()
+
 FORBIDDEN_LLM_MODULES = {
     "anthropic",
     "openai",
@@ -81,7 +91,7 @@ def scan_file(path: Path) -> list[str]:
                         f"LLM module import '{alias.name}' violates ADR-0008"
                     )
                     continue
-                if top not in STDLIB:
+                if top not in STDLIB and not is_local_module(top):
                     violations.append(
                         f"{path.relative_to(REPO_ROOT)}:{node.lineno}  "
                         f"non-stdlib import '{alias.name}' violates ADR-0002"
@@ -97,7 +107,7 @@ def scan_file(path: Path) -> list[str]:
                     f"LLM module import 'from {node.module}' violates ADR-0008"
                 )
                 continue
-            if top not in STDLIB:
+            if top not in STDLIB and not is_local_module(top):
                 violations.append(
                     f"{path.relative_to(REPO_ROOT)}:{node.lineno}  "
                     f"non-stdlib import 'from {node.module}' violates ADR-0002"

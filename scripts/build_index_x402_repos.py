@@ -1,59 +1,61 @@
-"""CyberFuturo Index — arXiv AI research velocity.
+"""CyberFuturo Index — x402 repository velocity.
 
-Fetches monthly submission counts for cs.AI OR cs.LG from the arXiv API
-for the trailing 24 full months and writes:
+Fetches monthly counts of new, non-fork GitHub repositories matching
+"x402" in name, description, or topics for the trailing 24 full months
+and writes:
 
-  data/indices/arxiv-ai-velocity.csv   — raw time series
-  data/indices/arxiv-ai-velocity.svg   — rendered chart
+  data/indices/x402-repo-velocity.csv   — raw time series
+  data/indices/x402-repo-velocity.svg   — rendered chart
 
 Dependencies: Python stdlib only. No external packages.
 
 Methodology:
-  - Query: (cat:cs.AI OR cat:cs.LG) AND submittedDate:[start TO end]
-  - Unit: papers first-submitted within the calendar month (UTC)
-  - Source: https://export.arxiv.org/api/query
-  - Dedup: arXiv's own OR query returns unique entries, not sum of categories
-  - Rate limit: 3s between requests (arXiv asks nicely for ~1 req / 3s)
+  - Query: x402 in:name,description,topics created:{start}..{end} fork:false
+  - Unit: repositories first created within the calendar month (UTC)
+  - Source: https://api.github.com/search/repositories
+  - Auth: GITHUB_TOKEN env var if set (CI supplies this automatically via
+    the built-in Actions token; raises the search rate limit from 10 to 30
+    requests/min). Unauthenticated works too, just slower.
+  - Rate limit: 3.1s between requests (mirrors the arXiv pipeline's
+    politeness margin; comfortably under both the authenticated and
+    unauthenticated GitHub search limits)
 
 Run:
-  python3 scripts/build_index_arxiv_ai.py
+  python3 scripts/build_index_x402_repos.py
 """
 
 from __future__ import annotations
 
 import calendar
 import csv
+import json
+import os
 import sys
 import time
 import urllib.parse
 import urllib.request
-import xml.etree.ElementTree as ET
 from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _svg_chart import render_svg as _render_svg  # noqa: E402
 
-ARXIV_ENDPOINT = "https://export.arxiv.org/api/query"
-NS = {
-    "atom": "http://www.w3.org/2005/Atom",
-    "opensearch": "http://a9.com/-/spec/opensearch/1.1/",
-}
+GITHUB_SEARCH_ENDPOINT = "https://api.github.com/search/repositories"
 USER_AGENT = "CyberFuturoIndex/0.1 (https://cyberfuturo.com)"
 RATE_LIMIT_SECONDS = 3.1
 REQUEST_TIMEOUT = 30
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-CSV_PATH = REPO_ROOT / "data" / "indices" / "arxiv-ai-velocity.csv"
-SVG_PATH = REPO_ROOT / "data" / "indices" / "arxiv-ai-velocity.svg"
+CSV_PATH = REPO_ROOT / "data" / "indices" / "x402-repo-velocity.csv"
+SVG_PATH = REPO_ROOT / "data" / "indices" / "x402-repo-velocity.svg"
 
 MAX_RESPONSE_BYTES = 10 * 1024 * 1024  # 10 MiB — reject abnormally large payloads
 
 
 def month_window(year: int, month: int) -> tuple[str, str]:
     last_day = calendar.monthrange(year, month)[1]
-    start = f"{year:04d}{month:02d}010000"
-    end = f"{year:04d}{month:02d}{last_day:02d}2359"
+    start = f"{year:04d}-{month:02d}-01"
+    end = f"{year:04d}-{month:02d}-{last_day:02d}"
     return start, end
 
 
@@ -72,38 +74,36 @@ def trailing_months(end_year: int, end_month: int, n: int) -> list[tuple[int, in
 
 def fetch_count(year: int, month: int) -> int:
     start, end = month_window(year, month)
-    query = f"(cat:cs.AI OR cat:cs.LG) AND submittedDate:[{start} TO {end}]"
-    params = {"search_query": query, "start": "0", "max_results": "1"}
-    url = f"{ARXIV_ENDPOINT}?{urllib.parse.urlencode(params)}"
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    query = f"x402 in:name,description,topics created:{start}..{end} fork:false"
+    params = {"q": query, "per_page": "1"}
+    url = f"{GITHUB_SEARCH_ENDPOINT}?{urllib.parse.urlencode(params)}"
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    token = os.environ.get("GITHUB_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT) as resp:
         payload = resp.read(MAX_RESPONSE_BYTES + 1)
     if len(payload) > MAX_RESPONSE_BYTES:
         raise RuntimeError(
-            f"arXiv response exceeded {MAX_RESPONSE_BYTES} bytes; aborting to "
-            f"avoid processing untrusted oversized XML."
+            f"GitHub search response exceeded {MAX_RESPONSE_BYTES} bytes; aborting to "
+            f"avoid processing an untrusted oversized payload."
         )
-    # Parse with an explicit XMLParser rather than bare ET.fromstring() to make
-    # the security posture explicit.  Python 3.9+ already limits entity
-    # expansion in the default expat parser, but we call out the concern here:
-    # stdlib xml.etree does NOT fully defend against billion-laughs on all
-    # builds.  The MAX_RESPONSE_BYTES check above is the primary mitigation
-    # for untrusted arXiv XML when defusedxml is unavailable (ADR-0002:
-    # stdlib-only constraint).
-    parser = ET.XMLParser()
-    parser.feed(payload)
-    root = parser.close()
-    total_el = root.find("opensearch:totalResults", NS)
-    if total_el is None or total_el.text is None:
-        raise RuntimeError(f"arXiv returned no totalResults for {year}-{month:02d}")
-    return int(total_el.text)
+    data = json.loads(payload)
+    if "total_count" not in data:
+        raise RuntimeError(f"GitHub search returned no total_count for {year}-{month:02d}: {data}")
+    return int(data["total_count"])
 
 
 def write_csv(rows: list[tuple[str, int]]) -> None:
     CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
     with CSV_PATH.open("w", newline="") as f:
         w = csv.writer(f, lineterminator="\n")
-        w.writerow(["month", "papers"])
+        w.writerow(["month", "repos"])
         for month, count in rows:
             w.writerow([month, count])
 
@@ -112,15 +112,14 @@ def render_svg(rows: list[tuple[str, int]]) -> None:
     _render_svg(
         rows,
         SVG_PATH,
-        title="arXiv AI research velocity — monthly submissions (cs.AI OR cs.LG)",
-        source_label="arXiv API",
-        unit_label="papers / month",
+        title="x402 repository velocity — new repos/month (name, description, or topic)",
+        source_label="GitHub Search API",
+        unit_label="new repos / month",
     )
 
 
 def main() -> int:
     today = date.today()
-    # Last full month = month before current month
     if today.month == 1:
         end_year, end_month = today.year - 1, 12
     else:
@@ -128,11 +127,13 @@ def main() -> int:
 
     months = trailing_months(end_year, end_month, 24)
     print(
-        f"Fetching arXiv cs.AI OR cs.LG counts for "
+        f"Fetching GitHub x402-repo counts for "
         f"{months[0][0]}-{months[0][1]:02d} through "
         f"{months[-1][0]}-{months[-1][1]:02d}",
         file=sys.stderr,
     )
+    if not os.environ.get("GITHUB_TOKEN"):
+        print("  (no GITHUB_TOKEN set — running unauthenticated, 10 req/min search limit)", file=sys.stderr)
 
     rows: list[tuple[str, int]] = []
     for idx, (y, m) in enumerate(months):

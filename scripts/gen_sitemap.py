@@ -92,6 +92,7 @@ STANDALONE_PAGES = [
     ("/about/",                                0.6),
     ("/issues/01/",                            0.6),
     ("/methodology/arxiv-ai-velocity",         0.6),
+    ("/methodology/x402-repo-velocity",        0.6),
 ]
 
 
